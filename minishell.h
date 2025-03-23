@@ -13,7 +13,7 @@ typedef enum	e_token_ID
 	REDIR_IN = 3,
 	REDIR_OUT = 4,
 	REDIR_APP = 5,
-	HEREDOC = 7,
+	HEREDOC = 6,
 	END = 7
 }	t_token_type;
 

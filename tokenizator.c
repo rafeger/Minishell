@@ -7,13 +7,14 @@ char	*ft_strndup(char *input, int start, int end)
 
 	i = 0;
 	char	*word;
-	word = malloc((end - start) * sizeof(char));
-	while(start <= end)
+	word = malloc((end - start + 1) * sizeof(char));
+	while(start < end)
 	{
 		word[i] = input[start];
 		i++;
 		start++;
 	}
+	word[i] = '\0';
 	return (word);
 }
 
@@ -22,11 +23,10 @@ void	add_token(t_token **tokens, t_token_type type, char *value)
 	t_token	*new = malloc(sizeof(t_token));
 	if (!new)
 		return;
-	
-new->type = type;
+	new->type = type;
 	new->value = strdup(value); //utiliser ft_strdup
 	new->next = NULL;
-	if (!tokens)
+	if (*tokens == NULL)
 		*tokens = new;
 	else
 	{
@@ -40,17 +40,15 @@ new->type = type;
 int	extract_word(t_token **tokens, char *input, int i)
 {
 	int	j;
+	char *word;
 
 	j = i;
-	while (input[i] && input[i] != ' ' && input[i] != 
-		'\t' && input[i] != '>' && input[i] != '<')
+	while (input[j] && input[j] != ' ' && input[j] != '\t' && input[j] != '>' && input[j] != '<')
 		j++;
-	char *word;
 	word = ft_strndup(input, i, j); //copier de input[i] a input[j]
 	add_token(tokens, WORD, word);
 	free(word);
-
-	return (i);
+	return (j);
 }
 
 
@@ -75,7 +73,7 @@ t_token	*lexer(char	*input)
 		}
 		else if (input[i] == '>')
 		{
-			if (input[i = 1] == '>')
+			if (input[i + 1] == '>')
 			{
 				add_token(&tokens, REDIR_APP, ">>");
 				i += 2;
@@ -100,7 +98,7 @@ t_token	*lexer(char	*input)
 			}
 		}
 		else
-			i += extract_word(&tokens, input, i);
+			i = extract_word(&tokens, input, i);
 	}
 	return tokens;
 }
@@ -114,11 +112,27 @@ void	print_tokens(t_token *tokens)
 	}
 }
 
-int	main(int ac, char *av[])
+
+int main()
 {
-	char *input;
-	input = av[1];
-	t_token *tokens = lexer(input);
-	print_tokens(tokens);
-	return 0;
+    char *inputs[] = {
+        "ls -l",
+        "echo 'hello world'",
+        "cat < input.txt",
+        "grep .c | wc -l",
+        "echo \"text > file\" > output.txt",
+        "ls | grep txt | wc -l",
+        NULL
+    };
+	int i;
+	i = 0;
+    while (i < 6)
+    {
+        printf("\n🟢 Test %d : \"%s\"\n", i + 1, inputs[i]);
+        t_token *tokens = lexer(inputs[i]);  // Appelle ton tokenizer
+        print_tokens(tokens);
+		i++;
+    }
+    return 0;
 }
+
