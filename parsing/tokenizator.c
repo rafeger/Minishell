@@ -51,7 +51,63 @@ int	extract_word(t_token **tokens, char *input, int i)
 	return (j);
 }
 
+void	syntax_error(char *error)
+{
+	printf("\n Syntax Error !\n");
+	if (error == '"')
+		printf("The \" is not closed\n");
+	if (error == "<")
+		printf("< leads to nothing\n");
+}
 
+void	handle_quotes(t_token *tokens, char *input, int *i)
+{
+	
+}
+
+void	handle_whitespace(char *input, int *i)
+{
+	while ((input[(*i)] == ' ') || (input[(*i)] == '\t'))
+		(*i)++;
+}
+
+void handle_pipe(t_token *tokens, char *input, int *i)
+{
+	add_token(&tokens, PIPE, "|");
+	(*i)++;
+}
+ 
+void	handle_redir(t_token *tokens, char *input, int *i)
+{
+	if (input[(*i)] == '>')
+	{	
+		if (input[(*i) + 1] == '>')
+		{	
+			add_token(&tokens, REDIR_APP, ">>");
+			(*i)++;
+			(*i)++;
+		}
+		else
+		{
+			add_token(&tokens, REDIR_OUT, ">");
+			(*i)++;
+		}
+	}
+	else if (input[(*i)] == '<')
+	{
+		if (input[(*i)+1] == '<')
+		{
+			add_token(&tokens, HEREDOC, "<<");
+			(*i) += 2;
+		}
+		else
+		{
+			add_token(&tokens, REDIR_OUT, "<");
+			(*i)++;
+		}
+	}
+
+}
 
 // a RACCOURCIR
 t_token	*lexer(char	*input)
@@ -65,38 +121,13 @@ t_token	*lexer(char	*input)
 	while (input[i])
 	{
 		if ((input[i] == ' ') || (input[i] == '\t'))
-			i++;
+			handle_whitespace(input, &i);
 		else if (input[i] == '|')
-		{
-			add_token(&tokens, PIPE, "|");
-			i++;
-		}
-		else if (input[i] == '>')
-		{
-			if (input[i + 1] == '>')
-			{
-				add_token(&tokens, REDIR_APP, ">>");
-				i += 2;
-			}
-			else 
-			{
-				add_token(&tokens, REDIR_OUT, ">");
-				i++;
-			}
-		}
-		else if (input[i] == '<')
-		{
-			if (input[i+1] == '<')
-			{
-				add_token(&tokens, HEREDOC, "<<");
-				i += 2;
-			}
-			else
-			{
-				add_token(&tokens, REDIR_OUT, "<");
-				i++;
-			}
-		}
+			handle_pipe(tokens, input, &i);
+		else if (input[i] == '>' || input[i] == '<')
+			handle_redir(tokens, input, &i);
+		else if (input[i] == '"')
+			handle_quotes(tokens, input, &i);
 		else
 			i = extract_word(&tokens, input, i);
 	}
