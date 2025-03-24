@@ -51,18 +51,38 @@ int	extract_word(t_token **tokens, char *input, int i)
 	return (j);
 }
 
-void	syntax_error(char *error)
+void	syntax_error(char error)
 {
 	printf("\n Syntax Error !\n");
 	if (error == '"')
 		printf("The \" is not closed\n");
-	if (error == "<")
+	if (error == '<')
 		printf("< leads to nothing\n");
 }
 
-void	handle_quotes(t_token *tokens, char *input, int *i)
+void	handle_quotes(t_token *tokens, char *input, int *i, char quote_type)
 {
-	
+	char *text;
+	int	start;
+	int j;
+
+	start = (*i) + 1;
+	(*i)++;
+	while (input[(*i)] && input[(*i)] != quote_type)
+		(*i)++;
+	if (input[(*i)] == '\0' && input[(*i) - 1] != quote_type)
+		printf("Syntax error, quote is unclosed !\n");
+	else
+	{
+		text = malloc(sizeof(char) * start + 1);
+		j = 0;
+		while (start < (*i))
+			text[j++] = input[start++];
+		text[j] = '\0';
+		add_token(&tokens, WORD, text);
+		free (text);
+	}
+	(*i)++;
 }
 
 void	handle_whitespace(char *input, int *i)
@@ -126,8 +146,8 @@ t_token	*lexer(char	*input)
 			handle_pipe(tokens, input, &i);
 		else if (input[i] == '>' || input[i] == '<')
 			handle_redir(tokens, input, &i);
-		else if (input[i] == '"')
-			handle_quotes(tokens, input, &i);
+		else if (input[i] == '"' || input[i] == '\'')
+			handle_quotes(tokens, input, &i, input[i]);
 		else
 			i = extract_word(&tokens, input, i);
 	}
