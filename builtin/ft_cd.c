@@ -11,21 +11,27 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-static void	change_pwd()
+static void	update_pwd()
 {
-	
+
+}
+static void	update_old_pwd(char *arg, t_env *env)
+{
+	if (!getcwd(args[1]))
+		return ;
+	chdir(arg);
 }
 
-int	ft_cd(char **args)
+int	ft_cd(char **args, t_env *env)
 {
 	if (args && args[1] && args[2])
 	{
 		ft_putstr_fd("bash: cd: too many arguments\n", 2);
 		return (1);
     }
-	if (!chdir(args[1]))
+	if (!getcwd(args[1]))
 	{
-
+		update_old_pwd(args[1], env);
 		return (0);
 	}
 	else

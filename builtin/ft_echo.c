@@ -21,7 +21,7 @@ static bool	check_new_line(char *str)
 		i++;
 		while (str[i] && str[i] == 'n')
 			i++;
-		if (i == ft_strlen(str))
+		if (i == (int)ft_strlen(str))
 			return (true);
 	}
 	return (false);
@@ -43,7 +43,7 @@ int	ft_echo(char **arg)
 	while (arg[i])
 	{
 		write(1, arg[i], ft_strlen(arg[i]));
-		if (i != nbr_arg - 1)
+		if (i != nbr_arg)
 			write(1, " ", 1);
 		i++;
 	}
@@ -51,3 +51,10 @@ int	ft_echo(char **arg)
 		write(1, "\n", 1);
 	return (0);
 }
+/*int	main(int argc, char **argv)
+{
+
+	(void)argc;
+	ft_echo(argv);
+	return (0);
+}*/
