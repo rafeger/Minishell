@@ -1,0 +1,17 @@
+je 
+suis
+une
+page
+de
+tests
+pour
+tester
+des
+commandes
+bash
+parceque
+jai
+des 
+lacunes
+en 
+bash.
