@@ -16,7 +16,7 @@ typedef struct s_env
 
 typedef struct s_data
 {
-	t_list	*env;
+	t_env	*env;
 	int		exit;
 
 }				t_data;

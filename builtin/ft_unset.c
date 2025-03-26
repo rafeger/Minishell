@@ -11,35 +11,88 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-int	check_is_in_env(char *str, t_list *env)
+void	delete_env_var(t_env *tmp_env)
 {
-	t_list	*env_tmp;
-
-	env_tmp = env;
-	while (env_tmp)
+	if (tmp_env->prev == NULL && tmp_env->next == NULL)
+		return ;
+	else if (tmp_env->prev == NULL)
 	{
-		if (!ft_strncmp(str[i], env_tmp->str, ft_strlen(str[i])))
-			delete_env_var(pos)
-		env_tmp = env_tmp->next;
+		tmp_env->next->prev = tmp_env->prev;
+		return ;
 	}
+	else if (tmp_env->next == NULL)
+	{
+		tmp_env->prev->next = tmp_env->next;
+		return ;
+	}
+	tmp_env->prev->next = tmp_env->next;
+	tmp_env->next->prev = tmp_env->prev;
 }
 
-int	ft_unset(char **str, t_list *env)
+int	check_is_in_env(char *var, t_env **env)
+{
+	t_env	*tmp_env;
+
+	tmp_env = *env;
+	while (tmp_env)
+	{
+		if (!ft_strncmp(var, tmp_env->str, ft_strlen(var)))
+		{
+			delete_env_var(tmp_env);
+			tmp_env->str = NULL;
+			return (0);
+		}			
+		tmp_env = tmp_env->next;
+	}
+	return (0);
+}
+
+int	ft_unset(char **str, t_env **env)
 {
 	int		i;
-	int		*pos;
-	t_list	*env_tmp;
 
 	i = 0;
 	while (str[i])
 	{
-		env_tmp = env;
-		while (env_tmp)
-		{
-			while (!ft_strncmp(str[i], env_tmp->str, ft_strlen(str[i])))
-				env_tmp = env_tmp->next;
-			
-		} 
+		check_is_in_env(str[i], env);
+		i++;
 	}
 	return (0);
 }
+
+/*int	main(void)
+{
+	t_env	**env;
+	char	**str = malloc(sizeof(char *)*2);
+	char	*a = "OLDPWD";
+	int		i = 0;
+
+	env = malloc(4 * sizeof(t_env));
+	env[0] = malloc(sizeof(t_env));
+	env[1] = malloc(sizeof(t_env));
+	env[2] = malloc(sizeof(t_env));
+	env[0]->prev = NULL;
+	env[0]->str ="USER=zmurie";
+	env[0]->next = env[1];
+	env[1]->prev = env[0];
+	env[1]->str = "OLDPWD=/home/zmurie";
+	env[1]->next = env[2];
+	env[2]->prev = env[1];
+	env[2]->str = "QT_IM_MODULE=ibus";
+	env[2]->next = NULL;
+	str[0] = a;
+	str[1] = NULL;
+	ft_unset(str, env);
+	while(env[i])
+	{
+		printf("%s\n", env[i]->str);
+		i++;
+	}
+	t_env *tmp = env[0];
+	while(tmp)
+	{
+		printf("%s\n", tmp->str);
+		tmp = tmp->next;
+	}	
+	return (0);
+}*/
