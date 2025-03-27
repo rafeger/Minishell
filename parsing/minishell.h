@@ -10,9 +10,10 @@ typedef enum	e_token_ID
 {
 	WORD = 1,
 	PIPE = 2,
-	REDIR_IN = 3,
-	REDIR_OUT = 4,
-	REDIR_APP = 5,
+	REDIR_IN = 3, //<
+	REDIR_OUT = 4, //>
+	REDIR_APP = 5, //<<
+	
 	HEREDOC = 6,
 	END = 7
 }	t_token_type;
@@ -32,6 +33,7 @@ typedef struct s_command
 	char	*infile;
 	char	*outfile;
 	int		append;
+	int		pipe;
 	struct s_command *next;
 }	t_command;
 
@@ -52,7 +54,27 @@ cmd.append = 0;
 
 (append pour differencier si on ecrase dans le fichier sortie ou pas);*/
 
-char *readline(const char *prompt);
+//utils
+char	*ft_strndup(char *input, int start, int end);
+void	syntax_error(char error);
+void	*ft_memset(void *s, int c, size_t n);
+
+//handle_quotes
+void	handle_single_quotes(t_token *tokens, char *input, int *i);
+void	handle_double_quotes(t_token *tokens, char *input, int *i);
+
+
+//tokenizator
+void	add_token(t_token **tokens, t_token_type type, char *value);
+int		extract_word(t_token **tokens, char *input, int i);
+t_token	*lexer(char	*input);
+
+//tokens_class
+void	handle_quotes(t_token *tokens, char *input, int *i, char quote_type);
+void	handle_whitespace(char *input, int *i);
+void 	handle_pipe(t_token *tokens, char *input, int *i);
+void	handle_redir(t_token *tokens, char *input, int *i);
+
 
 #endif
 

@@ -1,22 +1,6 @@
 #include "minishell.h"
 #include <string.h>
 
-char	*ft_strndup(char *input, int start, int end)
-{
-	int	i;
-
-	i = 0;
-	char	*word;
-	word = malloc((end - start + 1) * sizeof(char));
-	while(start < end)
-	{
-		word[i] = input[start];
-		i++;
-		start++;
-	}
-	word[i] = '\0';
-	return (word);
-}
 
 void	add_token(t_token **tokens, t_token_type type, char *value)
 {
@@ -51,93 +35,20 @@ int	extract_word(t_token **tokens, char *input, int i)
 	return (j);
 }
 
-void	syntax_error(char error)
-{
-	printf("\n Syntax Error !\n");
-	if (error == '"')
-		printf("The \" is not closed\n");
-	if (error == '<')
-		printf("< leads to nothing\n");
-}
 
-void	handle_quotes(t_token *tokens, char *input, int *i, char quote_type)
-{
-	char *text;
-	int	start;
-	int j;
-
-	start = (*i) + 1;
-	(*i)++;
-	while (input[(*i)] && input[(*i)] != quote_type)
-		(*i)++;
-	if (input[(*i)] == '\0' && input[(*i) - 1] != quote_type)
-		printf("Syntax error, quote is unclosed !\n");
-	else
-	{
-		text = malloc(sizeof(char) * start + 1);
-		j = 0;
-		while (start < (*i))
-			text[j++] = input[start++];
-		text[j] = '\0';
-		add_token(&tokens, WORD, text);
-		free (text);
-	}
-	(*i)++;
-}
-
-void	handle_whitespace(char *input, int *i)
-{
-	while ((input[(*i)] == ' ') || (input[(*i)] == '\t'))
-		(*i)++;
-}
-
-void handle_pipe(t_token *tokens, char *input, int *i)
-{
-	add_token(&tokens, PIPE, "|");
-	(*i)++;
-}
- 
-void	handle_redir(t_token *tokens, char *input, int *i)
-{
-	if (input[(*i)] == '>')
-	{	
-		if (input[(*i) + 1] == '>')
-		{	
-			add_token(&tokens, REDIR_APP, ">>");
-			(*i)++;
-			(*i)++;
-		}
-		else
-		{
-			add_token(&tokens, REDIR_OUT, ">");
-			(*i)++;
-		}
-	}
-	else if (input[(*i)] == '<')
-	{
-		if (input[(*i)+1] == '<')
-		{
-			add_token(&tokens, HEREDOC, "<<");
-			(*i) += 2;
-		}
-		else
-		{
-			add_token(&tokens, REDIR_OUT, "<");
-			(*i)++;
-		}
-	}
-
-}
-
-// a RACCOURCIR
 t_token	*lexer(char	*input)
 {
 	int	i;
+	int	quote_nb;
 
 	i = 0;
 	t_token *tokens;
 	tokens = NULL;
 
+
+	quote_nb = check_quotes(input);
+	if (quote_nb % 2 != 0)
+		error("Syntax error, quote is unclosed !\n");
 	while (input[i])
 	{
 		if ((input[i] == ' ') || (input[i] == '\t'))
@@ -154,6 +65,8 @@ t_token	*lexer(char	*input)
 	return tokens;
 }
 
+//tests.c
+
 void	print_tokens(t_token *tokens)
 {
 	while (tokens)
@@ -164,26 +77,16 @@ void	print_tokens(t_token *tokens)
 }
 
 
-int main()
+int main(int ac, char *av[])
 {
-    char *inputs[] = {
-        "ls -l",
-        "echo 'hello world'",
-        "cat < input.txt",
-        "grep .c | wc -l",
-        "echo \"text > file\" > output.txt",
-        "ls | grep txt | wc -l",
-        NULL
-    };
+	(void) ac;
+
 	int i;
 	i = 0;
-    while (i < 6)
-    {
-        printf("\n Test %d : \"%s\"\n", i + 1, inputs[i]);
-        t_token *tokens = lexer(inputs[i]);  // Appelle ton tokenizer
-        print_tokens(tokens);
-		i++;
-    }
+	printf("\n Test %d : \"%s\"\n", i + 1, av[1]);
+	t_token *tokens = lexer(av[1]);  // Appelle ton tokenizer
+	print_tokens(tokens);
+	i++;
     return 0;
 }
 
