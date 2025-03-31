@@ -81,4 +81,5 @@ int		ft_putpointer(void *ptr);
 int		ft_putunsigned(unsigned int nbr);
 int		ft_puthex(unsigned int nbr, int uppercase);
 int		ft_isnumber(char *str);
+char	*ft_strndup(const char *s, size_t n);
 #endif

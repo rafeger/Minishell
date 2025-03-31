@@ -47,14 +47,14 @@ int	check_is_in_env(char *var, t_env **env)
 	return (0);
 }
 
-int	ft_unset(char **str, t_env **env)
+int	ft_unset(char **args, t_env **env)
 {
 	int		i;
 
 	i = 0;
-	while (str[i])
+	while (args[i])
 	{
-		check_is_in_env(str[i], env);
+		check_is_in_env(args[i], env);
 		i++;
 	}
 	return (0);
