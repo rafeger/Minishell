@@ -82,4 +82,5 @@ int		ft_putunsigned(unsigned int nbr);
 int		ft_puthex(unsigned int nbr, int uppercase);
 int		ft_isnumber(char *str);
 char	*ft_strndup(const char *s, size_t n);
+int		ft_strcmp(char *s1, char *s2);
 #endif
