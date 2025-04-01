@@ -37,4 +37,3 @@ void	ft_exit(t_data *data, char **args)
 	}
 	data->exit = 1;
 }
-

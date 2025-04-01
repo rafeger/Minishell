@@ -11,18 +11,18 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-static int print_all_var_env(t_env *env)
+static int	print_all_var_env(t_env *env)
 {
 	int	i;
 
-	while(env)
+	while (env)
 	{
 		printf("declare -x ");
 		i = 0;
-		while(env->str[i] && env->str[i] != '=')
+		while (env->str[i] && env->str[i] != '=')
 			printf("%c", env->str[i++]);
 		if (env->str[i] && env->str[i] == '=')
-			printf("=\"%s\"\n", &env->str[i+1]);
+			printf("=\"%s\"\n", &env->str[i + 1]);
 		else
 			printf("\n");
 		env = env->next;
@@ -38,7 +38,7 @@ static int	update_env_var(char *str, t_env **env, int len_name)
 	while (tmp_env)
 	{
 		if (!ft_strncmp(str, tmp_env->str, len_name))
-			break;
+			break ;
 		tmp_env = tmp_env->next;
 	}
 	tmp_env->str = ft_strdup(str);
@@ -61,13 +61,12 @@ static int	name_var_exist(char *str, t_env **env)
 		tmp_env = tmp_env->next;
 	}
 	return (0);
-
 }
 
 static int	create_new_env_var(char *str, t_env **env)
 {
-	t_env *tmp_env;
-	t_env *new_node;
+	t_env	*tmp_env;
+	t_env	*new_node;
 
 	if (!env || !str || check_valid_name_var(str) || name_var_exist(str, env))
 		return (1);
@@ -95,7 +94,7 @@ int	ft_export(char **args, t_env **env)
 	int	i;
 
 	if (!args[1])
-		return(print_all_var_env(*env));
+		return (print_all_var_env(*env));
 	i = 1;
 	while (args[i])
 	{
@@ -105,7 +104,7 @@ int	ft_export(char **args, t_env **env)
 	return (0);
 }
 
-int	main(void)
+/*int	main(void)
 {
 	t_env	**env;
 	char	**str = malloc(sizeof(char *)*2);
@@ -140,4 +139,4 @@ int	main(void)
 		tmp = tmp->next;
 	}	
 	return (0);
-}
+}*/
