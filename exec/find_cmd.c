@@ -33,16 +33,17 @@ static char	*construct_and_check_path(char *path, char *cmd)
 	return (NULL);
 }
 
-char	*get_pathname(char *cmd, char **envp)
+char	*get_pathname(char *cmd, t_env *env)
 {
 	char	**paths;
 	char	*exec;
 	int		i;
+	t_env	*tmp_env;
 
-	i = 0;
-	while (envp[i] && ft_strnstr(envp[i], "PATH", 4) == 0)
-		i++;
-	paths = ft_split(envp[i] + 5, ':');
+	tmp_env = env;
+	while (tmp_env && ft_strnstr(tmp_env->str, "PATH", 4) == 0)
+		tmp_env = tmp_env->next;
+	paths = ft_split(tmp_env + 5, ':');
 	i = 0;
 	while (paths[i])
 	{
