@@ -74,8 +74,7 @@ int	ft_cd(char **args, t_env *env)
 	else
 	{
 		ft_putstr_fd("bash: cd: ", 2);
-		ft_putstr_fd(args[1], 2);
-		ft_putstr_fd(": No such file or directory\n", 2);
+		perror(args[1]);
 		return (1);
 	}
 }
@@ -99,7 +98,7 @@ int	ft_cd(char **args, t_env *env)
 // 	env[2]->str = "PWD=/home/zmurie/Minishell";
 // 	env[2]->next = NULL;
 // 	str[0] = "cd";
-// 	str[1] = "builtin";
+// 	str[1] = "ouistiti";
 // 	ft_cd(str, *env);
 // 	t_env *tmp = env[0];
 // 	while(tmp)
