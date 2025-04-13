@@ -72,7 +72,6 @@ void	parent_process(t_data *data, t_command *cmd, int *pipefd)
 	close(fd);
 	close(pipefd[0]);
 	close(pipefd[1]);
-	execute(argv[3], envp);
 }
 
 int	main(t_data *data)
@@ -92,7 +91,9 @@ int	main(t_data *data)
 			exit(1);
 		if (g_signal == 0)
 			child_process(data, tmp_cmd, pipefd);
-		parent_process(data, tmp_cmd, pipefd);
+		else
+			parent_process(data, tmp_cmd, pipefd);
+		tmp_cmd = tmp_cmd->next;
 	}
 	return (0);
 }
