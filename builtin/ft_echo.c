@@ -51,10 +51,10 @@ int	ft_echo(char **arg)
 		write(1, "\n", 1);
 	return (0);
 }
-/*int	main(int argc, char **argv)
-{
+// int	main(int argc, char **argv)
+// {
 
-	(void)argc;
-	ft_echo(argv);
-	return (0);
-}*/
+// 	(void)argc;
+// 	ft_echo(argv);
+// 	return (0);
+// }

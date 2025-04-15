@@ -17,6 +17,7 @@ void	ft_exit(t_data *data, char **args)
 
 	if (args[1] && ft_isnumber(args[1]))
 	{
+		data->exit = 2;
 		ft_putendl_fd("exit", 2);
 		ft_putstr_fd("bash: exit: ", 2);
 		ft_putstr_fd(args[1], 2);
@@ -33,7 +34,8 @@ void	ft_exit(t_data *data, char **args)
 	else
 	{
 		std_out = ft_atoi(args[1]) % 256;
+		data->exit = std_out;
 		ft_putendl_fd("exit", std_out);
 	}
-	data->exit = 1;
+	free_all(data);
 }

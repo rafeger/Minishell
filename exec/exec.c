@@ -55,23 +55,20 @@ void	execute(t_data *data, t_command *cmd)
 
 void	child_process(t_data *data, t_command *cmd, int *pipefd)
 {
-
-	dup2(data->command->infile, STDIN_FILENO);
-	dup2(pipefd[1], STDOUT_FILENO);
-	close(data->command->infile);
 	close(pipefd[0]);
+	dup2(data->command->infile, STDIN_FILENO);
+	close(data->command->infile);
+	dup2(pipefd[1], STDOUT_FILENO);
 	close(pipefd[1]);
 	execute(data, cmd);
+	close(pipefd[1]);
 }
 
 void	parent_process(t_data *data, t_command *cmd, int *pipefd)
 {
 	close(pipefd[1]);
-	dup2(fd, STDOUT_FILENO);
-	dup2(pipefd[0], STDIN_FILENO);
-	close(fd);
-	close(pipefd[0]);
-	close(pipefd[1]);
+	cmd->infile = pipefd[0];
+	//close(pipefd[0]);
 }
 
 int	main(t_data *data)
