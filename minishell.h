@@ -47,5 +47,7 @@ int		check_valid_name_var(char *str);
 int		ft_export(char **args, t_env **env);
 int		ft_pwd(void);
 int		ft_unset(char **args, t_env **env);
+int		is_builtin(char *cmd);
+void	do_builtin(t_data *data, t_command *cmd);
 #endif
 

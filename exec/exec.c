@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-void	cleanup_split(char **array)
+static void	cleanup_split(char **array)
 {
 	int	i;
 
@@ -23,7 +23,7 @@ void	cleanup_split(char **array)
 	free(array);
 }
 
-void	execute(t_data *data, t_command *cmd)
+static void	execute(t_data *data, t_command *cmd)
 {
 	char	*pathname;
 	char	**commande;
@@ -53,32 +53,42 @@ void	execute(t_data *data, t_command *cmd)
 	}
 }
 
-void	child_process(t_data *data, t_command *cmd, int *pipefd)
+static void	child_process(t_data *data, t_command *cmd, int *pipefd)
 {
 	close(pipefd[0]);
-	dup2(data->command->infile, STDIN_FILENO);
-	close(data->command->infile);
-	dup2(pipefd[1], STDOUT_FILENO);
+	if (cmd->infile >= 0)
+	{
+		dup2(cmd->infile, STDIN_FILENO);
+		close(cmd->infile);
+	}
+	if (cmd->outfile >= 0)
+	{
+		dup2(cmd->outfile, STDOUT_FILENO);
+		close(cmd->outfile);
+	}
 	close(pipefd[1]);
 	execute(data, cmd);
-	close(pipefd[1]);
 }
 
-void	parent_process(t_data *data, t_command *cmd, int *pipefd)
+static void	parent_process(t_data *data, t_command *cmd, int *pipefd)
 {
 	close(pipefd[1]);
-	cmd->infile = pipefd[0];
-	//close(pipefd[0]);
+	if (cmd->infile >= 0)
+		close(cmd->infile);
+	if (cmd->infile == -2)
+		cmd->infile = pipefd[0];
+	if (cmd->next->args && cmd->next->infile == -2)
+		cmd->next->infile = pipefd[0];
+	else
+		close(pipefd[0]);
 }
 
-int	main(t_data *data)
+int	exec(t_data *data)
 {
-	int		    *pipefd;
-    t_command   *tmp_cmd;
+	int			*pipefd;
+	t_command	*tmp_cmd;
 
 	tmp_cmd = data->command;
-    if (is_one_builtin(data))
-		return (do_builtin);
 	while (tmp_cmd)
 	{
 		if (pipe(pipefd) == -1)
@@ -86,11 +96,40 @@ int	main(t_data *data)
 		g_signal = fork();
 		if (g_signal == -1)
 			exit(1);
+		if (is_builtin(tmp_cmd))
+			do_builtin(data, tmp_cmd);
 		if (g_signal == 0)
 			child_process(data, tmp_cmd, pipefd);
 		else
 			parent_process(data, tmp_cmd, pipefd);
 		tmp_cmd = tmp_cmd->next;
 	}
+	return (0);
+}
+
+int	main(void)
+{
+	t_env	**envi;
+	t_data	*data;
+	char	**str = malloc(sizeof(char *)*2);
+
+	envi = malloc(4 * sizeof(t_env));
+	envi[0] = malloc(sizeof(t_env));
+	envi[1] = malloc(sizeof(t_env));
+	envi[2] = malloc(sizeof(t_env));
+	envi[0]->prev = NULL;
+	envi[0]->str ="USER=zmurie";
+	envi[0]->next = envi[1];
+	envi[1]->prev = envi[0];
+	envi[1]->str = "OLDPWD=/home/zmurie";
+	envi[1]->next = envi[2];
+	envi[2]->prev = envi[1];
+	envi[2]->str = "QT_IM_MODULE=ibus";
+	envi[2]->next = NULL;
+	str[0] = "export";
+	str[1] = "JE_MANGE=du_pain";
+	data->env = envi;
+	data->command = 
+	exec(data);
 	return (0);
 }

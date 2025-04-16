@@ -11,3 +11,30 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
+int	is_builtin(char *cmd)
+{
+	if (!ft_strcmp(cmd, "cd") || !ft_strcmp(cmd, "echo") \
+		|| !ft_strcmp(cmd, "env") || !ft_strcmp(cmd, "exit") \
+		|| !ft_strcmp(cmd, "export") || !ft_strcmp(cmd, "pwd") \
+		||!ft_strcmp(cmd, "unset"))
+		return (1);
+	return (0);
+}
+
+void	do_builtin(t_data *data, t_command *cmd)
+{
+	if (!ft_strcmp(cmd, "cd"))
+		ft_cd(cmd->args, data->env);
+	else if (!ft_strcmp(cmd, "echo"))
+		ft_echo(cmd->args);
+	else if (!ft_strcmp(cmd, "env"))
+		ft_env(data->env);
+	else if (!ft_strcmp(cmd, "exit"))
+		ft_exit(data, cmd->args);
+	else if (!ft_strcmp(cmd, "export"))
+		ft_export(cmd->args, data->env);
+	else if (!ft_strcmp(cmd, "pwd"))
+		ft_pwd();
+	else if (!ft_strcmp(cmd, "unset"))
+		ft_unset(cmd->args, data->env);
+}
