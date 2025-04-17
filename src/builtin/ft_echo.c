@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/14 11:42:32 by zmurie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "../minishell.h"
+#include "../../minishell.h"
 
 static bool	check_new_line(char *str)
 {

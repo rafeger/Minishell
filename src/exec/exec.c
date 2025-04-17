@@ -9,7 +9,8 @@
 /*   Updated: 2025/04/01 14:39:36 by zmurie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "../minishell.h"
+#include "../../minishell.h"
+pid_t	g_signal;
 
 static void	cleanup_split(char **array)
 {
@@ -27,8 +28,9 @@ static void	execute(t_data *data, t_command *cmd)
 {
 	char	*pathname;
 	char	**commande;
+	char	**tab_env;
 
-	commande = ft_split(cmd->args, ' ');
+	commande = ft_split(*cmd->args, ' ');
 	pathname = get_pathname(commande[0], data->env);
 	if (!pathname)
 	{
@@ -44,7 +46,8 @@ static void	execute(t_data *data, t_command *cmd)
 		cleanup_split(commande);
 		return ;
 	}
-	if (execve(pathname, commande, data->env) == -1)
+	tab_env = convert_list_to_tab_str(data->env);
+	if (execve(pathname, commande, tab_env) == -1)
 	{
 		perror("execve");
 		free(pathname);
@@ -70,7 +73,7 @@ static void	child_process(t_data *data, t_command *cmd, int *pipefd)
 	execute(data, cmd);
 }
 
-static void	parent_process(t_data *data, t_command *cmd, int *pipefd)
+static void	parent_process(t_command *cmd, int *pipefd)
 {
 	close(pipefd[1]);
 	if (cmd->infile >= 0)
@@ -88,6 +91,7 @@ int	exec(t_data *data)
 	int			*pipefd;
 	t_command	*tmp_cmd;
 
+	pipefd = NULL;
 	tmp_cmd = data->command;
 	while (tmp_cmd)
 	{
@@ -96,40 +100,58 @@ int	exec(t_data *data)
 		g_signal = fork();
 		if (g_signal == -1)
 			exit(1);
-		if (is_builtin(tmp_cmd))
+		if (is_builtin(tmp_cmd->args[0]))
 			do_builtin(data, tmp_cmd);
 		if (g_signal == 0)
 			child_process(data, tmp_cmd, pipefd);
 		else
-			parent_process(data, tmp_cmd, pipefd);
+			parent_process(tmp_cmd, pipefd);
 		tmp_cmd = tmp_cmd->next;
 	}
 	return (0);
 }
 
-int	main(void)
+int main(void)
 {
-	t_env	**envi;
-	t_data	*data;
-	char	**str = malloc(sizeof(char *)*2);
+	t_data data;
+	t_command *cmd = malloc(sizeof(t_command ));
+	char **params = malloc(sizeof(char *) * 3);
+	t_env *env_node = malloc(sizeof(t_list));
 
-	envi = malloc(4 * sizeof(t_env));
-	envi[0] = malloc(sizeof(t_env));
-	envi[1] = malloc(sizeof(t_env));
-	envi[2] = malloc(sizeof(t_env));
-	envi[0]->prev = NULL;
-	envi[0]->str ="USER=zmurie";
-	envi[0]->next = envi[1];
-	envi[1]->prev = envi[0];
-	envi[1]->str = "OLDPWD=/home/zmurie";
-	envi[1]->next = envi[2];
-	envi[2]->prev = envi[1];
-	envi[2]->str = "QT_IM_MODULE=ibus";
-	envi[2]->next = NULL;
-	str[0] = "export";
-	str[1] = "JE_MANGE=du_pain";
-	data->env = envi;
-	data->command = 
-	exec(data);
+	// Préparation d'une commande "echo hello"
+	params[0] = strdup("echo");
+	params[1] = strdup("hello");
+	params[2] = NULL;
+
+	// Remplir t_cmd
+	cmd->infile = -1;
+	cmd->outfile = -1;
+	cmd->args = params;
+	cmd->next = cmd;
+
+	// Remplir un env minimal (PATH, par exemple)
+	env_node->str = strdup("PATH=/usr/bin:/bin");
+	env_node->prev = NULL;
+	env_node->next = NULL;
+
+	// Initialiser t_data
+	data.env = env_node;
+	data.command = cmd;
+	data.exit = 0;
+
+	// Lancer l'exécution
+	exec(&data);
+
+	// Afficher le code de sortie
+	printf("exit_code = %d\n", data.exit);
+
+	// Libération
+	free(params[0]);
+	free(params[1]);
+	free(params);
+	free(cmd);
+	free(env_node->str);
+	free(env_node);
+
 	return (0);
 }

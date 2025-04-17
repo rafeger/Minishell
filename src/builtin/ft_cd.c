@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/18 11:14:48 by zmurie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "../minishell.h"
+#include "../../minishell.h"
 
 static void	update_pwd(char *arg, t_env *env)
 {

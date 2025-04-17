@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/24 11:16:11 by zmurie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "../minishell.h"
+#include "../../minishell.h"
 
 void	ft_exit(t_data *data, char **args)
 {

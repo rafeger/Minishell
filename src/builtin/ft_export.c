@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/24 11:17:04 by zmurie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "../minishell.h"
+#include "../../minishell.h"
 
 static int	print_all_var_env(t_env *env)
 {

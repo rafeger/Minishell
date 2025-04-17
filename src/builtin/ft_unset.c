@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/24 11:16:47 by zmurie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "../minishell.h"
+#include "../../minishell.h"
 
 void	delete_env_var(t_env *tmp_env)
 {

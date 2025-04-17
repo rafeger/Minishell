@@ -49,5 +49,9 @@ int		ft_pwd(void);
 int		ft_unset(char **args, t_env **env);
 int		is_builtin(char *cmd);
 void	do_builtin(t_data *data, t_command *cmd);
+char	*get_pathname(char *cmd, t_env *env);
+char	**convert_list_to_tab_str(t_env *env);
+void	free_all(t_data *data);
+int		ft_envsize(t_env *lst);
 #endif
 

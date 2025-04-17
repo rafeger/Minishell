@@ -1,29 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_export2.c                                       :+:      :+:    :+:   */
+/*   ft_pwd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zmurie <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/28 12:59:59 by zmurie            #+#    #+#             */
-/*   Updated: 2025/03/28 13:00:01 by zmurie           ###   ########.fr       */
+/*   Created: 2025/03/22 17:43:29 by zmurie            #+#    #+#             */
+/*   Updated: 2025/03/22 17:43:32 by zmurie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "../minishell.h"
+#include "../../minishell.h"
 
-int	check_valid_name_var(char *str)
+int	ft_pwd(void)
 {
-	int	i;
+	char	cwd[PATH_MAX];
 
-	i = 0;
-	if (!str[i] || (str[i] != '_' && !ft_isalpha(str[i])))
-		return (1);
-	i++;
-	while (str[i] && str[i] != '=')
+	if (getcwd(cwd, PATH_MAX))
 	{
-		if (!ft_isalnum(str[i]) && str[i] != '_')
-			return (1);
-		i++;
+		ft_putendl_fd(cwd, 1);
+		return (0);
 	}
-	return (0);
+	else
+	{
+		perror("pwd");
+		return (1);
+	}
 }

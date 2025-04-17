@@ -9,8 +9,7 @@
 /*   Updated: 2025/04/14 15:38:20 by zmurie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "../minishell.h"
+#include "../../minishell.h"
 
 static void	print_command_not_found(char *cmd)
 {
@@ -55,7 +54,7 @@ char	*get_pathname(char *cmd, t_env *env)
 	tmp_env = env;
 	while (tmp_env && ft_strnstr(tmp_env->str, "PATH", 4) == 0)
 		tmp_env = tmp_env->next;
-	paths = ft_split(tmp_env + 5, ':');
+	paths = ft_split(tmp_env->str + 5, ':');
 	i = 0;
 	while (paths[i])
 	{
