@@ -35,12 +35,15 @@ char	**convert_list_to_tab_str(t_env *env)
 		return (NULL);
 	tmp_env = env;
 	i = 0;
-	while (env)
+	while (tmp_env)
 	{
 		tab_str[i] = tmp_env->str;
 		i++;
+		printf("tmp_env->str : %s\n", tmp_env->str);
 		tmp_env = tmp_env->next;
+		printf("tmp_env->str : %s\n", tmp_env->str);
 	}
+	tab_str[i] = NULL;
 	return (tab_str);
 }
 

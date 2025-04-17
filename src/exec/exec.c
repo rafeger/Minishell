@@ -29,6 +29,7 @@ static void	execute(t_data *data, t_command *cmd)
 	char	*pathname;
 	char	**commande;
 	char	**tab_env;
+	int		i;
 
 	commande = ft_split(*cmd->args, ' ');
 	pathname = get_pathname(commande[0], data->env);
@@ -47,6 +48,12 @@ static void	execute(t_data *data, t_command *cmd)
 		return ;
 	}
 	tab_env = convert_list_to_tab_str(data->env);
+	i = 0;
+	while (tab_env[i])
+	{
+		printf("tabenv : %s\n", tab_env[i]);
+		i++;
+	}
 	if (execve(pathname, commande, tab_env) == -1)
 	{
 		perror("execve");
@@ -88,15 +95,14 @@ static void	parent_process(t_command *cmd, int *pipefd)
 
 int	exec(t_data *data)
 {
-	int			*pipefd;
+	int			pipefd[2];
 	t_command	*tmp_cmd;
 
-	pipefd = NULL;
 	tmp_cmd = data->command;
 	while (tmp_cmd)
 	{
 		if (pipe(pipefd) == -1)
-			return (1);
+			return (perror("pipe"), 1);
 		g_signal = fork();
 		if (g_signal == -1)
 			exit(1);
@@ -127,7 +133,7 @@ int main(void)
 	cmd->infile = -1;
 	cmd->outfile = -1;
 	cmd->args = params;
-	cmd->next = cmd;
+	cmd->next = NULL;
 
 	// Remplir un env minimal (PATH, par exemple)
 	env_node->str = strdup("PATH=/usr/bin:/bin");
