@@ -29,7 +29,6 @@ static void	execute(t_data *data, t_command *cmd)
 	char	*pathname;
 	char	**commande;
 	char	**tab_env;
-	int		i;
 
 	commande = ft_split(*cmd->args, ' ');
 	pathname = get_pathname(commande[0], data->env);
@@ -48,12 +47,6 @@ static void	execute(t_data *data, t_command *cmd)
 		return ;
 	}
 	tab_env = convert_list_to_tab_str(data->env);
-	i = 0;
-	while (tab_env[i])
-	{
-		printf("tabenv : %s\n", tab_env[i]);
-		i++;
-	}
 	if (execve(pathname, commande, tab_env) == -1)
 	{
 		perror("execve");
@@ -87,7 +80,7 @@ static void	parent_process(t_command *cmd, int *pipefd)
 		close(cmd->infile);
 	if (cmd->infile == -2)
 		cmd->infile = pipefd[0];
-	if (cmd->next->args && cmd->next->infile == -2)
+	if (cmd->next && cmd->next->infile == -2)
 		cmd->next->infile = pipefd[0];
 	else
 		close(pipefd[0]);
@@ -122,7 +115,7 @@ int main(void)
 	t_data data;
 	t_command *cmd = malloc(sizeof(t_command ));
 	char **params = malloc(sizeof(char *) * 3);
-	t_env *env_node = malloc(sizeof(t_list));
+	t_env *env_node = malloc(sizeof(t_list) * 2);
 
 	// Préparation d'une commande "echo hello"
 	params[0] = strdup("echo");
@@ -149,7 +142,7 @@ int main(void)
 	exec(&data);
 
 	// Afficher le code de sortie
-	printf("exit_code = %d\n", data.exit);
+	//printf("exit_code = %d\n", data.exit);
 
 	// Libération
 	free(params[0]);

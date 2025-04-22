@@ -29,19 +29,21 @@ char	**convert_list_to_tab_str(t_env *env)
 	char	**tab_str;
 	t_env	*tmp_env;
 	int		i;
-
 	tab_str = malloc(sizeof(char *) * (ft_envsize(env) + 1));
 	if (!tab_str)
 		return (NULL);
 	tmp_env = env;
 	i = 0;
-	while (tmp_env)
+	if (tmp_env->str)
 	{
 		tab_str[i] = tmp_env->str;
 		i++;
-		printf("tmp_env->str : %s\n", tmp_env->str);
+	}
+	while (tmp_env->next)
+	{
 		tmp_env = tmp_env->next;
-		printf("tmp_env->str : %s\n", tmp_env->str);
+		tab_str[i] = tmp_env->str;
+		i++;
 	}
 	tab_str[i] = NULL;
 	return (tab_str);
