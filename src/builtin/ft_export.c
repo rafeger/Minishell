@@ -24,7 +24,7 @@ static int	print_all_var_env(t_env *env)
 		if (env->str[i] && env->str[i] == '=')
 			printf("=\"%s\"\n", &env->str[i + 1]);
 		else
-			("\n");
+			printf("\n");
 		env = env->next;
 	}
 	return (0);
