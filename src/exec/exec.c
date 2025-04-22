@@ -70,7 +70,10 @@ static void	child_process(t_data *data, t_command *cmd, int *pipefd)
 		close(cmd->outfile);
 	}
 	close(pipefd[1]);
-	execute(data, cmd);
+	if (is_builtin(cmd->args[0]))
+		do_builtin(data, cmd);
+	else
+		execute(data, cmd);
 }
 
 static void	parent_process(t_command *cmd, int *pipefd)
@@ -99,8 +102,6 @@ int	exec(t_data *data)
 		g_signal = fork();
 		if (g_signal == -1)
 			exit(1);
-		if (is_builtin(tmp_cmd->args[0]))
-			do_builtin(data, tmp_cmd);
 		if (g_signal == 0)
 			child_process(data, tmp_cmd, pipefd);
 		else

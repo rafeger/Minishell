@@ -47,7 +47,7 @@ int	ft_echo(char **arg)
 			write(1, " ", 1);
 		i++;
 	}
-	if (new_line)
+	if (!new_line)
 		write(1, "\n", 1);
 	return (0);
 }
