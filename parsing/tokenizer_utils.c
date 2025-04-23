@@ -1,6 +1,16 @@
 #include "minishell.h"
 
 
+
+int	ft_strlen(char *str)
+{
+	int i = 0;
+	while(str[i])
+		str[i++];
+	return (i);
+}
+
+
 void	syntax_error(char error)
 {
 	printf("\n Syntax Error !\n");

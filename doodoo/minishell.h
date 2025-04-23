@@ -7,15 +7,15 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
-typedef enum	e_token_type
+typedef enum	e_token_ID
 {
 	INPUT = 1, //<
 	OUTPUT = 2, //>
 	HEREDOC = 3, //<<
 	APPEND = 4, //>>
 	PIPE = 5, //|
-	CMD = 6, //echo
-	ARG = 7	//text
+	CMD = 6, 
+	ARG = 7
 }	t_token_type;
 
 
@@ -68,6 +68,23 @@ char	*ft_strndup(char *input, int start, int end);
 void	syntax_error(char error);
 void	*ft_memset(void *s, int c, size_t n);
 
+//handle_quotes
+void	handle_single_quotes(t_token *tokens, char *input, int *i);
+void	handle_double_quotes(t_token *tokens, char *input, int *i);
+void	handle_quotes(t_token *tokens, char *input, int *i, char quote_type);
+int		check_quotes(char	*input);
+
+
+//tokenizator
+void	add_token(t_token **tokens, t_token_type type, char *value);
+int		extract_word(t_token **tokens, char *input, int i);
+t_token	*lexer(char	*input);
+
+//tokens_class
+
+void	handle_whitespace(char *input, int *i);
+void 	handle_pipe(t_token *tokens, char *input, int *i);
+void	handle_redir(t_token *tokens, char *input, int *i);
 
 
 #endif
