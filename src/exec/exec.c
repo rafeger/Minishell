@@ -30,7 +30,7 @@ static void	execute(t_data *data, t_command *cmd)
 	char	**commande;
 	char	**tab_env;
 
-	commande = ft_split(*cmd->args, ' ');
+	commande = cmd->args;
 	pathname = get_pathname(commande[0], data->env);
 	if (!pathname)
 	{
@@ -49,7 +49,6 @@ static void	execute(t_data *data, t_command *cmd)
 	tab_env = convert_list_to_tab_str(data->env);
 	if (execve(pathname, commande, tab_env) == -1)
 	{
-		perror("execve");
 		free(pathname);
 		cleanup_split(commande);
 		exit(EXIT_FAILURE);
@@ -64,11 +63,13 @@ static void	child_process(t_data *data, t_command *cmd, int *pipefd)
 		dup2(cmd->infile, STDIN_FILENO);
 		close(cmd->infile);
 	}
-	if (cmd->outfile >= 0)
+	if (cmd->outfile >= 0 || cmd->outfile == -2)
 	{
+		if (cmd->outfile == -2)
+			cmd->outfile = pipefd[1];
 		dup2(cmd->outfile, STDOUT_FILENO);
 		close(cmd->outfile);
-	}
+	}	
 	close(pipefd[1]);
 	if (is_builtin(cmd->args[0]))
 		do_builtin(data, cmd);
@@ -114,20 +115,35 @@ int	exec(t_data *data)
 int main(void)
 {
 	t_data data;
-	t_command *cmd = malloc(sizeof(t_command ));
-	char **params = malloc(sizeof(char *) * 3);
+	t_command *cmd = malloc(sizeof(t_command ) * 2);
+	char **params1 = malloc(sizeof(char *) * 3);
+	char **params2 = malloc(sizeof(char *) * 3);
 	t_env *env_node = malloc(sizeof(t_list) * 2);
 
 	// Préparation d'une commande "echo hello"
-	params[0] = strdup("echo");
-	params[1] = strdup("hello");
-	params[2] = NULL;
+	// params1[0] = strdup("echo");
+	// params1[1] = strdup("hello");
+	// params1[2] = NULL;
 
-	// Remplir t_cmd
-	cmd->infile = -1;
-	cmd->outfile = -1;
-	cmd->args = params;
-	cmd->next = NULL;
+	params1[0] = strdup("ls");
+	params1[1] = NULL;
+	params1[2] = NULL;
+
+	params2[0] = strdup("wc");
+	params2[1] = NULL;
+	params2[2] = NULL;
+
+	// Premier noeud : ls
+	cmd[0].infile = -1;
+	cmd[0].outfile = -2; // ← redirigé vers pipe
+	cmd[0].args = params1;
+	cmd[0].next = &cmd[1]; // ← vers wc
+
+	// Deuxième noeud : wc
+	cmd[1].infile = -2; // ← va lire depuis le pipe
+	cmd[1].outfile = -1;
+	cmd[1].args = params2;
+	cmd[1].next = NULL;
 
 	// Remplir un env minimal (PATH, par exemple)
 	env_node->str = strdup("PATH=/usr/bin:/bin");
@@ -136,7 +152,7 @@ int main(void)
 
 	// Initialiser t_data
 	data.env = env_node;
-	data.command = cmd;
+	data.command = &cmd[0];
 	data.exit = 0;
 
 	// Lancer l'exécution
@@ -146,9 +162,12 @@ int main(void)
 	//printf("exit_code = %d\n", data.exit);
 
 	// Libération
-	free(params[0]);
-	free(params[1]);
-	free(params);
+	free(params1[0]);
+	free(params1[1]);
+	free(params1);
+	free(params2[0]);
+	free(params2[1]);
+	free(params2);
 	free(cmd);
 	free(env_node->str);
 	free(env_node);
