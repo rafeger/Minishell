@@ -1,6 +1,4 @@
-#include "minishell.h"
-
-
+#include "../../minishell.h"
 
 int	ft_strlen(char *str)
 {
@@ -10,7 +8,6 @@ int	ft_strlen(char *str)
 	return (i);
 }
 
-
 void	syntax_error(char error)
 {
 	printf("\n Syntax Error !\n");
@@ -18,6 +15,23 @@ void	syntax_error(char error)
 		printf("The \" is not closed\n");
 	if (error == '<')
 		printf("< leads to nothing\n");
+}
+
+char *ft_strncpy(char *dest, const char *src, int n)
+{
+    int i = 0;
+
+    while (i < n && src[i] != '\0')
+    {
+        dest[i] = src[i];
+        i++;
+    }
+    while (i < n)
+    {
+        dest[i] = '\0';
+        i++;
+    }
+    return (dest);
 }
 
 
