@@ -6,13 +6,14 @@ static int is_special_c(char c)
 	return (c == '|' || c == '<' || c == '>');
 }
 
-static t_token_type	get_token_type(const char *str)
+static t_token_type	get_token_type(char *str)
 {
-	if (!ft_strcmp(str, "|")) return T_PIPE;
-	if (!ft_strcmp(str, "<")) return T_REDIR_IN;
-	if (!ft_strcmp(str, ">")) return T_REDIR_OUT;
-	if (!ft_strcmp(str, ">>")) return T_REDIR_APPEND;
-	if (!ft_strcmp(str, "<<")) return T_REDIR_HEREDOC;
+	char *temp = str;
+	if (!ft_strcmp(temp, "|")) return T_PIPE;
+	if (!ft_strcmp(temp, "<")) return T_REDIR_IN;
+	if (!ft_strcmp(temp, ">")) return T_REDIR_OUT;
+	if (!ft_strcmp(temp, ">>")) return T_REDIR_APPEND;
+	if (!ft_strcmp(temp, "<<")) return T_REDIR_HEREDOC;
 	return T_WORD;
 }
 static char *extract_token(const char *str, int *i)
@@ -28,7 +29,7 @@ static char *extract_token(const char *str, int *i)
 		if (str[*i] == quote)
 			(*i)++;
 	}
-	else if (is_special_char(str[*i]))
+	else if (is_special_c(str[*i]))
 	{
 		if ((str[*i] == '<' && str[*i + 1] == '<') ||
 			(str[*i] == '>' && str[*i + 1] == '>'))
@@ -48,11 +49,9 @@ static char *extract_token(const char *str, int *i)
 	ft_strncpy(token, str + start, len);
 	token[len] = '\0';
 	return (token);
-
 }
 
-
-static t_token	*new_token(t_token_type t_value, char *str)
+static t_token	*new_token(char *str, t_token_type t_value)
 {
 	t_token	*new;
 	new = malloc(sizeof(t_token));
@@ -100,64 +99,43 @@ t_token	*tokenize(char *input)
 		char *word = extract_token(input, &i);
 		if (!word)
 		{
-			free_tokens(head);
+			free_token_list(head);
 			return NULL;
 		}
 		t_token *new = new_token(word, get_token_type(word));
 		free(word);
 		if (!new || !add_token(&head, new))
 		{
-			free_tokens(head);
+			free_token_list(head);
 			return NULL;
 		}
 	}
 	return (head);
 }
 
-// void handle_quotes(char *str, int *i)
-// {
-// 	char	*copy;
-// 	if (str[*i] == '\'')
-// 	{
-// 		*i++;
-// 		while(str[*i] != '\'')
-// 			copy[j] = str[*i];
-		
-// 	}
-// 	else if (str[*i] == '"')
-// 	{
-
-// 	}
-// }
-
-/* ls -l | grep test > outfile.txt | echo "hello world"*/
-
-/*
-token1 = ls
-token2 = -l
-token3 = |
-token4 = grep
-token5 = test
-token6 = >
-token7 = outfile.txt
-token8 = |
-token 9 = echo
-token 10 = "hello world"
-*/
 
 
-
-int	main(void)
+int main(void)
 {
-	char *str1 = "ls -l | grep test > outfile.txt | echo \"hello world\"";
-	t_token *test = tokenizer(str1);
-	t_token *tmp = test;
-	while (tmp != NULL)
+	char *input = "echo hello | grep h > out.txt && ls -l";
+	t_token *tokens = tokenize(input);
+
+	if (!tokens)
 	{
-		printf("%d\n%s\n", tmp->type, tmp->value);
-		t_token *next = tmp->next;
-		free(tmp);
-		tmp = next;
+		printf("Tokenisation échouée.\n");
+		return (1);
 	}
+
+	printf("Tokens extraits :\n");
+	while (tokens)
+	{
+		printf("Type: %d\tValue: [%s]\n", tokens->type, tokens->value);
+		tokens = tokens->next;
+	}
+
+	// Important : libère les tokens à la fin si tu veux éviter les leaks
+	// ex: free_token_list(tokens);
+
+	return (0);
 }
 

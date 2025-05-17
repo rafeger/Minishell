@@ -11,6 +11,8 @@
 # include <fcntl.h>
 # include <stdlib.h>
 # include "libft/libft.h"
+# include <readline/readline.h>
+# include <readline/history.h>
 
 
 typedef enum	e_token_type
@@ -81,8 +83,12 @@ void	handle_whitespaces(char *str, int *i);
 void    free_command_list(t_command *cmd);
 void	free_token_list(t_token *tok);
 
+//toke_utils.c
+char *ft_strncpy(char *dest, const char *src, int n);
+void	syntax_error(char error);
 
 //tokenizer.c
 t_token	*tokenize(char *input);
 #endif
+
 
