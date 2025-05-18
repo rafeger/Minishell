@@ -45,7 +45,6 @@ static char	*join_and_free(char *s1, char *s2)
 static char	*parse_word(const char *str, int *i)
 {
 	char	*result = NULL;
-	int		start = *i;
 	int		quote_open = 0;
 
 	while (str[*i] && !ft_isspace(str[*i]) && !is_special_c(str[*i]))

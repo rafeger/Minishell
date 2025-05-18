@@ -1,5 +1,22 @@
 #include "../../minishell.h"
 
+static bool	has_invalid_chars(const char *str)
+{
+	int		i = 0;
+	char	q = 0;
+
+	while (str[i])
+	{
+		if (!q && (str[i] == '\'' || str[i] == '"'))
+			q = str[i];
+		else if (q && str[i] == q)
+			q = 0;
+		else if (!q && (str[i] == ';' || str[i] == '\\'))
+			return true;
+		i++;
+	}
+	return false;
+}
 
 static t_token_type	get_token_type(char *str)
 {
@@ -9,6 +26,8 @@ static t_token_type	get_token_type(char *str)
 	if (!ft_strcmp(temp, ">")) return T_REDIR_OUT;
 	if (!ft_strcmp(temp, ">>")) return T_REDIR_APPEND;
 	if (!ft_strcmp(temp, "<<")) return T_REDIR_HEREDOC;
+	if (has_invalid_chars(str))
+		return T_INVALID;
 	return T_WORD;
 }
 static t_token	*new_token(char *str, t_token_type t_value)

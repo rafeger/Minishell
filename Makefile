@@ -32,7 +32,15 @@ SRC :=  $(SRCDIR)/builtin/ft_cd.c			\
 		$(SRCDIR)/exec/exec.c				\
 		$(SRCDIR)/exec/find_cmd.c			\
 		$(SRCDIR)/exec/here_doc.c			\
-		$(SRCDIR)/exec/utils.c
+		$(SRCDIR)/exec/utils.c				\
+		$(SRCDIR)/parsing/append_args.c		\
+		$(SRCDIR)/parsing/create_cmd.c		\
+		$(SRCDIR)/parsing/extract_token.c	\
+		$(SRCDIR)/parsing/tokenizer_utils.c	\
+		$(SRCDIR)/parsing/tokenizer.c		\
+		$(SRCDIR)/trucs/free.c				\
+		$(SRCDIR)/trucs/misc_tokens.c       \
+		$(SRCDIR)/main.c
 
 OBJ := $(SRC:.c=.o)
 

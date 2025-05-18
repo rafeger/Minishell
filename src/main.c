@@ -1,18 +1,19 @@
 #include "../minishell.h"
 
-pid_t	g_signal_pid
+pid_t	g_signal_pid;
 
 
-void	data_init(t_data *data, int ac, char **av)
-{
+// void	data_init(t_data *data, int ac, char **av)
+// {
 
-}
+// }
 
-int main(int ac, char *av)
-{
+// int main(int ac, char *av)
+// {
 	
-}
+// }
 //test tokens
+
 int main(void)
 {
 	char *input = "echo hello | grep h > out.txt && ls -l";

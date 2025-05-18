@@ -22,7 +22,8 @@ typedef enum	e_token_type
 	T_REDIR_IN,
 	T_REDIR_OUT,
 	T_REDIR_APPEND,
-	T_REDIR_HEREDOC
+	T_REDIR_HEREDOC,
+	T_INVALID
 }	t_token_type;
 
 typedef	struct s_token
@@ -89,6 +90,9 @@ void	syntax_error(char error);
 
 //tokenizer.c
 t_token	*tokenize(char *input);
+
+//extract_token.c
+char	*extract_token(const char *str, int *i);
 #endif
 
 
