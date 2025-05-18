@@ -1,13 +1,39 @@
 #include "../../minishell.h"
 
 
-void	syntax_error(char error)
+int	print_syntax_error(const char *msg)
 {
-	printf("\n Syntax Error !\n");
-	if (error == '"')
-		printf("The \" is not closed\n");
-	if (error == '<')
-		printf("< leads to nothing\n");
+	write(STDERR_FILENO, msg, ft_strlen(msg));
+	return (1);
+}
+
+int	check_syntax_errors(t_token *head)
+{
+	t_token	*curr = head;
+
+	if (!curr)
+		return print_syntax_error("syntax error: empty command\n");
+	if (curr->type == T_PIPE)
+		return print_syntax_error("syntax error near unexpected token `|'\n");
+	while (curr)
+	{
+		if (curr->type == T_PIPE && curr->next && curr->next->type == T_PIPE)
+			return print_syntax_error("syntax error near unexpected token `|'\n");
+		if (curr->type == T_PIPE && !curr->next)
+			return print_syntax_error("syntax error: pipe at end of command\n");
+		if ((curr->type == T_REDIR_IN || curr->type == T_REDIR_OUT
+			|| curr->type == T_REDIR_APPEND || curr->type == T_REDIR_HEREDOC)
+			&& (!curr->next || curr->next->type != T_WORD))
+			return print_syntax_error("syntax error near unexpected token `newline'\n");
+		if ((curr->type == T_REDIR_IN || curr->type == T_REDIR_OUT
+			|| curr->type == T_REDIR_APPEND || curr->type == T_REDIR_HEREDOC)
+			&& curr->next && (curr->next->type == T_REDIR_IN
+			|| curr->next->type == T_REDIR_OUT || curr->next->type == T_REDIR_APPEND
+			|| curr->next->type == T_REDIR_HEREDOC))
+			return print_syntax_error("syntax error near unexpected redirection\n");
+		curr = curr->next;
+	}
+	return 0;
 }
 
 char *ft_strncpy(char *dest, const char *src, int n)
@@ -25,41 +51,4 @@ char *ft_strncpy(char *dest, const char *src, int n)
         i++;
     }
     return (dest);
-}
-
-// int	ft_strcmp(const char *s1, const char *s2)
-// {
-// 	while (*s1 && *s2 && *s1 == *s2)
-// 	{
-// 		s1++;
-// 		s2++;
-// 	}
-// 	return ((unsigned char)*s1 - (unsigned char)*s2);
-// }
-
-// char	*ft_strndup(char *input, int start, int end)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	char	*word;
-// 	word = malloc((end - start + 1) * sizeof(char));
-// 	while(start < end)
-// 	{
-// 		word[i] = input[start];
-// 		i++;
-// 		start++;
-// 	}
-// 	word[i] = '\0';
-// 	return (word);
-// }
-
-void	*ft_memset(void *s, int c, size_t n)
-{
-	unsigned char	*ptr;
-
-	ptr = s;
-	while (n--)
-		*ptr++ = c;
-	return (s);
 }
