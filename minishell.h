@@ -86,7 +86,7 @@ void	free_token_list(t_token *tok);
 
 //toke_utils.c
 char *ft_strncpy(char *dest, const char *src, int n);
-void	syntax_error(char error);
+int	print_syntax_error(const char *msg);
 
 //tokenizer.c
 t_token	*tokenize(char *input);
