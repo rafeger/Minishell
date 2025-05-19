@@ -56,7 +56,7 @@ int	handle_redirection(t_command *cmd, t_token **tok)
 		perror(filename);
 		return (0);
 	}
-	*tok = redir->next; // sauter le mot
+	*tok = redir->next;
 	return (1);
 }
 
@@ -73,7 +73,7 @@ char	*expand_variables(const char *str, char **envp)
 			while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
 				i++;
 			char *var = ft_substr(str, start, i - start);
-			char *val = getenv_from_envp(var, envp); // fonction que tu écris
+			char *val = getenv_from_envp(var, envp);
 			free(var);
 			if (val)
 			{
