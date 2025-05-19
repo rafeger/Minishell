@@ -11,5 +11,37 @@
 /* ************************************************************************** */
 #include "../../minishell.h"
 
+int	write_in_heredoc(int fd, char *delim, t_data *data)
+{
+	//int		i;
+	char	*buf;
+
+	//i = 0;
+	while(1)
+	{
+
+
+
+
+	}
+
+}
+
+
+int	heredoc(char *delim, t_data *data)
+{
+	int	fd;
+	open("heredoc.tmp", O_WRONLY, O_CREAT, O_TRUNC);
+	if (!fd)
+		return (1);
+	if (write_in_heredoc(fd, delim, data))
+		return (1);
+	if (unlink("heredoc.tmp"))
+		return (1);
+	return (0);
+	
+
+
+}
 
 

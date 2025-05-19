@@ -11,6 +11,28 @@
 # include <fcntl.h>
 # include <stdlib.h>
 # include "libft/libft.h"
+# include <readline/readline.h>
+# include <readline/history.h>
+
+
+typedef enum	e_token_type
+{
+	T_WORD = 1,
+	T_PIPE,
+	T_REDIR_IN,
+	T_REDIR_OUT,
+	T_REDIR_APPEND,
+	T_REDIR_HEREDOC,
+	T_INVALID
+}	t_token_type;
+
+typedef	struct s_token
+{
+	t_token_type type;
+	char		*value;
+	struct s_token *next;
+}	t_token;
+
 
 typedef struct s_env
 {
@@ -53,5 +75,24 @@ char	*get_pathname(char *cmd, t_env *env);
 char	**convert_list_to_tab_str(t_env *env);
 void	free_all(t_data *data);
 int		ft_envsize(t_env *lst);
+
+//misc_tokens.c
+bool	ft_isspace(char c);
+void	handle_whitespaces(char *str, int *i);
+
+//free.c
+void    free_command_list(t_command *cmd);
+void	free_token_list(t_token *tok);
+
+//toke_utils.c
+char *ft_strncpy(char *dest, const char *src, int n);
+void	syntax_error(char error);
+
+//tokenizer.c
+t_token	*tokenize(char *input);
+
+//extract_token.c
+char	*extract_token(const char *str, int *i);
 #endif
+
 

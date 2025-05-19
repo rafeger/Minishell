@@ -112,65 +112,47 @@ int	exec(t_data *data)
 	return (0);
 }
 
-int main(void)
-{
-	t_data data;
-	t_command *cmd = malloc(sizeof(t_command ) * 2);
-	char **params1 = malloc(sizeof(char *) * 3);
-	char **params2 = malloc(sizeof(char *) * 3);
-	t_env *env_node = malloc(sizeof(t_list) * 2);
+// int main(void)
+// {
+// 	t_data data;
+// 	t_command *cmd = malloc(sizeof(t_command ));
+// 	char **params = malloc(sizeof(char *) * 3);
+// 	t_env *env_node = malloc(sizeof(t_list) * 2);
 
-	// Préparation d'une commande "echo hello"
-	// params1[0] = strdup("echo");
-	// params1[1] = strdup("hello");
-	// params1[2] = NULL;
+// 	// Préparation d'une commande "echo hello"
+// 	params[0] = strdup("echo");
+// 	params[1] = strdup("hello");
+// 	params[2] = NULL;
 
-	params1[0] = strdup("ls");
-	params1[1] = NULL;
-	params1[2] = NULL;
+// 	// Remplir t_cmd
+// 	cmd->infile = -1;
+// 	cmd->outfile = -1;
+// 	cmd->args = params;
+// 	cmd->next = NULL;
 
-	params2[0] = strdup("wc");
-	params2[1] = NULL;
-	params2[2] = NULL;
+// 	// Remplir un env minimal (PATH, par exemple)
+// 	env_node->str = strdup("PATH=/usr/bin:/bin");
+// 	env_node->prev = NULL;
+// 	env_node->next = NULL;
 
-	// Premier noeud : ls
-	cmd[0].infile = -1;
-	cmd[0].outfile = -2; // ← redirigé vers pipe
-	cmd[0].args = params1;
-	cmd[0].next = &cmd[1]; // ← vers wc
+// 	// Initialiser t_data
+// 	data.env = env_node;
+// 	data.command = cmd;
+// 	data.exit = 0;
 
-	// Deuxième noeud : wc
-	cmd[1].infile = -2; // ← va lire depuis le pipe
-	cmd[1].outfile = -1;
-	cmd[1].args = params2;
-	cmd[1].next = NULL;
+// 	// Lancer l'exécution
+// 	exec(&data);
 
-	// Remplir un env minimal (PATH, par exemple)
-	env_node->str = strdup("PATH=/usr/bin:/bin");
-	env_node->prev = NULL;
-	env_node->next = NULL;
+// 	// Afficher le code de sortie
+// 	//printf("exit_code = %d\n", data.exit);
 
-	// Initialiser t_data
-	data.env = env_node;
-	data.command = &cmd[0];
-	data.exit = 0;
+// 	// Libération
+// 	free(params[0]);
+// 	free(params[1]);
+// 	free(params);
+// 	free(cmd);
+// 	free(env_node->str);
+// 	free(env_node);
 
-	// Lancer l'exécution
-	exec(&data);
-
-	// Afficher le code de sortie
-	//printf("exit_code = %d\n", data.exit);
-
-	// Libération
-	free(params1[0]);
-	free(params1[1]);
-	free(params1);
-	free(params2[0]);
-	free(params2[1]);
-	free(params2);
-	free(cmd);
-	free(env_node->str);
-	free(env_node);
-
-	return (0);
-}
+// 	return (0);
+// }
