@@ -1,37 +1,54 @@
 #include "../minishell.h"
 
-pid_t	g_signal_pid;
-
-
-// void	data_init(t_data *data, int ac, char **av)
-// {
-
-// }
-
-// int main(int ac, char *av)
-// {
-	
-// }
-//test tokens
-
-int main(void)
+void	print_tokens(t_token *tok)
 {
-	char *input = "echo hello | grep h > out.txt && ls -l";
-	t_token *tokens = tokenize(input);
-
-	if (!tokens)
+	while (tok)
 	{
-		printf("Tokenisation échouée.\n");
-		return (1);
+		printf("TOKEN: [%s] | TYPE: %d\n", tok->value, tok->type);
+		tok = tok->next;
 	}
+}
+void	init_command(t_command *cmd)
+{
+	cmd->args = NULL;
+	cmd->infile = -1;
+	cmd->outfile = -1;
+	cmd->append = 0;
+	cmd->heredoc_delim = NULL;
+	cmd->next = NULL;
+}
 
-	printf("Tokens extraits :\n");
-	while (tokens)
+
+
+int	main(void)
+{
+	char	input[1024];
+	t_token	*tokens;
+
+	while (1)
 	{
-		printf("Type: %d\tValue: [%s]\n", tokens->type, tokens->value);
-		tokens = tokens->next;
-	}
-	free_token_list(tokens);
+		printf("minishell> ");
+		if (!fgets(input, sizeof(input), stdin))
+			break;
+		if (input[0] == '\0')
+			continue;
+		input[strcspn(input, "\n")] = '\0';
 
+
+		tokens = tokenize(input);
+		if (!tokens)
+		{
+			printf("Tokenization failed.\n");
+			continue;
+		}
+		print_tokens(tokens);
+
+		if (check_syntax_errors(tokens))
+			printf("Syntax error detected.\n");
+		else
+			printf("No syntax errors.\n");
+
+		free_token_list(tokens);
+	}
 	return (0);
 }

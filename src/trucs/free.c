@@ -24,6 +24,20 @@ void	free_command_list(t_command *cmd)
 	}
 }
 
+void	free_args(char **args)
+{
+	int i;
+	i = 0;
+	if (!args)
+		return;
+	while (args[i])
+	{
+		free(args[i]);
+		i++;
+	}
+	free(args);
+}
+
 void	free_token_list(t_token *tok)
 {
 	t_token	*tmp;

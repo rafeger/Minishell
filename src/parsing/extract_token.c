@@ -43,7 +43,17 @@ static char	*join_and_free(char *s1, char *s2)
 {
 	char	*joined;
 
+	if (!s1)
+		return s2;
+	if (!s2)
+		return s1;
 	joined = ft_strjoin(s1, s2);
+	if (!joined)
+	{
+		free(s1);
+		free(s2);
+		return (NULL);
+	}
 	free(s1);
 	free(s2);
 	return (joined);
