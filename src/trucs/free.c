@@ -23,6 +23,19 @@ void	free_command_list(t_command *cmd)
 		free(tmp);
 	}
 }
+void	free_str_list(t_list *lst)
+{
+	t_list	*tmp;
+
+	while (lst)
+	{
+		tmp = lst->next;
+		free(lst->content);
+		free(lst);
+		lst = tmp;
+	}
+}
+
 
 void	free_args(char **args)
 {

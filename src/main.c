@@ -1,13 +1,5 @@
 #include "../minishell.h"
 
-void	print_tokens(t_token *tok)
-{
-	while (tok)
-	{
-		printf("TOKEN: [%s] | TYPE: %d\n", tok->value, tok->type);
-		tok = tok->next;
-	}
-}
 void	init_command(t_command *cmd)
 {
 	cmd->args = NULL;
@@ -20,35 +12,47 @@ void	init_command(t_command *cmd)
 
 
 
-int	main(void)
+
+
+int	main(int argc, char **argv, char **envp)
 {
-	char	input[1024];
+	char	*line;
 	t_token	*tokens;
+	t_command *commands;
+
+	(void)argc;
+	(void)argv;
+	(void)envp;
 
 	while (1)
 	{
-		printf("minishell> ");
-		if (!fgets(input, sizeof(input), stdin))
+		line = readline("minishell$ ");
+		if (!line)
 			break;
-		if (input[0] == '\0')
-			continue;
-		input[strcspn(input, "\n")] = '\0';
 
+		if (*line)
+			add_history(line);
 
-		tokens = tokenize(input);
+		tokens = tokenize(line);
 		if (!tokens)
 		{
-			printf("Tokenization failed.\n");
+			free(line);
 			continue;
 		}
+
+		printf("\n--- Tokens ---\n");
 		print_tokens(tokens);
 
-		if (check_syntax_errors(tokens))
-			printf("Syntax error detected.\n");
-		else
-			printf("No syntax errors.\n");
+		commands = parse_tokens(tokens);
+		if (commands)
+		{
+			printf("\n--- Parsed Commands ---\n");
+			print_commands(commands);
+			free_command_list(commands);
+		}
 
 		free_token_list(tokens);
+		free(line);
 	}
 	return (0);
 }

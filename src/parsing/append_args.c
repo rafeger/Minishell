@@ -1,6 +1,6 @@
 #include "../../minishell.h"
 
-int	fill_command(t_command *cmd, t_token **tok, char **envp)
+int	fill_command(t_command *cmd, t_token **tok)
 {
 	t_list	*arg_list = NULL;
 
@@ -8,7 +8,7 @@ int	fill_command(t_command *cmd, t_token **tok, char **envp)
 	{
 		if ((*tok)->type == T_WORD)
 		{
-			char *expanded = expand_variables((*tok)->value, envp);
+			char *expanded = expand_variables((*tok)->value);
 			if (!expanded)
 				return (free_str_list(arg_list), 0);
 			ft_lstadd_back(&arg_list, ft_lstnew(expanded));
