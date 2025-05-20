@@ -47,7 +47,7 @@ typedef struct s_command
 	int					infile;
 	int					outfile;
 	int					append;
-	int					pipe;
+	char 				*heredoc_delim;
 	struct s_command	*next;
 }	t_command;
 
@@ -87,6 +87,10 @@ void	free_token_list(t_token *tok);
 //toke_utils.c
 char *ft_strncpy(char *dest, const char *src, int n);
 int	print_syntax_error(const char *msg);
+<<<<<<< HEAD
+=======
+int	check_syntax_errors(t_token *head);
+>>>>>>> origin
 
 //tokenizer.c
 t_token	*tokenize(char *input);
