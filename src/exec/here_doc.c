@@ -26,12 +26,14 @@ void	write_in_heredoc(int fd, char *delim, t_data *data)
 		}
 		if (ft_strcmp(buf, delim))
 			break;
+		if (!ft_strchr(buf, "$"))
+			buf = expand_variables(buf);
 		ft_putstr_fd("%s\n", buf);
 	}
+	free(buf);
 	close(fd);
 
 }
-
 
 int	heredoc(char *delim, t_data *data)
 {
@@ -42,6 +44,7 @@ int	heredoc(char *delim, t_data *data)
 	write_in_heredoc(fd, delim, data);
 	if (unlink("heredoc.tmp"))
 		return (1);
+	
 	return (0);
 	
 
