@@ -40,15 +40,11 @@ int	heredoc(char *delim, t_data *data)
 	int	fd;
 	open("heredoc.tmp", O_WRONLY, O_CREAT, O_TRUNC);
 	if (!fd)
-		return (1);
+		return (-1);
 	write_in_heredoc(fd, delim, data);
 	if (unlink("heredoc.tmp"))
-		return (1);
-	
-	return (0);
-	
-
-
+		return (-1);
+	return (fd);
 }
 
 
