@@ -11,6 +11,7 @@
 # **************************************************************************** #
 NAME := minishell
 
+LIBS = -lreadline
 CC := cc
 CFLAGS := -Wall -Wextra -Werror -g -Iheaders/
 
@@ -36,10 +37,12 @@ SRC :=  $(SRCDIR)/builtin/ft_cd.c			\
 		$(SRCDIR)/parsing/append_args.c		\
 		$(SRCDIR)/parsing/create_cmd.c		\
 		$(SRCDIR)/parsing/extract_token.c	\
+		$(SRCDIR)/parsing/expand_vars.c 	\
 		$(SRCDIR)/parsing/tokenizer_utils.c	\
 		$(SRCDIR)/parsing/tokenizer.c		\
 		$(SRCDIR)/trucs/free.c				\
 		$(SRCDIR)/trucs/misc_tokens.c       \
+		$(SRCDIR)/trucs/debug.c				\
 		$(SRCDIR)/main.c
 
 OBJ := $(SRC:.c=.o)
@@ -49,7 +52,7 @@ OBJ := $(SRC:.c=.o)
 all: $(LIBFT) $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME) $(LIBS)
 
 # Règle pour compiler Libft
 $(LIBFT):

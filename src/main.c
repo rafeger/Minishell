@@ -1,37 +1,58 @@
 #include "../minishell.h"
 
-pid_t	g_signal_pid;
-
-
-// void	data_init(t_data *data, int ac, char **av)
-// {
-
-// }
-
-// int main(int ac, char *av)
-// {
-	
-// }
-//test tokens
-
-int main(void)
+void	init_command(t_command *cmd)
 {
-	char *input = "echo hello | grep h > out.txt && ls -l";
-	t_token *tokens = tokenize(input);
+	cmd->args = NULL;
+	cmd->infile = -1;
+	cmd->outfile = -1;
+	cmd->append = 0;
+	cmd->heredoc_delim = NULL;
+	cmd->next = NULL;
+}
 
-	if (!tokens)
+
+
+
+
+int	main(int argc, char **argv, char **envp)
+{
+	char	*line;
+	t_token	*tokens;
+	t_command *commands;
+
+	(void)argc;
+	(void)argv;
+	(void)envp;
+
+	while (1)
 	{
-		printf("Tokenisation échouée.\n");
-		return (1);
-	}
+		line = readline("minishell$ ");
+		if (!line)
+			break;
 
-	printf("Tokens extraits :\n");
-	while (tokens)
-	{
-		printf("Type: %d\tValue: [%s]\n", tokens->type, tokens->value);
-		tokens = tokens->next;
-	}
-	free_token_list(tokens);
+		if (*line)
+			add_history(line);
 
+		tokens = tokenize(line);
+		if (!tokens)
+		{
+			free(line);
+			continue;
+		}
+
+		printf("\n--- Tokens ---\n");
+		print_tokens(tokens);
+
+		commands = parse_tokens(tokens);
+		if (commands)
+		{
+			printf("\n--- Parsed Commands ---\n");
+			print_commands(commands);
+			free_command_list(commands);
+		}
+
+		free_token_list(tokens);
+		free(line);
+	}
 	return (0);
 }
