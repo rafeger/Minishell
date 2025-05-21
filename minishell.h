@@ -79,12 +79,18 @@ int		ft_envsize(t_env *lst);
 //misc_tokens.c
 bool	ft_isspace(char c);
 void	handle_whitespaces(char *str, int *i);
+char	**list_to_str_array(t_list *lst);
 
 //free.c
 void    free_command_list(t_command *cmd);
 void	free_token_list(t_token *tok);
+void	free_args(char **args);
+void	free_str_list(t_list *lst);
 
 //toke_utils.c
+char	*ft_strncpy(char *dest, const char *src, int n);
+int		print_syntax_error(const char *msg);
+int		check_syntax_errors(t_token *head);
 char *ft_strncpy(char *dest, const char *src, int n);
 int	print_syntax_error(const char *msg);
 <<<<<<< HEAD
@@ -97,6 +103,24 @@ t_token	*tokenize(char *input);
 
 //extract_token.c
 char	*extract_token(const char *str, int *i);
-#endif
 
+//crea_cmd.c
+
+int		handle_redirection(t_command *cmd, t_token **tok);
+t_command	*parse_tokens(t_token *tokens);
+
+//expand.c
+char	*expand_variables(const char *str);
+
+//append_args.c
+int	fill_command(t_command *cmd, t_token **tok);
+
+//debug.c
+void	print_tokens(t_token *tok);
+void 	print_commands(t_command *cmd);
+
+//main
+void	init_command(t_command *cmd);
+
+#endif
 
