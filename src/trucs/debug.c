@@ -19,7 +19,7 @@ void print_commands(t_command *cmd)
 		printf("  Infile: %d\n", cmd->infile);
 		printf("  Outfile: %d\n", cmd->outfile);
 		printf("  Append: %d\n", cmd->append);
-		if (cmd->heredoc_delim)
+		if (cmd->heredoc_delim != NULL)
 			printf("  Heredoc: %s\n", cmd->heredoc_delim);
 		cmd = cmd->next;
 	}

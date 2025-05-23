@@ -85,6 +85,7 @@ static char	*expand_loop(const char *str)
 	return (res);
 }
 
+
 char	*expand_variables(const char *str)
 {
 	if (!str)

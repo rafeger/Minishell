@@ -27,6 +27,17 @@ t_command	*parse_tokens(t_token *tokens)
 	return (head);
 }
 
+static void	close_fd(t_command *cmd)
+{
+	while (cmd)
+	{
+		if (cmd->infile > 2)
+			close(cmd->infile);
+		if (cmd->outfile > 2)
+			close(cmd->outfile);
+		cmd = cmd->next;
+	}
+}
 
 int	handle_redirection(t_command *cmd, t_token **tok)
 {
@@ -52,6 +63,7 @@ int	handle_redirection(t_command *cmd, t_token **tok)
 		|| (cmd->outfile == -1 && redir->type != T_REDIR_IN))
 	{
 		perror(filename);
+		close_fd(cmd);
 		return (0);
 	}
 	*tok = redir->next;

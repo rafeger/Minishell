@@ -12,8 +12,6 @@ void	init_command(t_command *cmd)
 
 
 
-
-
 int	main(int argc, char **argv, char **envp)
 {
 	char	*line;
