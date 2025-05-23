@@ -30,7 +30,7 @@ static void	execute(t_data *data, t_command *cmd)
 	char	**commande;
 	char	**tab_env;
 
-	commande = ft_split(*cmd->args, ' ');
+	commande = cmd->args;
 	pathname = get_pathname(commande[0], data->env);
 	if (!pathname)
 	{
@@ -49,7 +49,6 @@ static void	execute(t_data *data, t_command *cmd)
 	tab_env = convert_list_to_tab_str(data->env);
 	if (execve(pathname, commande, tab_env) == -1)
 	{
-		perror("execve");
 		free(pathname);
 		cleanup_split(commande);
 		exit(EXIT_FAILURE);
@@ -64,11 +63,13 @@ static void	child_process(t_data *data, t_command *cmd, int *pipefd)
 		dup2(cmd->infile, STDIN_FILENO);
 		close(cmd->infile);
 	}
-	if (cmd->outfile >= 0)
+	if (cmd->outfile >= 0 || cmd->outfile == -2)
 	{
+		if (cmd->outfile == -2)
+			cmd->outfile = pipefd[1];
 		dup2(cmd->outfile, STDOUT_FILENO);
 		close(cmd->outfile);
-	}
+	}	
 	close(pipefd[1]);
 	if (is_builtin(cmd->args[0]))
 		do_builtin(data, cmd);
