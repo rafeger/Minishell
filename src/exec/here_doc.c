@@ -14,6 +14,7 @@
 void	write_in_heredoc(int fd, char *delim, t_data *data)
 {
 	char	*buf;
+	(void)data;
 
 	while(1)
 	{
@@ -26,9 +27,10 @@ void	write_in_heredoc(int fd, char *delim, t_data *data)
 		}
 		if (ft_strcmp(buf, delim))
 			break;
-		if (!ft_strchr(buf, "$"))
+		if (!ft_strchr(buf, '$'))
 			buf = expand_variables(buf);
-		ft_putstr_fd("%s\n", buf);
+		ft_putstr_fd(buf, fd);
+		ft_putstr_fd("\n", fd);
 	}
 	free(buf);
 	close(fd);
@@ -38,7 +40,7 @@ void	write_in_heredoc(int fd, char *delim, t_data *data)
 int	heredoc(char *delim, t_data *data)
 {
 	int	fd;
-	open("heredoc.tmp", O_WRONLY, O_CREAT, O_TRUNC);
+	fd = open("heredoc.tmp", O_WRONLY, O_CREAT, O_TRUNC);
 	if (!fd)
 		return (-1);
 	write_in_heredoc(fd, delim, data);
