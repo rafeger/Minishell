@@ -11,13 +11,13 @@
 /* ************************************************************************** */
 #include "../../minishell.h"
 
-void	ft_exit(t_data *data, char **args)
+void	ft_exit(t_shell_data *data, char **args)
 {
 	int	std_out;
 
 	if (args[1] && ft_isnumber(args[1]))
 	{
-		data->exit = 2;
+		data->last_exit_status = 2;
 		ft_putendl_fd("exit", 2);
 		ft_putstr_fd("bash: exit: ", 2);
 		ft_putstr_fd(args[1], 2);
@@ -34,7 +34,7 @@ void	ft_exit(t_data *data, char **args)
 	else
 	{
 		std_out = ft_atoi(args[1]) % 256;
-		data->exit = std_out;
+		data->last_exit_status = std_out;
 		ft_putendl_fd("exit", std_out);
 	}
 	free_all(data);

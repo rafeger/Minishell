@@ -36,10 +36,10 @@ int	check_is_in_env(char *var, t_env **env)
 	tmp_env = *env;
 	while (tmp_env)
 	{
-		if (!ft_strncmp(var, tmp_env->str, ft_strlen(var)))
+		if (!ft_strncmp(var, tmp_env->value, ft_strlen(var)))
 		{
 			delete_env_var(tmp_env);
-			tmp_env->str = NULL;
+			tmp_env->value = NULL;
 			return (0);
 		}			
 		tmp_env = tmp_env->next;

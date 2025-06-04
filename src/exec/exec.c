@@ -24,7 +24,7 @@ static void	cleanup_split(char **array)
 	free(array);
 }
 
-static void	execute(t_data *data, t_command *cmd)
+static void	execute(t_shell_data *data, t_cmd *cmd)
 {
 	char	*pathname;
 	char	**commande;
@@ -35,14 +35,14 @@ static void	execute(t_data *data, t_command *cmd)
 	if (!pathname)
 	{
 		perror(pathname);
-		data->exit = 127;
+		data->last_exit_status = 127;
 		cleanup_split(commande);
 		return ;
 	}
 	if (access(pathname, X_OK))
 	{
 		perror(pathname);
-		data->exit = 126;
+		data->last_exit_status = 126;
 		cleanup_split(commande);
 		return ;
 	}
@@ -55,20 +55,20 @@ static void	execute(t_data *data, t_command *cmd)
 	}
 }
 
-static void	child_process(t_data *data, t_command *cmd, int *pipefd)
+static void	child_process(t_shell_data *data, t_cmd *cmd, int *pipefd)
 {
 	close(pipefd[0]);
-	if (cmd->infile >= 0)
+	if (cmd->fd_info->stdin_backup >= 0)
 	{
-		dup2(cmd->infile, STDIN_FILENO);
-		close(cmd->infile);
+		dup2(cmd->fd_info->stdin_backup, STDIN_FILENO);
+		close(cmd->fd_info->stdin_backup);
 	}
-	if (cmd->outfile >= 0 || cmd->outfile == -2)
+	if (cmd->fd_info->stdout_backup >= 0 || cmd->fd_info->stdout_backup == -2)
 	{
-		if (cmd->outfile == -2)
-			cmd->outfile = pipefd[1];
-		dup2(cmd->outfile, STDOUT_FILENO);
-		close(cmd->outfile);
+		if (cmd->fd_info->stdout_backup == -2)
+			cmd->fd_info->stdout_backup = pipefd[1];
+		dup2(cmd->fd_info->stdout_backup, STDOUT_FILENO);
+		close(cmd->fd_info->stdout_backup);
 	}	
 	close(pipefd[1]);
 	if (is_builtin(cmd->args[0]))
@@ -81,16 +81,16 @@ static void	parent_process(t_cmd *cmd, int *pipefd)
 {
 	close(pipefd[1]);
 	if (cmd->fd_info->stdin_backup >= 0)
-		close(cmd->infile);
-	if (cmd->infile == -2)
-		cmd->infile = pipefd[0];
-	if (cmd->next && cmd->next->infile == -2)
-		cmd->next->infile = pipefd[0];
+		close(cmd->fd_info->stdin_backup);
+	if (cmd->fd_info->stdin_backup == -2)
+		cmd->fd_info->stdin_backup = pipefd[0];
+	if (cmd->next && cmd->next->fd_info->stdin_backup == -2)
+		cmd->next->fd_info->stdin_backup = pipefd[0];
 	else
 		close(pipefd[0]);
 }
 
-int	exec(t_data *data)
+int	exec(t_shell_data *data)
 {
 	int			pipefd[2];
 	t_cmd	*tmp_cmd;

@@ -49,7 +49,7 @@ char	**convert_list_to_tab_str(t_env *env)
 	return (tab_str);
 }
 
-void	free_all(t_data *data)
+void	free_all(t_shell_data *data)
 {
 	if (data->cmd)
 		free(data->cmd);

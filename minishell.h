@@ -41,6 +41,7 @@ typedef struct s_env
 	char				*key;
 	char				*value;
 	struct s_env		*next;
+	struct s_env		*prev;
 }	t_env;
 
 
@@ -117,15 +118,6 @@ typedef struct s_shell_data
 }	t_shell_data;
    
 
-// typedef struct s_command
-// {
-// 	char				**args;
-// 	int					infile;
-// 	int					outfile;
-// 	int					append;
-// 	char 				*heredoc_delim;
-// 	struct s_command	*next;
-// }	t_command;
 
 
 typedef struct s_exp
@@ -138,30 +130,31 @@ typedef struct s_exp
 	t_shell_data		*shell;
 }	t_exp;
 
-typedef struct s_data
-{
-	t_env		*env;
-	t_cmd		*cmd;
-	int			sig_quit_flag;
-	int			last_exit_status;
-	int			exit;
-}				t_data;
+// typedef struct s_command
+// {
+// 	char				**args;
+// 	int					infile;
+// 	int					outfile;
+// 	int					append;
+// 	char 				*heredoc_delim;
+// 	struct s_command	*next;
+// }	t_command;
 
 extern pid_t	g_signal;
 
 int		ft_cd(char **args, t_env *env);
 int		ft_echo(char **arg);
 int		ft_env(t_env *env);
-void	ft_exit(t_data *data, char **args);
+void	ft_exit(t_shell_data *data, char **args);
 int		check_valid_name_var(char *str);
 int		ft_export(char **args, t_env **env);
 int		ft_pwd(void);
 int		ft_unset(char **args, t_env **env);
 int		is_builtin(char *cmd);
-void	do_builtin(t_data *data, t_cmd *cmd);
+void	do_builtin(t_shell_data *data, t_cmd *cmd);
 char	*get_pathname(char *cmd, t_env *env);
 char	**convert_list_to_tab_str(t_env *env);
-void	free_all(t_data *data);
+void	free_all(t_shell_data *data);
 int		ft_envsize(t_env *lst);
 
 
