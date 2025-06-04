@@ -165,5 +165,104 @@ void	free_all(t_data *data);
 int		ft_envsize(t_env *lst);
 
 
+/*================================== lexer ===================================*/
+
+/* lexer_core.c */
+void			process_char(t_ta *ta, char **input);
+void			process_input(t_ta *ta, char *input);
+void			handle_token_end(t_ta *ta);
+int				add_token(t_ta *ta, char *token);
+t_ta			*lexer(char *input);
+
+/* lexer_quote.c */
+int				is_only_quotes(const char *input);
+t_ta			*create_special_empty_token(t_ta *ta);
+void			handle_empty_quotes(t_ta *ta, char **input);
+void			process_quotes(t_ta *ta, char **input);
+void			handle_quotes(t_ta *ta, char *input);
+
+/* lexer_special.c */
+void			handle_trailing_space(t_ta *ta, int was_quoted);
+void			handle_special_chars(t_ta *ta, char **input);
+void			resize_token_array(t_ta *ta);
+
+/* lexer_util.c */
+int				add_token_failed(t_ta *ta);
+t_ta			*clean_lexer(t_ta *ta);
+int				check_unclosed_quotes(t_ta *ta);
+
+/*================================== parser ==================================*/
+
+/* parse_args.c */
+int				should_concat(char *prev_arg, char *curr_arg);
+void			concat_argument(t_cmd *cmd, char *arg);
+void			add_argument(t_cmd *cmd, char *arg, int quoted);
+
+/* parse_core.c */
+int				process_token(t_cmd *cmd, t_ta *ta, int *i);
+void			handle_redirect(t_cmd *cmd, t_ta *ta, int *i);
+int				handle_pipe_token(t_cmd *cmd, t_ta *ta, int *i);
+void			handle_empty_token(t_cmd *cmd, t_ta *ta, int *i);
+
+t_cmd			*parse_tokens(t_ta *ta);
+
+/* parse_redirect.c */
+void			cleanup_pipe_data(t_ta *new_ta, char **sub_tokens, \
+					int last_alloc);
+int				is_redirect(const char *token);
+int				get_redirect_type(char *token);
+void			add_redirect(t_cmd *cmd, int type, char *file, int eof_quoted);
+
+/* tokenarray_utils.c */
+t_ta			*init_new_ta(t_ta *ta, int index);
+char			**create_sub_tokens(t_ta *ta, int index, t_ta *new_ta);
+int				init_quoted_array(t_ta *new_ta, t_ta *ta, int index);
+
+/*================================== expand ==================================*/
+
+/* expand_core.c */
+int				get_var_length(const char *str);
+char			*get_var_value(const char *var, t_shell_data *shell_data);
+void			process_expand_char(t_exp *exp, char *input);
+size_t			calculate_expanded_size(char *input, t_shell_data *shell_data);
+char			*expand_variables(char *input, t_shell_data *shell_data);
+
+/* expand_size_utils.c */
+int				handle_quoted_len(char **result, int *j, char *input, \
+					int quote_len);
+int				process_var(char *input, int i, size_t *size, t_shell_data *sd);
+
+/* expand_var_utils.c */
+int				is_in_quotes(const char *str);
+void			copy_var_value(char **result, int *j, char *var_value);
+int				get_quoted_length(const char *str);
+int				handle_quoted_var(char **result, int *j, char *input);
+int				handle_var(char **res, int *j, char *in, t_shell_data *sd);
+
+/*=============================== init_and_free ==============================*/
+
+/* free_core.c */
+void			free_ptr(void *ptr);
+void			free_env_array(char **env_array);
+void			free_tokenarray(t_ta *ta);
+void			free_redirects(t_redirect *redirect);
+
+/* tokenarray_init.c */
+void			tokenarray_init_second(t_ta *ta);
+t_ta			*tokenarray_init(void);
+
+/* struct_init_core.c */
+t_cmd			*cmd_init(void);
+void			fd_info_init(t_cmd *cmd);
+
+/* free_advanced.c */
+void			free_command_args(t_cmd *cmd);
+void			free_command(t_cmd *cmd);
+void			ft_cleanup_shell(t_shell_data **shell);
+void			ft_cleanup_env(t_env **env);
+
+/*============================================================================*/
+
+
 #endif
 

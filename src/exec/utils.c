@@ -34,15 +34,15 @@ char	**convert_list_to_tab_str(t_env *env)
 		return (NULL);
 	tmp_env = env;
 	i = 0;
-	if (tmp_env->str)
+	if (tmp_env->value)
 	{
-		tab_str[i] = tmp_env->str;
+		tab_str[i] = tmp_env->value;
 		i++;
 	}
 	while (tmp_env->next)
 	{
 		tmp_env = tmp_env->next;
-		tab_str[i] = tmp_env->str;
+		tab_str[i] = tmp_env->value;
 		i++;
 	}
 	tab_str[i] = NULL;
@@ -51,6 +51,6 @@ char	**convert_list_to_tab_str(t_env *env)
 
 void	free_all(t_data *data)
 {
-	if (data->command)
-		free(data->command);
+	if (data->cmd)
+		free(data->cmd);
 }

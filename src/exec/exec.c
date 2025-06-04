@@ -77,10 +77,10 @@ static void	child_process(t_data *data, t_command *cmd, int *pipefd)
 		execute(data, cmd);
 }
 
-static void	parent_process(t_command *cmd, int *pipefd)
+static void	parent_process(t_cmd *cmd, int *pipefd)
 {
 	close(pipefd[1]);
-	if (cmd->infile >= 0)
+	if (cmd->fd_info->stdin_backup >= 0)
 		close(cmd->infile);
 	if (cmd->infile == -2)
 		cmd->infile = pipefd[0];
@@ -93,9 +93,9 @@ static void	parent_process(t_command *cmd, int *pipefd)
 int	exec(t_data *data)
 {
 	int			pipefd[2];
-	t_command	*tmp_cmd;
+	t_cmd	*tmp_cmd;
 
-	tmp_cmd = data->command;
+	tmp_cmd = data->cmd;
 	while (tmp_cmd)
 	{
 		if (pipe(pipefd) == -1)
