@@ -21,7 +21,7 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-void	do_builtin(t_data *data, t_command *cmd)
+void	do_builtin(t_data *data, t_cmd *cmd)
 {
 	if (!ft_strcmp(cmd->args[0], "cd"))
 		ft_cd(cmd->args, data->env);

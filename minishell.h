@@ -14,49 +14,137 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
+# define PROMPT "minishell> "
 
-typedef enum	e_token_type
+
+typedef struct s_fd_info
 {
-	T_WORD = 1,
-	T_PIPE,
-	T_REDIR_IN,
-	T_REDIR_OUT,
-	T_REDIR_APPEND,
-	T_REDIR_HEREDOC,
-	T_INVALID
-}	t_token_type;
-
-typedef	struct s_token
-{
-	t_token_type type;
-	char		*value;
-	struct s_token *next;
-}	t_token;
+	int					stdin_backup;
+	int					stdout_backup;
+	int					pipe_fd[2];
+}	t_fd_info;
 
 
+// typedef struct s_env
+// {
+// 	char			*str;
+// 	struct s_env	*prev;
+// 	struct s_env	*next;
+// }					t_env;
+
+
+/* *key : key of the environment variable.
+   *value : value of the environment variable.
+   *next : pointer the the next environment variable. */
 typedef struct s_env
 {
-	char			*str;
-	struct s_env	*prev;
-	struct s_env	*next;
-}					t_env;
+	char				*key;
+	char				*value;
+	struct s_env		*next;
+}	t_env;
 
-typedef struct s_command
+
+/*	token array
+	**tokens : an array of strings containing each individual tok
+	*token	: temp buffer to construct each tok individually
+	quotechar : contains the type of quote (simple or double)
+	token index : keep track of curent pos in the token buffer
+	count : count the total number of toks
+	inquotes : flag if in quotes duh
+	tokensize : contains the len of said tok
+	capacity : total number of toks we can handle dinamically*/
+
+typedef struct s_ta
 {
+	char				**tokens;
+	char				*token;
+	char				quotechar;
+	size_t				tokenindex;
+	size_t				tokensize;
+	int					inquotes;
+	int					count;
+	int					capacity;
+	int					trailing_space;
+	int					*quoted;
+	int					second_quote;
+}	t_ta;
+
+/* type : type of redirection, defined by 0 = <, 1 = >, 2 = << and 3 = >>.
+   *file : it's the name of the file implicated in the redirection.
+   *next : pointer to the next redirection. */
+typedef struct s_redirect
+{
+	int					type;
+	int					eof_quoted;
+	char				*file;
+	struct s_redirect	*next;
+}	t_redirect;
+
+
+/* **args : array of the command's arguments.
+   *name : name of the command.
+   arg_count : number of arguments.
+   *redirects : chained list of the redirections associated to the command.
+   *next : pointer to the next command in case of pipes. */
+typedef struct s_cmd
+{
+	int					arg_count;
 	char				**args;
-	int					infile;
-	int					outfile;
-	int					append;
-	char 				*heredoc_delim;
-	struct s_command	*next;
-}	t_command;
+	char				*name;
+	t_redirect			*redirects;
+	struct s_cmd		*next;
+	struct s_cmd		*prev;
+	t_fd_info			*fd_info;
+	int					n_quoted;
+	pid_t				pid;
+	int					tty_backup;
+	int					has_heredoc;
+	int					heredoc_fd;
+	int					has_next;
+	int					quoted;
+	int					*arg_quoted;
+}	t_cmd;
+
+/* *env : chained list of the environment variable.
+   *command :
+ last_exit_status : output status of the last executed command. */
+typedef struct s_shell_data
+{
+	t_cmd				*cmd;
+	t_env				*env;
+	int					last_exit_status;
+	int					sig_quit_flag;
+}	t_shell_data;
+   
+
+// typedef struct s_command
+// {
+// 	char				**args;
+// 	int					infile;
+// 	int					outfile;
+// 	int					append;
+// 	char 				*heredoc_delim;
+// 	struct s_command	*next;
+// }	t_command;
+
+
+typedef struct s_exp
+{
+	char				*result;
+	int					i;
+	int					j;
+	int					squote;
+	int					dquote;
+	t_shell_data		*shell;
+}	t_exp;
 
 typedef struct s_data
 {
 	t_env		*env;
-	t_command	*command;
+	t_cmd		*cmd;
+	int			sig_quit_flag;
+	int			last_exit_status;
 	int			exit;
-
 }				t_data;
 
 extern pid_t	g_signal;
@@ -70,57 +158,12 @@ int		ft_export(char **args, t_env **env);
 int		ft_pwd(void);
 int		ft_unset(char **args, t_env **env);
 int		is_builtin(char *cmd);
-void	do_builtin(t_data *data, t_command *cmd);
+void	do_builtin(t_data *data, t_cmd *cmd);
 char	*get_pathname(char *cmd, t_env *env);
 char	**convert_list_to_tab_str(t_env *env);
 void	free_all(t_data *data);
 int		ft_envsize(t_env *lst);
 
-//misc_tokens.c
-bool	ft_isspace(char c);
-void	handle_whitespaces(char *str, int *i);
-char	**list_to_str_array(t_list *lst);
-
-//free.c
-void    free_command_list(t_command *cmd);
-void	free_token_list(t_token *tok);
-void	free_args(char **args);
-void	free_str_list(t_list *lst);
-
-//toke_utils.c
-char	*ft_strncpy(char *dest, const char *src, int n);
-int		print_syntax_error(const char *msg);
-int		check_syntax_errors(t_token *head);
-char *ft_strncpy(char *dest, const char *src, int n);
-int	print_syntax_error(const char *msg);
-<<<<<<< HEAD
-=======
-int	check_syntax_errors(t_token *head);
->>>>>>> origin
-
-//tokenizer.c
-t_token	*tokenize(char *input);
-
-//extract_token.c
-char	*extract_token(const char *str, int *i);
-
-//crea_cmd.c
-
-int		handle_redirection(t_command *cmd, t_token **tok);
-t_command	*parse_tokens(t_token *tokens);
-
-//expand.c
-char	*expand_variables(const char *str);
-
-//append_args.c
-int	fill_command(t_command *cmd, t_token **tok);
-
-//debug.c
-void	print_tokens(t_token *tok);
-void 	print_commands(t_command *cmd);
-
-//main
-void	init_command(t_command *cmd);
 
 #endif
 
