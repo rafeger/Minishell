@@ -9,12 +9,15 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <fcntl.h>
+# include <signal.h>
 # include <stdlib.h>
 # include "libft/libft.h"
 # include <readline/readline.h>
 # include <readline/history.h>
 
 # define PROMPT "minishell> "
+
+extern volatile sig_atomic_t	g_sig;
 
 
 typedef struct s_fd_info
@@ -254,7 +257,32 @@ void			free_command(t_cmd *cmd);
 void			ft_cleanup_shell(t_shell_data **shell);
 void			ft_cleanup_env(t_env **env);
 
-/*============================================================================*/
+/*=================================== env ====================================*/
+
+/* signal_core.c */
+void			sigint_handler(int sig);
+void			init_signals(void);
+void			update_exit_status(t_shell_data *shell_data);
+
+/* env_core.c */
+char			*create_env_string(const char *key, const char *value);
+void			*get_env_value(t_env *env, const char *key);
+void			set_env_value(t_env **env, const char *key, const char *value);
+void			remove_env_var(t_env **env, const char *key);
+char			**env_list_to_array(t_env *env);
+
+/* env_init.c */
+char			**allocate_env_array(t_env *env, int *count);
+int				fill_env_array(char **env_array, t_env *env);
+t_env			*create_env_node(char *env_str);
+void			add_env_node(t_env **env_list, t_env *new_node);
+t_env			*init_env(char **envp);
+
+/* shell_core.c */
+t_shell_data	*init_shell_data(char **envp);
+int				initialize_shell(t_shell_data **shell, char **envp);
+void			update_shlvl(t_env **env, int level);
+void			initialize_shlvl(t_env **env);
 
 
 #endif
