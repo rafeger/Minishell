@@ -1,4 +1,4 @@
-#include "../../minishell.h"
+#include "../../include/minishell.h"
 
 /*
  * Allocates memory for environment variable array.

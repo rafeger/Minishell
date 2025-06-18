@@ -1,4 +1,4 @@
-#include "../../minishell.h"
+#include "../../include/minishell.h"
 
 /*
  * Updates shell level (SHLVL) environment variable.

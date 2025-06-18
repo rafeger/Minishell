@@ -1,4 +1,4 @@
-#include "../../minishell.h"
+#include "../../include/minishell.h"
 
 /*
  * Safely frees a single pointer and sets it to NULL.

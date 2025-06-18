@@ -1,30 +1,53 @@
-#include "../../minishell.h"
+#include "../../include/minishell.h"
 
 
-/*
- * Determines if two arguments should be concatenated.
- * Chekcs specific patterns requiring concatenation:
- * - Variables with special characters ($, :, =)
- * - Numeric values with variables
- * Returns 1 if concatenation needed, 0 otherwise.
-*/
-int	should_concat(char *prev_arg, char *curr_arg)
+// /*
+//  * Determines if two arguments should be concatenated.
+//  * Chekcs specific patterns requiring concatenation:
+//  * - Variables with special characters ($, :, =)
+//  * - Numeric values with variables
+//  * Returns 1 if concatenation needed, 0 otherwise.
+// */
+// int	should_concat(char *prev_arg, char *curr_arg)
+// {
+// 	if (!prev_arg || !curr_arg || !*prev_arg || !*curr_arg)
+// 		return (0);
+// 	if (prev_arg[0] == '$' && (curr_arg[0] == ':' || curr_arg[0] == '$' || \
+// 				curr_arg[0] == '='))
+// 		return (1);
+// 	if (prev_arg[ft_strlen(prev_arg) - 1] == ':' && curr_arg[0] == '$')
+// 		return (1);
+// 	if (prev_arg[ft_strlen(prev_arg) - 1] == '$' && curr_arg[0] == '=')
+// 		return (1);
+// 	if (ft_isdigit(prev_arg[0]) && curr_arg[0] == '$')
+// 		return (1);
+// 	if (prev_arg[ft_strlen(prev_arg) - 1] == '$')
+// 		return (1);
+// 	return (0);
+// }
+static int	concat_check(const char *prev_token, const char *curr_token)
 {
-	if (!prev_arg || !curr_arg || !*prev_arg || !*curr_arg)
+	size_t	prev_len;
+
+	if (!prev_token || !curr_token || !*prev_token || !*curr_token)
 		return (0);
-	if (prev_arg[0] == '$' && (curr_arg[0] == ':' || curr_arg[0] == '$' || \
-				curr_arg[0] == '='))
+
+	prev_len = ft_strlen(prev_token);
+	if (prev_token[0] == '$' && (curr_token[0] == ':' 
+		|| curr_token[0] == '$' || curr_token[0] == '='))
 		return (1);
-	if (prev_arg[ft_strlen(prev_arg) - 1] == ':' && curr_arg[0] == '$')
+	if (prev_len > 0 && prev_token[prev_len - 1] == ':' && curr_token[0] == '$')
 		return (1);
-	if (prev_arg[ft_strlen(prev_arg) - 1] == '$' && curr_arg[0] == '=')
+	if (prev_len > 0 && prev_token[prev_len - 1] == '$' && curr_token[0] == '=')
 		return (1);
-	if (ft_isdigit(prev_arg[0]) && curr_arg[0] == '$')
+	if (ft_isdigit(prev_token[0]) && curr_token[0] == '$')
 		return (1);
-	if (prev_arg[ft_strlen(prev_arg) - 1] == '$')
+	if (prev_len > 0 && prev_token[prev_len - 1] == '$')
 		return (1);
+
 	return (0);
 }
+
 
 /*
  * Concatenates current argument with previous argument.
@@ -52,7 +75,7 @@ void	concat_argument(t_cmd *cmd, char *arg)
 */
 void	add_argument(t_cmd *cmd, char *arg, int quoted)
 {
-	if (cmd->arg_count > 0 && should_concat(cmd->args[cmd->arg_count - 1], arg))
+	if (cmd->arg_count > 0 && concat_check(cmd->args[cmd->arg_count - 1], arg))
 	{
 		concat_argument(cmd, arg);
 		return ;
@@ -76,5 +99,31 @@ void	add_argument(t_cmd *cmd, char *arg, int quoted)
 	{
 		cmd->name = ft_strdup(arg);
 		cmd->quoted = quoted;
+	}
+}
+
+void	add_argument(t_cmd *cmd, char *arg_val, int is_quoted)
+{
+	if (cmd->arg_count > 0 && concat_check(cmd->args[cmd->arg_count - 1], arg_val))
+	{
+		if (!s_try_concat_arg(cmd, arg_val))
+			return ;
+		return ;
+	}
+	if (!s_expand_arg_arrays(cmd))
+	{
+		return ;
+	}
+	cmd->args[cmd->arg_count] = ft_strdup(arg_val);
+	if (!cmd->args[cmd->arg_count])
+		return ;
+	cmd->arg_quoted[cmd->arg_count] = is_quoted;
+	cmd->arg_count++;
+	if (!cmd->name)
+	{
+		cmd->name = ft_strdup(arg_val);
+		if (!cmd->name)
+			return ;
+		cmd->quoted = is_quoted;
 	}
 }

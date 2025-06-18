@@ -1,102 +1,144 @@
-#include "../../minishell.h"
-
+#include "../../include/minishell.h"
 
 /*
- * Safely frees and nullifies the current command structure in shell_data.
- * Essential for preventing memory leaks between command executions.
+ * Processes a single character during tokenization.
+ * Handles memory reallocation for token buffer when needed.
+ * Manages different character types:
+ * - Quotes (single and double)
+ * - Whitespace
+ * - Special characters (<, >, |, $)
+ * - Regular characters
+ * Core function of character-by-character tokenization process.
 */
-void	cleanup_current_cmd(t_shell_data *shell_data)
+void	process_char(t_ta *ta, char **input)
 {
-	if (shell_data->cmd)
+	size_t	oldsize;
+
+	oldsize = ta->tokensize + 1;
+	if (ta->tokenindex == ta->tokensize)
 	{
-		free_command(shell_data->cmd);
-		shell_data->cmd = NULL;
+		if (ta->tokensize == 0)
+			ta->tokensize = 1;
+		else
+			ta->tokensize = ta->tokensize * 2;
+		ta->token = ft_realloc(ta->token, oldsize * sizeof(char), \
+				(ta->tokensize + 1) * sizeof(char));
+		if (!ta->token)
+			return ;
+	}
+	if (**input == '"' || **input == '\'' || ta->inquotes)
+		process_quotes(ta, input);
+	else if (**input == ' ' || **input == '\t')
+		handle_token_end(ta);
+	else if (!ta->inquotes && ft_strchr("<>|$", **input))
+		handle_special_chars(ta, input);
+	else
+		ta->token[ta->tokenindex++] = **input;
+}
+
+/*
+ * Handles complete input string processing.
+ * Iterates through entire input, processing each character.
+ * Ensures final token is properly handled.
+ * Main driver of lexical analysis process.
+*/
+void	process_input(t_ta *ta, char *input)
+{
+	while (*input)
+	{
+		process_char(ta, &input);
+		input++;
+	}
+	handle_token_end(ta);
+}
+
+/*
+ * Finalizes current token and adds it to token array.
+ * Manages quote status and trailing space handling.
+ * Resets token index and quote tracking for next token.
+ * Called whenever a token boundary is reached.
+*/
+void	handle_token_end(t_ta *ta)
+{
+	int		was_quoted;
+
+	was_quoted = ta->second_quote;
+	if (ta->tokenindex > 0 || ta->trailing_space)
+	{
+		if (ta->count >= ta->capacity)
+			resize_token_array(ta);
+		ta->token[ta->tokenindex] = '\0';
+		if (ta->trailing_space && ta->tokenindex == 0)
+			handle_trailing_space(ta, was_quoted);
+		else
+		{
+			ta->quoted[ta->count] = was_quoted;
+			add_token(ta, ta->token);
+		}
+		ta->tokenindex = 0;
+		ta->second_quote = 0;
 	}
 }
 
 /*
- * Validates input syntax using check_syntax().
- * If syntax errors are found:
- * - Sets error exit status.
- * - Frees input.
- * Returns 1 on syntax error, 0 if syntax is valid.
+ * Adds new token to token array.
+ * Handles dynamic resizing of token storage if needed.
+ * Manages quote status tracking for token.
+ * Returns 0 on success, 1 on allocation failure.
 */
-int	handle_syntax_check(char *input, t_shell_data *shell_data)
+int	add_token(t_ta *ta, char *token)
 {
-	if (check_syntax(input) != 0)
+	char	**new_tokens;
+	int		*new_quoted;
+	size_t	oldsize;
+
+	if (ta->count == ta->capacity)
 	{
-		shell_data->last_exit_status = 2;
-		free(input);
-		return (1);
+		oldsize = ta->capacity;
+		ta->capacity *= 2;
+		new_tokens = ft_realloc(ta->tokens, oldsize * sizeof(char *), \
+				sizeof(char *) * ta->capacity);
+		new_quoted = ft_realloc(ta->quoted, oldsize * sizeof(int), \
+				sizeof(int) * ta->capacity);
+		if (!new_tokens || !new_quoted)
+			return (add_token_failed(ta));
+		ta->tokens = new_tokens;
+		ta->quoted = new_quoted;
 	}
+	ta->tokens[ta->count] = ft_strdup(token);
+	if (!ta->tokens[ta->count])
+		return (1);
+	ta->quoted[ta->count] = ta->second_quote;
+	ta->count++;
 	return (0);
 }
 
 /*
- * Processes raw input into executable command:
- * - Expands variables.
- * - Performs lexical analysis.
- * - Parses tokens into command structure.
- * Returns NULL if any step fails, otherwise returns prepared command.
+ * Main lexical analysis function.
+ * Coordinates complete tokenization process:
+ * - Handles special case of quote-only input
+ * - Processes input character by character
+ * - Manages token creation and storage
+ * - Handles cleanup in case of errors
+ * Returns NULL if analysis fails, otherwise returns completed token array.
 */
-t_cmd	*execute_input(char *input, t_shell_data *shell_data)
+t_ta	*lexer(char *input)
 {
-	char	*expanded_input;
 	t_ta	*ta;
-	t_cmd	*cmd;
-	int		is_empty;
 
-	expanded_input = expand_variables(input, shell_data);
-	if (!expanded_input)
-		return (NULL);
-	is_empty = (expanded_input[0] == '\0');
-	ta = lexer(expanded_input);
-	free(expanded_input);
-	if (!ta && is_empty)
-	{
-		shell_data->last_exit_status = 0;
-		return (NULL);
-	}
+	ta = tokenarray_init();
 	if (!ta)
 		return (NULL);
-	cmd = parse_tokens(ta);
-	free_tokenarray(ta);
-	return (cmd);
-}
-
-/*
- * Executes command if valid:
- * - Stores command in shell data.
- * - Triggers command execution.
- * No return value as execution status is stored in t_shell_data.
-*/
-void	execute_if_valid(t_cmd *cmd, t_shell_data *sd)
-{
-	if (cmd)
-	{
-		sd->cmd = cmd;
-		execute_commands(cmd, sd);
-	}
-}
-
-/*
- * Main input handling function that orchestrates:
- * - Syntax validation.
- * - Command cleanup.
- * - Input processing.
- * - Command execution.
- * Manages complete lifecycle of a single command input.
-*/
-void	handle_input(char *input, t_shell_data *shell_data)
-{
-	t_cmd	*cmd;
-
-	if (!input)
-		exit(0);
-	if (handle_syntax_check(input, shell_data))
-		return ;
-	cleanup_current_cmd(shell_data);
-	cmd = execute_input(input, shell_data);
-	free(input);
-	execute_if_valid(cmd, shell_data);
+	if (is_only_quotes(input))
+		return (create_special_empty_token(ta));
+	process_input(ta, input);
+	if (check_unclosed_quotes(ta))
+		return (clean_lexer(ta));
+	if (ta->tokenindex > 0)
+		ta->token[ta->tokenindex] = '\0';
+	if (ta->tokenindex > 0 && add_token(ta, ta->token))
+		return (clean_lexer(ta));
+	if (!ta->count)
+		return (clean_lexer(ta));
+	return (ta);
 }
