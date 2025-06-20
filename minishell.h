@@ -93,10 +93,7 @@ int		print_syntax_error(const char *msg);
 int		check_syntax_errors(t_token *head);
 char *ft_strncpy(char *dest, const char *src, int n);
 int	print_syntax_error(const char *msg);
-<<<<<<< HEAD
-=======
 int	check_syntax_errors(t_token *head);
->>>>>>> origin
 
 //tokenizer.c
 t_token	*tokenize(char *input);
