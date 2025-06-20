@@ -1,22 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memset.c                                        :+:      :+:    :+:   */
+/*   ft_pwd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zmurie <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/07 17:05:28 by zmurie            #+#    #+#             */
-/*   Updated: 2024/11/11 17:57:48 by zmurie           ###   ########.fr       */
+/*   Created: 2025/03/22 17:43:29 by zmurie            #+#    #+#             */
+/*   Updated: 2025/03/22 17:43:32 by zmurie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "libft.h"
+#include "../../include/minishell.h"
 
-void	*ft_memset(void *s, int c, size_t n)
+int	ft_pwd(void)
 {
-	unsigned char	*ptr;
+	char	cwd[PATH_MAX];
 
-	ptr = (unsigned char *)s;
-	while (n--)
-		*ptr++ = (unsigned char)c;
-	return (s);
+	if (getcwd(cwd, PATH_MAX))
+	{
+		ft_putendl_fd(cwd, 1);
+		return (0);
+	}
+	else
+	{
+		perror("pwd");
+		return (1);
+	}
 }

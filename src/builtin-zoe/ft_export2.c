@@ -1,42 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strcmp.c                                        :+:      :+:    :+:   */
+/*   ft_export2.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zmurie <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/24 13:13:59 by zmurie            #+#    #+#             */
-/*   Updated: 2024/09/26 10:24:28 by zmurie           ###   ########.fr       */
+/*   Created: 2025/03/28 12:59:59 by zmurie            #+#    #+#             */
+/*   Updated: 2025/03/28 13:00:01 by zmurie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "libft.h"
+#include "../../include/minishell.h"
 
-int	ft_strcmp(const char *s1, const char *s2)
+int	check_valid_name_var(char *str)
 {
-	size_t	i;
+	int	i;
 
-	if (!s1 || !s2)
-		return (-1);
 	i = 0;
-	while (s1[i] || s2[i])
+	if (!str[i] || (str[i] != '_' && !ft_isalpha(str[i])))
+		return (1);
+	i++;
+	while (str[i] && str[i] != '=')
 	{
-		if (s1[i] != s2[i])
-			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+		if (!ft_isalnum(str[i]) && str[i] != '_')
+			return (1);
 		i++;
 	}
 	return (0);
 }
-
-// int	main(void)
-// {
-// 	int a;
-// 	int res;
-// 	char s1[] = "abd";
-// 	char s2[] = "abdc";
-// 	a = ft_strcmp(s1, s2);
-// 	printf("%d\n", a);
-// 	//res = strcmp(s1, s2);
-// 	//printf("%d\n", res);
-
-// 	return(0);
-// }
