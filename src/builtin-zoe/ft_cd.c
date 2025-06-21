@@ -14,10 +14,11 @@
 static void	update_pwd(char *arg, t_env *env)
 {
 	t_env	*tmp_env;
-	char	cwd[PATH_MAX];
+	char	*cwd;
 	char	*pwd;
 
-	if (getcwd(cwd, PATH_MAX) == NULL)
+	cwd = getcwd(NULL, 0);
+	if (!cwd)
 	{
 		perror(arg);
 		return ;

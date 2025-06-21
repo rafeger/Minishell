@@ -11,6 +11,44 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
+static char	*get_value(char *str)
+{
+	int	len;
+	int	i;
+
+	len = 0;
+	i = 1;
+	while (str[i - 1] != '=')
+		i++;
+	if (str[i] == '\0')
+		return (NULL);
+	while (str[i + len])
+		len++;
+	return (ft_substr(str, i, len));
+}
+
+static char *get_key(char *str)
+{
+	int		len;
+	int		i;
+	char	*key;
+
+	i = 0;
+	len = 0;
+	while (str[len] != '=')
+		len++;
+	key = malloc(sizeof(char *) * len + 1);
+	if (!key)
+		exit(EXIT_FAILURE);
+	while (i < len)
+	{
+		key[i] = str[i];
+		i++;
+	}
+	key[i] = '\0';
+	return (key);
+}
+
 static int	print_all_var_env(t_env *env)
 {
 	t_env	*tmp_env;
@@ -71,7 +109,8 @@ static int	create_new_env_var(char *str, t_env **env)
 	new_node = malloc(sizeof(t_env));
 	if (!new_node)
 		return (1);
-	new_node->str = ft_strdup(str);
+	new_node->key = get_key(str);
+	new_node->value = get_value(str);
 	new_node->next = NULL;
 	new_node->prev = NULL;
 	if (!(*env))
