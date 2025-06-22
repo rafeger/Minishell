@@ -11,29 +11,29 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
-void	ft_exit(t_shell_data *data, char **args)
+void	ft_exit(t_shell_data *data, t_cmd *cmd)
 {
 	int	std_out;
 
-	if (args[1] && ft_isnumber(args[1]))
+	if (cmd->args[1] && ft_isnumber(cmd->args[1]))
 	{
 		data->last_exit_status = 2;
 		ft_putendl_fd("exit", 2);
 		ft_putstr_fd("bash: exit: ", 2);
-		ft_putstr_fd(args[1], 2);
+		ft_putstr_fd(cmd->args[1], 2);
 		ft_putendl_fd(": numeric argument required", 2);
 	}
-	else if (args[1] && args[2])
+	else if (cmd->args[1] && cmd->args[2])
 	{
 		ft_putendl_fd("exit", 2);
 		ft_putendl_fd("bash: exit: too many arguments", 2);
 		return ;
 	}
-	else if (!args[1])
+	else if (!cmd->args[1])
 		ft_putendl_fd("exit", 2);
 	else
 	{
-		std_out = ft_atoi(args[1]) % 256;
+		std_out = ft_atoi(cmd->args[1]) % 256;
 		data->last_exit_status = std_out;
 		ft_putendl_fd("exit", std_out);
 	}
