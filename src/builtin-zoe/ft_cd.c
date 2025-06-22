@@ -61,24 +61,25 @@ static void	update_old_pwd(char *arg, t_env *env)
 	update_pwd(arg, env);
 }
 
-int	ft_cd(char **args, t_env *env)
+int	ft_cd(t_cmd *cmd, t_shell_data *shell_data)
 {
-	if (args && !args[1])
+	char	*path;
+	if (cmd->arg_count == 1)
 		return (0);
-	if (args && args[1] && args[2])
+	if (cmd->arg_count >= 3)
 	{
 		ft_putstr_fd("bash: cd: too many arguments\n", 2);
 		return (1);
 	}
-	if (!chdir(args[1]))
+	if (!chdir(path))
 	{
-		update_old_pwd(args[1], env);
+		update_old_pwd(path, shell_data->env);
 		return (0);
 	}
 	else
 	{
 		ft_putstr_fd("bash: cd: ", 2);
-		perror(args[1]);
+		perror(path);
 		return (1);
 	}
 }
