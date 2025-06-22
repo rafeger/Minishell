@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
-void	ft_exit(t_shell_data *data, t_cmd *cmd)
+void	ft_exit(t_cmd *cmd, t_shell_data *data)
 {
 	int	std_out;
 
