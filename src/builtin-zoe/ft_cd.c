@@ -14,46 +14,50 @@
 static void	update_pwd(char *arg, t_env *env)
 {
 	t_env	*tmp_env;
-	char	cwd[PATH_MAX];
+	char	*cwd;
 	char	*pwd;
 
-	if (getcwd(cwd, PATH_MAX) == NULL)
+	cwd = getcwd(NULL, 0);
+	if (!cwd)
 	{
 		perror(arg);
 		return ;
 	}
 	tmp_env = env;
-	while (ft_strncmp("PWD=", tmp_env->str, 4))
+	while ((ft_strncmp("PWD", tmp_env->key, 3)) == 0
+		&& ft_strlen(tmp_env->key) == 3)
 		tmp_env = tmp_env->next;
-	pwd = ft_strjoin("PWD=", cwd);
+	pwd = ft_strjoin("PWD", cwd);
 	if (!pwd)
 	{
 		perror("malloc");
 		return ;
 	}
-	tmp_env->str = pwd;
+	tmp_env->value = pwd;
 }
 
 static void	update_old_pwd(char *arg, t_env *env)
 {
 	t_env	*tmp_env;
-	char	*old_pwd;
+	char	*old_pwd_value;
 	char	*new_old_pwd;
 
 	tmp_env = env;
-	while (ft_strncmp("PWD=", tmp_env->str, 4))
+	while ((ft_strncmp("PWD", tmp_env->key, 3)) == 0
+		&& ft_strlen(tmp_env->key) == 3)
 		tmp_env = tmp_env->next;
-	old_pwd = tmp_env->str;
+	old_pwd_value = tmp_env->value;
 	tmp_env = env;
-	while (ft_strncmp("OLDPWD=", tmp_env->str, 7))
+	while ((ft_strncmp("OLDPWD", tmp_env->key, 6)) == 0
+		&& ft_strlen(tmp_env->key) == 6)
 		tmp_env = tmp_env->next;
-	new_old_pwd = ft_strjoin("OLD", old_pwd);
+	new_old_pwd = ft_strjoin("OLD", old_pwd_value);
 	if (!new_old_pwd)
 	{
 		perror("malloc");
 		return ;
 	}
-	tmp_env->str = new_old_pwd;
+	tmp_env->value = new_old_pwd;
 	update_pwd(arg, env);
 }
 

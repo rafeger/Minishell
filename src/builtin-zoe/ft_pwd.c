@@ -13,11 +13,13 @@
 
 int	ft_pwd(void)
 {
-	char	cwd[PATH_MAX];
+	char	*cwd;
 
-	if (getcwd(cwd, PATH_MAX))
+	cwd = getcwd(NULL, 0);
+	if (cwd)
 	{
 		ft_putendl_fd(cwd, 1);
+		free(cwd);
 		return (0);
 	}
 	else

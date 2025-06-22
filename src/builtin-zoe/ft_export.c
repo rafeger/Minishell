@@ -11,21 +11,55 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
-static int	print_all_var_env(t_env *env)
+static char	*get_value(char *str)
 {
+	int	len;
 	int	i;
 
-	while (env)
+	len = 0;
+	i = 1;
+	while (str[i - 1] != '=')
+		i++;
+	if (str[i] == '\0')
+		return (NULL);
+	while (str[i + len])
+		len++;
+	return (ft_substr(str, i, len));
+}
+
+static char *get_key(char *str)
+{
+	int		len;
+	int		i;
+	char	*key;
+
+	i = 0;
+	len = 0;
+	while (str[len] != '=')
+		len++;
+	key = malloc(sizeof(char *) * len + 1);
+	if (!key)
+		exit(EXIT_FAILURE);
+	while (i < len)
+	{
+		key[i] = str[i];
+		i++;
+	}
+	key[i] = '\0';
+	return (key);
+}
+
+static int	print_all_var_env(t_env *env)
+{
+	t_env	*tmp_env;
+
+	tmp_env = env;
+	while (tmp_env)
 	{
 		printf("declare -x ");
-		i = 0;
-		while (env->str[i] && env->str[i] != '=')
-			printf("%c", env->str[i++]);
-		if (env->str[i] && env->str[i] == '=')
-			printf("=\"%s\"\n", &env->str[i + 1]);
-		else
-			printf("\n");
-		env = env->next;
+		printf(env->key);
+		printf("=\"%s\"\n", env->value);
+		tmp_env = tmp_env->next;
 	}
 	return (0);
 }
@@ -37,11 +71,12 @@ static int	update_env_var(char *str, t_env **env, int len_name)
 	tmp_env = *env;
 	while (tmp_env)
 	{
-		if (!ft_strncmp(str, tmp_env->str, len_name))
+		if ((ft_strncmp(str, tmp_env->key, len_name)) == 0
+			&& ft_strlen(tmp_env->key) == len_name)
 			break ;
 		tmp_env = tmp_env->next;
 	}
-	tmp_env->str = ft_strdup(str);
+	tmp_env->value = ft_strdup(str);
 	return (1);
 }
 
@@ -56,7 +91,8 @@ static int	name_var_exist(char *str, t_env **env)
 	tmp_env = *env;
 	while (tmp_env)
 	{
-		if (!ft_strncmp(str, tmp_env->str, len_name))
+		if ((ft_strncmp(str, tmp_env->key, len_name)) == 0
+			&& ft_strlen(tmp_env->key) == len_name)
 			return (update_env_var(str, env, len_name));
 		tmp_env = tmp_env->next;
 	}
@@ -73,7 +109,8 @@ static int	create_new_env_var(char *str, t_env **env)
 	new_node = malloc(sizeof(t_env));
 	if (!new_node)
 		return (1);
-	new_node->str = ft_strdup(str);
+	new_node->key = get_key(str);
+	new_node->value = get_value(str);
 	new_node->next = NULL;
 	new_node->prev = NULL;
 	if (!(*env))

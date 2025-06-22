@@ -18,7 +18,8 @@ int	ft_env(t_env *env)
 	tmp = env;
 	while (tmp)
 	{
-		ft_putendl_fd(tmp->str, 1);
+		ft_printf(tmp->key);
+		ft_putendl_fd(tmp->value, 1);
 		tmp = tmp->next;
 	}
 	return (0);

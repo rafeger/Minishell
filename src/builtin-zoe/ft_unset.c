@@ -40,6 +40,7 @@ int	check_is_in_env(char *var, t_env **env)
 		{
 			delete_env_var(tmp_env);
 			tmp_env->value = NULL;
+			tmp_env->key = NULL;
 			return (0);
 		}			
 		tmp_env = tmp_env->next;
