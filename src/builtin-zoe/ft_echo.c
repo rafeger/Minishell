@@ -27,7 +27,7 @@ static bool	check_new_line(char *str)
 	return (false);
 }
 
-int	ft_echo(char **arg)
+int	ft_echo(t_cmd *cmd)
 {
 	int		i;
 	int		nbr_arg;
@@ -35,14 +35,14 @@ int	ft_echo(char **arg)
 
 	nbr_arg = 0;
 	new_line = false;
-	while (arg[nbr_arg + 1])
+	while (cmd->args[nbr_arg + 1])
 		nbr_arg++;
 	i = 0;
-	while (arg[++i] && check_new_line(arg[i]))
+	while (cmd->args[++i] && check_new_line(cmd->args[i]))
 			new_line = true;
-	while (arg[i])
+	while (cmd->args[i])
 	{
-		write(1, arg[i], ft_strlen(arg[i]));
+		write(1, cmd->args[i], ft_strlen(cmd->args[i]));
 		if (i != nbr_arg)
 			write(1, " ", 1);
 		i++;
