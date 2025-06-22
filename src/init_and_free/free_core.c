@@ -50,7 +50,7 @@ void	free_tokenarray(t_ta *ta)
 	if (ta->tokens)
 	{
 		i = 0;
-		while (i < ta->count)
+		while (i < ta->t_tot)
 		{
 			if (ta->tokens[i])
 				free(ta->tokens[i]);

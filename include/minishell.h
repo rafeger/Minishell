@@ -34,8 +34,6 @@ typedef struct s_fd_info
 }	t_fd_info;
 
 
-
-
 /* *key : key of the environment variable.
    *value : value of the environment variable.
    *next : pointer the the next environment variable. */
@@ -52,10 +50,10 @@ typedef struct s_env
 	*token	: temp buffer to construct each tok individually
 	quotechar : contains the type of quote (simple or double)
 	token index : keep track of curent pos in the token buffer
-	count : count the total number of toks
-	inquotes : flag if in quotes duh
+	t_tot : count the total number of toks
+	in_q : is a boolean (1 true / 0 false) to know if ur inside quotes or nah
 	tokensize : contains the len of said tok
-	capacity : total number of toks we can handle dinamically*/
+	cap : total number of toks we can handle dinamically*/
 
 typedef struct s_ta
 {
@@ -64,9 +62,9 @@ typedef struct s_ta
 	char				quotechar;
 	size_t				tokenindex;
 	size_t				tokensize;
-	int					inquotes;
-	int					count;
-	int					capacity;
+	bool				in_q;
+	int					t_tot;
+	int					cap;
 	int					trailing_space;
 	int					*quoted;
 	int					second_quote;
@@ -106,6 +104,7 @@ typedef struct s_cmd
 	int					has_next;
 	int					quoted;
 	int					*arg_quoted;
+	bool				heredoc_quotes;
 }	t_cmd;
 
 /* *env : chained list of the environment variable.
@@ -178,27 +177,47 @@ typedef struct s_heredoc_data
 
 /*============================== main_and_input ==============================*/
 
-/* main.c */
-char			*get_input(void);
+void	clear_current_command(t_shell_data *shell_data);
 
-int				main(int ac, char **av, char **envp);
+int	perform_syntax_validation(char *input, t_shell_data *shell_data);
 
-/* input_core.c */
-void			cleanup_current_cmd(t_shell_data *shell_data);
+t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data);
 
-int				handle_syntax_check(char *input, t_shell_data *shell_data);
+void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd);
 
-t_cmd			*execute_input(char *input, t_shell_data *shell_data);
+void	process_shell_input(char *input, t_shell_data *shell_data);
 
-void			execute_if_valid(t_cmd *cmd, t_shell_data *sd);
 
-void			handle_input(char *input, t_shell_data *shel_data);
+char	*read_user_input(void);
 
-/* main_utils.c */
+int	main(int ac, char **av, char **envp);
 
-void			check_and_restore_stdin(void);
 
-int				is_eof_reached(void);
+void	ensure_stdin_tty(void);
+
+int	has_eof_been_reached(void);
+
+// /* main.c */
+// char			*get_input(void);
+
+// int				main(int ac, char **av, char **envp);
+
+// /* input_core.c */
+// void			cleanup_current_cmd(t_shell_data *shell_data);
+
+// int				handle_syntax_check(char *input, t_shell_data *shell_data);
+
+// t_cmd			*execute_input(char *input, t_shell_data *shell_data);
+
+// void			execute_if_valid(t_cmd *cmd, t_shell_data *sd);
+
+// void			handle_input(char *input, t_shell_data *shel_data);
+
+// /* main_utils.c */
+
+// void			check_and_restore_stdin(void);
+
+// int				is_eof_reached(void);
 
 /*================================= execute ==================================*/
 
@@ -352,7 +371,7 @@ void			remove_env_var(t_env **env, const char *key);
 char			**env_list_to_array(t_env *env);
 
 /* env_init.c */
-char			**allocate_env_array(t_env *env, int *count);
+char			**allocate_env_array(t_env *env, int *t_tot);
 
 int				fill_env_array(char **env_array, t_env *env);
 
@@ -444,41 +463,67 @@ int				check_if_quotes(char *input, int *i);
 
 /*================================== lexer ===================================*/
 
-/* lexer_core.c */
-void			process_char(t_ta *ta, char **input);
+void	handle_char_tokenization(t_ta *ta, char **input);
+void	process_input(t_ta *ta, char **input);
+void	handle_token_end(t_ta *ta);
+int	append_token_to_array(t_ta *ta, char *token);
+t_ta	*tokenize_input_string(char *input);
 
-void			process_input(t_ta *ta, char *input);
+// From lexer_quote.c
+int	contains_only_quotes(const char *input);
+t_ta	*create_empty_quoted_token(t_ta *ta);
+void	process_empty_quotes(t_ta *ta, char **input);
+void	manage_quote_processing(t_ta *ta, char **input);
+void	process_quote_character(t_ta *ta, char *input);
 
-void			handle_token_end(t_ta *ta);
+// From lexer_special.c
+void	handle_trailing_space(t_ta *ta, int was_quoted);
+void	handle_special_chars(t_ta *ta, char **input);
+void	resize_token_array_capacity(t_ta *ta);
 
-int				add_token(t_ta *ta, char *token);
+// From lexer_util.c
+int	handle_token_add_failure(t_ta *ta);
+int	validate_quote_closure(t_ta *ta);
+t_ta	*cleanup_lexer_resources(t_ta *ta);
 
-t_ta			*lexer(char *input);
 
-/* lexer_quote.c */
-int				is_only_quotes(const char *input);
 
-t_ta			*create_special_empty_token(t_ta *ta);
 
-void			handle_empty_quotes(t_ta *ta, char **input);
+// /* lexer_core.c */
+// void			process_char(t_ta *ta, char **input);
 
-void			process_quotes(t_ta *ta, char **input);
+// void			process_input(t_ta *ta, char *input);
 
-void			handle_quotes(t_ta *ta, char *input);
+// void			handle_token_end(t_ta *ta);
 
-/* lexer_special.c */
-void			handle_trailing_space(t_ta *ta, int was_quoted);
+// int				add_token(t_ta *ta, char *token);
 
-void			handle_special_chars(t_ta *ta, char **input);
+// t_ta			*lexer(char *input);
 
-void			resize_token_array(t_ta *ta);
+// /* lexer_quote.c */
+// int				is_only_quotes(const char *input);
 
-/* lexer_util.c */
-int				add_token_failed(t_ta *ta);
+// t_ta			*create_special_empty_token(t_ta *ta);
 
-t_ta			*clean_lexer(t_ta *ta);
+// void			handle_empty_quotes(t_ta *ta, char **input);
 
-int				check_unclosed_quotes(t_ta *ta);
+// void			process_quotes(t_ta *ta, char **input);
+
+// void			handle_quotes(t_ta *ta, char *input);
+
+// /* lexer_special.c */
+// void			handle_trailing_space(t_ta *ta, int was_quoted);
+
+// void			handle_special_chars(t_ta *ta, char **input);
+
+// void			resize_token_array(t_ta *ta);
+
+// /* lexer_util.c */
+// int				add_token_failed(t_ta *ta);
+
+// t_ta			*clean_lexer(t_ta *ta);
+
+// int				check_unclosed_quotes(t_ta *ta);
 
 /*================================== parser ==================================*/
 

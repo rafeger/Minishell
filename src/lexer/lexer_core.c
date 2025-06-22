@@ -1,6 +1,22 @@
 #include "../../include/minishell.h"
 
 /*
+ * Determines how to process a character based on its type and current lexer state.
+ * This is a helper for handle_char_tokenization.
+*/
+static void	decide_char_processing(t_ta *ta, char **input)
+{
+	if (**input == '"' || **input == '\'' || ta->in_q)
+		manage_quote_processing(ta, input);
+	else if (**input == ' ' || **input == '\t')
+		handle_token_end(ta);
+	else if (!ta->in_q && ft_strchr("<>|$", **input))
+		handle_special_chars(ta, input);
+	else
+		ta->token[ta->tokenindex++] = **input;
+}
+
+/*
  * Processes a single character during tokenization.
  * Handles memory reallocation for token buffer when needed.
  * Manages different character types:
@@ -10,30 +26,33 @@
  * - Regular characters
  * Core function of character-by-character tokenization process.
 */
-void	process_char(t_ta *ta, char **input)
+void	handle_char_tokenization(t_ta *ta, char **input)
 {
-	size_t	oldsize;
+	size_t	current_size;
+	char	*temp_token;
 
-	oldsize = ta->tokensize + 1;
-	if (ta->tokenindex == ta->tokensize)
+	current_size = ta->tokensize + 1;
+	if (ta->tokenindex >= ta->tokensize)
 	{
 		if (ta->tokensize == 0)
-			ta->tokensize = 1;
+			ta->tokensize = 2;
 		else
-			ta->tokensize = ta->tokensize * 2;
-		ta->token = ft_realloc(ta->token, oldsize * sizeof(char), \
-				(ta->tokensize + 1) * sizeof(char));
-		if (!ta->token)
+			ta->tokensize *= 2;
+		temp_token = malloc((ta->tokensize + 1) * sizeof(char));
+		if (!temp_token)
+		{
+			free(ta->token);
+			ta->token = NULL;
 			return ;
+		}
+		if (ta->token)
+		{
+			ft_memcpy(temp_token, ta->token, current_size * sizeof(char));
+			free(ta->token);
+		}
+		ta->token = temp_token;
 	}
-	if (**input == '"' || **input == '\'' || ta->inquotes)
-		process_quotes(ta, input);
-	else if (**input == ' ' || **input == '\t')
-		handle_token_end(ta);
-	else if (!ta->inquotes && ft_strchr("<>|$", **input))
-		handle_special_chars(ta, input);
-	else
-		ta->token[ta->tokenindex++] = **input;
+	decide_char_processing(ta, input);
 }
 
 /*
@@ -42,74 +61,80 @@ void	process_char(t_ta *ta, char **input)
  * Ensures final token is properly handled.
  * Main driver of lexical analysis process.
 */
-void	process_input(t_ta *ta, char *input)
+void	process_input(t_ta *ta, char **input)
 {
-	while (*input)
+	while (**input)
 	{
-		process_char(ta, &input);
-		input++;
+		handle_char_tokenization(ta, input);
+		(*input)++;
 	}
-	handle_token_end(ta);
+	if (ta->tokenindex > 0 || ta->trailing_space)
+		handle_token_end(ta);
 }
 
 /*
- * Finalizes current token and adds it to token array.
- * Manages quote status and trailing space handling.
- * Resets token index and quote tracking for next token.
- * Called whenever a token boundary is reached.
+ * Processes the end of a token.
+ * Adds the current token to the token array.
+ * Resets token buffer for next token.
+ * Manages trailing spaces as separate tokens.
 */
 void	handle_token_end(t_ta *ta)
 {
-	int		was_quoted;
-
-	was_quoted = ta->second_quote;
-	if (ta->tokenindex > 0 || ta->trailing_space)
+	if (ta->tokenindex > 0)
 	{
-		if (ta->count >= ta->capacity)
-			resize_token_array(ta);
 		ta->token[ta->tokenindex] = '\0';
-		if (ta->trailing_space && ta->tokenindex == 0)
-			handle_trailing_space(ta, was_quoted);
-		else
-		{
-			ta->quoted[ta->count] = was_quoted;
-			add_token(ta, ta->token);
-		}
+		append_token_to_array(ta, ta->token);
 		ta->tokenindex = 0;
-		ta->second_quote = 0;
+	}
+	if (ta->trailing_space)
+	{
+		handle_trailing_space(ta, ta->second_quote);
+		ta->trailing_space = 0;
 	}
 }
 
 /*
- * Adds new token to token array.
- * Handles dynamic resizing of token storage if needed.
- * Manages quote status tracking for token.
+ * Adds a processed token to the token array.
+ * Handles dynamic resizing of the token array.
+ * Copies token string and quote status tracking for token.
  * Returns 0 on success, 1 on allocation failure.
 */
-int	add_token(t_ta *ta, char *token)
+int	append_token_to_array(t_ta *ta, char *token)
 {
 	char	**new_tokens;
 	int		*new_quoted;
-	size_t	oldsize;
+	int		i;
 
-	if (ta->count == ta->capacity)
+	if (ta->t_tot == ta->cap)
 	{
-		oldsize = ta->capacity;
-		ta->capacity *= 2;
-		new_tokens = ft_realloc(ta->tokens, oldsize * sizeof(char *), \
-				sizeof(char *) * ta->capacity);
-		new_quoted = ft_realloc(ta->quoted, oldsize * sizeof(int), \
-				sizeof(int) * ta->capacity);
+		ta->cap = (ta->cap == 0) ? 4 : ta->cap * 2;
+		new_tokens = malloc(sizeof(char *) * ta->cap);
+		new_quoted = malloc(sizeof(int) * ta->cap);
 		if (!new_tokens || !new_quoted)
-			return (add_token_failed(ta));
+		{
+			if (new_tokens)
+				free(new_tokens);
+			if (new_quoted)
+				free(new_quoted);
+			return (handle_token_add_failure(ta));
+		}
+		i = 0;
+		while (i < ta->t_tot)
+		{
+			new_tokens[i] = ta->tokens[i];
+			new_quoted[i] = ta->quoted[i];
+			i++;
+		}
+		free(ta->tokens);
+		free(ta->quoted);
 		ta->tokens = new_tokens;
 		ta->quoted = new_quoted;
 	}
-	ta->tokens[ta->count] = ft_strdup(token);
-	if (!ta->tokens[ta->count])
+	ta->tokens[ta->t_tot] = ft_strdup(token);
+	if (!ta->tokens[ta->t_tot])
 		return (1);
-	ta->quoted[ta->count] = ta->second_quote;
-	ta->count++;
+	ta->quoted[ta->t_tot] = ta->second_quote;
+	ta->t_tot++;
 	return (0);
 }
 
@@ -122,23 +147,26 @@ int	add_token(t_ta *ta, char *token)
  * - Handles cleanup in case of errors
  * Returns NULL if analysis fails, otherwise returns completed token array.
 */
-t_ta	*lexer(char *input)
+t_ta	*tokenize_input_string(char *input)
 {
 	t_ta	*ta;
+	int		quotes_at_start;
 
+	quotes_at_start = 0;
 	ta = tokenarray_init();
 	if (!ta)
 		return (NULL);
-	if (is_only_quotes(input))
-		return (create_special_empty_token(ta));
-	process_input(ta, input);
-	if (check_unclosed_quotes(ta))
-		return (clean_lexer(ta));
-	if (ta->tokenindex > 0)
-		ta->token[ta->tokenindex] = '\0';
-	if (ta->tokenindex > 0 && add_token(ta, ta->token))
-		return (clean_lexer(ta));
-	if (!ta->count)
-		return (clean_lexer(ta));
+	if (contains_only_quotes(input))
+		quotes_at_start = 1;
+	process_input(ta, &input);
+	if (validate_quote_closure(ta))
+		return (cleanup_lexer_resources(ta));
+	if (ta->t_tot == 0)
+	{
+		if (quotes_at_start)
+			return (create_empty_quoted_token(ta));
+		cleanup_lexer_resources(ta);
+		return (NULL);
+	}
 	return (ta);
 }

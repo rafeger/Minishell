@@ -14,7 +14,7 @@ t_cmd	*setup_pipe_cmd(t_ta *new_ta, t_ta *ta, int idx, char **stok)
 	new_ta->tokens = stok;
 	if (!init_quoted_array(new_ta, ta, idx))
 	{
-		cleanup_pipe_data(new_ta, stok, new_ta->count);
+		cleanup_pipe_data(new_ta, stok, new_ta->t_tot);
 		return (NULL);
 	}
 	next_cmd = parse_tokens(new_ta);
@@ -48,7 +48,7 @@ int	handle_pipe(t_cmd *cmd, t_ta *ta, int index)
 	t_cmd	*next_cmd;
 	char	**sub_tokens;
 
-	if (index + 1 >= ta->count)
+	if (index + 1 >= ta->t_tot)
 		return (0);
 	new_ta = init_new_ta(ta, index);
 	if (!new_ta)

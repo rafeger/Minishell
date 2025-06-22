@@ -1,132 +1,176 @@
 #include "../../include/minishell.h"
 
-/*
- * Processes single token during parsing.
- * Handles different token types:
- * - Pipes
- * - Redirections
- * - Empty tokens
- * - Regular arguments
- * Returns 0 on pipe handling failure, 1 on success.
-*/
+/**
+ * @brief Processes a single token during the parsing phase.
+ *
+ * This function acts as a dispatcher, handling different types of tokens
+ * encountered while parsing a command line. It determines if the token is
+ * a pipe, a redirection, an empty token, or a regular argument, and calls
+ * the appropriate handler function. It ensures that the command structure
+ * is built correctly based on the token's type.
+ *
+ * @param cmd A pointer to the current command structure being built.
+ * @param ta A pointer to the token array structure, containing all tokens and their quoted status.
+ * @param i A pointer to the current index in the token array, which will be advanced by this function.
+ * @return Returns 0 on failure during pipe handling, 1 on success for all other token types.
+ */
 int	process_token(t_cmd *cmd, t_ta *ta, int *i)
 {
 	if (!handle_pipe_token(cmd, ta, i))
 		return (0);
-	if (*i < ta->count)
+	if (*i >= ta->t_tot)
+		return (1);
+	if (ft_strcmp(ta->tokens[*i], " ") == 0 && !ta->quoted[*i] && !cmd->name)
 	{
-		if (ft_strcmp(ta->tokens[*i], " ") == 0 && \
-				!ta->quoted[*i] && !cmd->name)
-			return (1);
-		if (get_redirect_type(ta->tokens[*i]) >= 0 && !ta->quoted[*i])
-			handle_redirect(cmd, ta, i);
-		else if (ft_strcmp(ta->tokens[*i], "") == 0)
-			handle_empty_token(cmd, ta, i);
-		else
-			add_argument(cmd, ta->tokens[*i], ta->quoted[*i]);
+		(*i)++; 
+		return (1);
+	}
+	if (get_redirect_type(ta->tokens[*i]) >= 0 && !ta->quoted[*i])
+	{
+		handle_redirect(cmd, ta, i);
+	}
+	else if (ft_strcmp(ta->tokens[*i], "") == 0)
+	{
+		handle_empty_token(cmd, ta, i);
+        (*i)++; 
+	}
+	else
+	{
+		add_argument(cmd, ta->tokens[*i], ta->quoted[*i]);
+		(*i)++; 
 	}
 	return (1);
 }
 
-/*
- * Processes redirection tokens.
- * Identifies redirection type.
- * Handles redirection file name.
- * Creates and adds redirection structure to command.
-*/
+/**
+ * @brief Handles redirection tokens and their associated file names.
+ *
+ * This function is invoked when a redirection operator (`<`, `>`, `<<`, `>>`)
+ * is encountered. It determines the type of redirection, then finds the
+ * subsequent token which represents the target filename (skipping any
+ * intervening whitespace tokens). Finally, it creates and adds a new
+ * redirection structure to the current command.
+ *
+ * @param cmd A pointer to the current command structure.
+ * @param ta A pointer to the token array.
+ * @param i A pointer to the current index in the token array, pointing to the redirection operator.
+ */
 void	handle_redirect(t_cmd *cmd, t_ta *ta, int *i)
 {
-	int	redirect_type;
-	int	next_idx;
+	int	redir_kind;
+	int	file_token_idx;
 
-	redirect_type = get_redirect_type(ta->tokens[*i]);
-	if (redirect_type >= 0 && *i + 1 < ta->count)
+	redir_kind = get_redirect_type(ta->tokens[*i]);
+	if (redir_kind >= 0)
 	{
-		next_idx = *i + 1;
-		while (next_idx < ta->count && \
-				ft_strcmp(ta->tokens[next_idx], " ") == 0)
-			next_idx++;
-		if (next_idx < ta->count && ta->tokens[next_idx])
+		file_token_idx = *i + 1;
+		while (file_token_idx < ta->t_tot && ft_strcmp(ta->tokens[file_token_idx], " ") == 0)
+			file_token_idx++;
+		if (file_token_idx < ta->t_tot && ta->tokens[file_token_idx])
 		{
-			add_redirect(cmd, redirect_type, ta->tokens[next_idx], \
-					ta->quoted[next_idx]);
-			*i = next_idx;
+			add_redirect(cmd, redir_kind, ta->tokens[file_token_idx], ta->quoted[file_token_idx]);
+			*i = file_token_idx + 1; 
 		}
+		else
+			(*i)++;
 	}
 }
 
-/*
- * Processes pipe token in command sequence.
- * Creates new command structure for piped command.
- * Links commands in pipeline.
- * Returns 0 on failure, 1 on success.
-*/
+/**
+ * @brief Processes a pipe token in the command sequence.
+ *
+ * When a pipe character ('|') is found, this function is responsible for
+ * creating a new command structure for the command that follows the pipe.
+ * It links the current command to this new command, effectively building
+ * the pipeline. If the `handle_pipe` operation fails, it cleans up the
+ * current command and signals failure.
+ *
+ * @param cmd A pointer to the current command structure, which will be linked to the next.
+ * @param ta A pointer to the token array.
+ * @param i A pointer to the current index in the token array, pointing to the pipe.
+ * @return Returns 0 if `handle_pipe` fails, 1 on successful handling of the pipe.
+ */
 int	handle_pipe_token(t_cmd *cmd, t_ta *ta, int *i)
 {
 	if (ft_strcmp(ta->tokens[*i], "|") == 0 && !ta->quoted[*i])
 	{
 		if (!handle_pipe(cmd, ta, *i))
 		{
-			free_command(cmd);
+			free_command(cmd); 
 			return (0);
 		}
-		*i = ta->count;
+		*i = ta->t_tot; 
 	}
 	return (1);
 }
 
-/*
- * Processes empty token in command sequence.
- * Handles space-separated empty tokens.
- * Manages empty arguments, appropriately.
-*/
+/**
+ * @brief Processes empty tokens, particularly those resulting from unquoted spaces.
+ *
+ * This function handles scenarios where an empty token (e.g., from `""` or `''`)
+ * is encountered. It specifically deals with empty tokens that might be
+ * followed by a space, ensuring they are correctly added as arguments.
+ *
+ * @param cmd A pointer to the current command structure.
+ * @param ta A pointer to the token array.
+ * @param i A pointer to the current index in the token array, pointing to the empty token.
+ */
 void	handle_empty_token(t_cmd *cmd, t_ta *ta, int *i)
 {
-	char	*tmp;
+	char	*space_content;
 
-	if ((*i + 1) < ta->count && ft_isspace(ta->tokens[*i + 1][0]))
-	{
-		tmp = ft_strdup(ta->tokens[*i + 1]);
-		if (tmp)
-		{
-			add_argument(cmd, tmp, ta->quoted[*i]);
-			free(tmp);
-			(*i)++;
-		}
+    if ((*i + 1) < ta->t_tot && ft_strcmp(ta->tokens[*i + 1], " ") == 0 && !ta->quoted[*i + 1])
+    {
+        space_content = ft_strdup(ta->tokens[*i + 1]);
+        if (space_content)
+        {
+            add_argument(cmd, space_content, ta->quoted[*i + 1]); 
+            free(space_content);
+        }
+    }
+    else
+    {
+        add_argument(cmd, "", ta->quoted[*i]);
 	}
-	else
-		add_argument(cmd, "", ta->quoted[*i]);
 }
 
-/*
- * Main parsing function for token array.
- * Creates and populates command structure.
- * Handles all token types and command building.
- * Returns NULL on failure of completed command structure.
-*/
+/**
+ * @brief Main function to parse a token array into a command structure.
+ *
+ * This is the primary parsing routine. It iterates through an array of tokens
+ * generated by the lexer, constructs `t_cmd` structures, handles arguments,
+ * redirections, and pipelines. It skips initial empty tokens and builds
+ * the command step-by-step using helper functions.
+ *
+ * @param ta A pointer to the token array structure to be parsed.
+ * @return Returns a pointer to the fully constructed `t_cmd` structure (or the head of a pipeline).
+ * @return Returns NULL if parsing fails or if the resulting command is empty/invalid.
+ */
 t_cmd	*parse_tokens(t_ta *ta)
 {
-	t_cmd	*cmd;
-	int		i;
+	t_cmd	*command_structure;
+	int		token_idx;
 
 	if (!ta || !ta->tokens)
 		return (NULL);
-	cmd = cmd_init();
-	if (!cmd)
+	command_structure = cmd_init(); 
+	if (!command_structure)
 		return (NULL);
-	i = 0;
-	while (i < ta->count && ft_strcmp(ta->tokens[i], "") == 0)
-		i++;
-	while (i < ta->count)
+	token_idx = 0;
+	while (token_idx < ta->t_tot && ft_strcmp(ta->tokens[token_idx], "") == 0)
+		token_idx++;
+	while (token_idx < ta->t_tot)
 	{
-		if (!process_token(cmd, ta, &i))
+		if (!process_token(command_structure, ta, &token_idx))
+		{
+			free_command(command_structure); 
 			return (NULL);
-		i++;
+		}
 	}
-	if (!cmd->name && cmd->arg_count == 0)
+	if (!command_structure->name && command_structure->arg_count == 0)
 	{
-		free_command(cmd);
+		free_command(command_structure);
 		return (NULL);
 	}
-	return (cmd);
+	return (command_structure);
 }

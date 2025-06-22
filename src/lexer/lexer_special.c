@@ -14,15 +14,15 @@ void	handle_trailing_space(t_ta *ta, int was_quoted)
 	{
 		ta->token[0] = ' ';
 		ta->token[1] = '\0';
-		add_token(ta, ta->token);
+		append_token_to_array(ta, ta->token);
 	}
 	else
 	{
 		tmp = ft_strjoin(ta->token, " ");
 		if (tmp)
 		{
-			ta->quoted[ta->count] = was_quoted;
-			add_token(ta, tmp);
+			ta->quoted[ta->t_tot] = was_quoted;
+			append_token_to_array(ta, tmp);
 			free(tmp);
 		}
 	}
@@ -46,7 +46,7 @@ static void	process_special_token(t_ta *ta, char **input)
 	}
 	else
 		ta->token[1] = '\0';
-	add_token(ta, ta->token);
+	append_token_to_array(ta, ta->token);
 }
 
 /*
@@ -70,7 +70,7 @@ void	handle_special_chars(t_ta *ta, char **input)
 		if (ta->tokenindex > 0)
 		{
 			ta->token[ta->tokenindex] = '\0';
-			add_token(ta, ta->token);
+			append_token_to_array(ta, ta->token);
 			ta->tokenindex = 0;
 		}
 		ta->token[0] = **input;
@@ -79,8 +79,8 @@ void	handle_special_chars(t_ta *ta, char **input)
 }
 
 /*
- * Expands token array capacity.
- * Doubles current capacity when needed.
+ * Expands token array cap.
+ * Doubles current cap when needed.
  * Initializes new memory space.
  * Essential for dynamic token storage.
 */
@@ -91,21 +91,21 @@ void	resize_token_array(t_ta *ta)
 	int		*new_quoted;
 	int		i;
 
-	new_capacity = ta->capacity * 2;
-	new_tokens = ft_realloc(ta->tokens, ta->capacity * sizeof(char *), \
+	new_capacity = ta->cap * 2;
+	new_tokens = ft_realloc(ta->tokens, ta->cap * sizeof(char *), \
 			new_capacity * sizeof(char *));
-	new_quoted = ft_realloc(ta->quoted, ta->capacity * sizeof(int), \
+	new_quoted = ft_realloc(ta->quoted, ta->cap * sizeof(int), \
 			new_capacity * sizeof(int));
 	if (!new_tokens || !new_quoted)
 		return ;
 	ta->tokens = new_tokens;
 	ta->quoted = new_quoted;
-	i = ta->capacity;
+	i = ta->cap;
 	while (i < new_capacity)
 	{
 		ta->tokens[i] = NULL;
 		ta->quoted[i] = 0;
 		i++;
 	}
-	ta->capacity = new_capacity;
+	ta->cap = new_capacity;
 }

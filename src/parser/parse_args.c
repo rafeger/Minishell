@@ -1,81 +1,80 @@
 #include "../../include/minishell.h"
 
+#include "../../include/minishell.h"
 
-// /*
-//  * Determines if two arguments should be concatenated.
-//  * Chekcs specific patterns requiring concatenation:
-//  * - Variables with special characters ($, :, =)
-//  * - Numeric values with variables
-//  * Returns 1 if concatenation needed, 0 otherwise.
-// */
-// int	should_concat(char *prev_arg, char *curr_arg)
-// {
-// 	if (!prev_arg || !curr_arg || !*prev_arg || !*curr_arg)
-// 		return (0);
-// 	if (prev_arg[0] == '$' && (curr_arg[0] == ':' || curr_arg[0] == '$' || \
-// 				curr_arg[0] == '='))
-// 		return (1);
-// 	if (prev_arg[ft_strlen(prev_arg) - 1] == ':' && curr_arg[0] == '$')
-// 		return (1);
-// 	if (prev_arg[ft_strlen(prev_arg) - 1] == '$' && curr_arg[0] == '=')
-// 		return (1);
-// 	if (ft_isdigit(prev_arg[0]) && curr_arg[0] == '$')
-// 		return (1);
-// 	if (prev_arg[ft_strlen(prev_arg) - 1] == '$')
-// 		return (1);
-// 	return (0);
-// }
-static int	concat_check(const char *prev_token, const char *curr_token)
+/**
+ * @brief Checks if two consecutive arguments should be merged into one.
+ *
+ * This function defines rules for concatenating arguments, often seen in shell
+ * expansions where a variable might be immediately followed by a colon, another
+ * variable, or an equals sign. It also handles cases where a numeric value
+ * is followed by a variable, or a dollar sign is at the end of the previous argument.
+ *
+ * @param prev_arg The preceding argument string.
+ * @param curr_arg The current argument string.
+ * @return Returns 1 if concatenation is required.
+ * @return Returns 0 otherwise.
+ */
+int	should_concat(char *prev_arg, char *curr_arg)
 {
-	size_t	prev_len;
-
-	if (!prev_token || !curr_token || !*prev_token || !*curr_token)
+	if (!prev_arg || !curr_arg || !*prev_arg || !*curr_arg)
 		return (0);
-
-	prev_len = ft_strlen(prev_token);
-	if (prev_token[0] == '$' && (curr_token[0] == ':' 
-		|| curr_token[0] == '$' || curr_token[0] == '='))
+	if (prev_arg[0] == '$' && (curr_arg[0] == ':' || curr_arg[0] == '$' || \
+				curr_arg[0] == '='))
 		return (1);
-	if (prev_len > 0 && prev_token[prev_len - 1] == ':' && curr_token[0] == '$')
+	if (ft_strlen(prev_arg) > 0 && prev_arg[ft_strlen(prev_arg) - 1] == ':' && curr_arg[0] == '$')
 		return (1);
-	if (prev_len > 0 && prev_token[prev_len - 1] == '$' && curr_token[0] == '=')
+	if (ft_strlen(prev_arg) > 0 && prev_arg[ft_strlen(prev_arg) - 1] == '$' && curr_arg[0] == '=')
 		return (1);
-	if (ft_isdigit(prev_token[0]) && curr_token[0] == '$')
+	if (ft_isdigit(prev_arg[0]) && curr_arg[0] == '$')
 		return (1);
-	if (prev_len > 0 && prev_token[prev_len - 1] == '$')
+	if (ft_strlen(prev_arg) > 0 && prev_arg[ft_strlen(prev_arg) - 1] == '$')
 		return (1);
-
 	return (0);
 }
 
-
-/*
- * Concatenates current argument with previous argument.
- * Handles memory management for concatenated string.
- * Updates command's argument array with new concatenated value.
-*/
+/**
+ * @brief Merges the current argument with the last argument in the command structure.
+ *
+ * This function performs the actual concatenation of two argument strings.
+ * It allocates new memory for the combined string, frees the old previous argument,
+ * and updates the command's argument array. This is used when `should_concat`
+ * determines that arguments should logically be treated as a single unit.
+ *
+ * @param cmd A pointer to the command structure where arguments are stored.
+ * @param arg The current argument string to be concatenated.
+ */
 void	concat_argument(t_cmd *cmd, char *arg)
 {
-	char	*new_arg;
-	int		last_idx;
+	char	*combined_arg;
+	int		last_index;
 
-	last_idx = cmd->arg_count - 1;
-	new_arg = ft_strjoin(cmd->args[last_idx], arg);
-	if (!new_arg)
+	last_index = cmd->arg_count - 1;
+	combined_arg = ft_strjoin(cmd->args[last_index], arg);
+	if (!combined_arg)
 		return ;
-	free(cmd->args[last_idx]);
-	cmd->args[last_idx] = new_arg;
+
+	free(cmd->args[last_index]);
+	cmd->args[last_index] = combined_arg;
 }
 
-/*
- * Adds new argument to command structure.
- * Handles memory reallocation for argument array growth.
- * Manages command name assignment for first argument.
- * Tracks quote status for each argument.
-*/
+/**
+ * @brief Appends a new argument to the command's argument list.
+ *
+ * This function manages the dynamic growth of the argument array for a command.
+ * It first checks if the new argument should be concatenated with the previous one.
+ * If not, it reallocates memory for the argument array and the corresponding
+ * quoted status array, duplicates the argument string, stores its quoted status,
+ * and updates the argument count. It also assigns the first argument as the
+ * command's primary name.
+ *
+ * @param cmd A pointer to the command structure to which the argument will be added.
+ * @param arg The argument string to add.
+ * @param quoted An integer indicating whether the argument was originally quoted (1) or not (0).
+ */
 void	add_argument(t_cmd *cmd, char *arg, int quoted)
 {
-	if (cmd->arg_count > 0 && concat_check(cmd->args[cmd->arg_count - 1], arg))
+	if (cmd->arg_count > 0 && should_concat(cmd->args[cmd->arg_count - 1], arg))
 	{
 		concat_argument(cmd, arg);
 		return ;
@@ -99,31 +98,5 @@ void	add_argument(t_cmd *cmd, char *arg, int quoted)
 	{
 		cmd->name = ft_strdup(arg);
 		cmd->quoted = quoted;
-	}
-}
-
-void	add_argument(t_cmd *cmd, char *arg_val, int is_quoted)
-{
-	if (cmd->arg_count > 0 && concat_check(cmd->args[cmd->arg_count - 1], arg_val))
-	{
-		if (!s_try_concat_arg(cmd, arg_val))
-			return ;
-		return ;
-	}
-	if (!s_expand_arg_arrays(cmd))
-	{
-		return ;
-	}
-	cmd->args[cmd->arg_count] = ft_strdup(arg_val);
-	if (!cmd->args[cmd->arg_count])
-		return ;
-	cmd->arg_quoted[cmd->arg_count] = is_quoted;
-	cmd->arg_count++;
-	if (!cmd->name)
-	{
-		cmd->name = ft_strdup(arg_val);
-		if (!cmd->name)
-			return ;
-		cmd->quoted = is_quoted;
 	}
 }

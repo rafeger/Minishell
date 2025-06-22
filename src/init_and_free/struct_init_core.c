@@ -17,18 +17,18 @@ t_cmd	*cmd_init(void)
 		return (NULL);
 	cmd->name = NULL;
 	cmd->args = NULL;
-	cmd->arg_count = 0;
-	cmd->n_quoted = 0;
-	cmd->redirects = NULL;
+	cmd->has_next = 0;
+	cmd->quoted = 0;
+	cmd->arg_quoted = NULL;
 	cmd->next = NULL;
 	cmd->prev = NULL;
 	cmd->fd_info = NULL;
 	cmd->tty_backup = -1;
-	cmd->has_heredoc = 0;
 	cmd->heredoc_fd = -1;
-	cmd->has_next = 0;
-	cmd->quoted = 0;
-	cmd->arg_quoted = NULL;
+	cmd->n_quoted = 0;
+	cmd->redirects = NULL;
+	cmd->arg_count = 0;
+	cmd->has_heredoc = 0;
 	return (cmd);
 }
 

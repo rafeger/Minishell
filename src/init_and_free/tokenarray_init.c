@@ -5,14 +5,14 @@
  * Sets initial memory to zero using ft_memset.
  * Used internally by tokenarray initialization.
 */
-static int	*alloc_quoted(int capacity)
+static int	*alloc_quoted(int cap)
 {
 	int	*quoted;
 
-	quoted = malloc(sizeof(int) * capacity);
+	quoted = malloc(sizeof(int) * cap);
 	if (!quoted)
 		return (NULL);
-	ft_memset(quoted, 0, sizeof(int) * capacity);
+	ft_memset(quoted, 0, sizeof(int) * cap);
 	return (quoted);
 }
 
@@ -22,16 +22,16 @@ static int	*alloc_quoted(int capacity)
  * Part of the two-step initialization process for token arrays.
 */
 void	tokenarray_init_second(t_ta *ta)
-{
-	ta->second_quote = 0;
-	ta->count = 0;
-	ta->capacity = 10;
+{	
+	ta->tokenindex = 0;
+	ta->in_q = 0;
+	ta->quotechar = '\0';
 	ta->token = NULL;
 	ta->tokensize = 0;
-	ta->tokenindex = 0;
-	ta->inquotes = 0;
-	ta->quotechar = '\0';
 	ta->trailing_space = 0;
+	ta->second_quote = 0;
+	ta->t_tot = 0;
+	ta->cap = 10;
 }
 
 /*

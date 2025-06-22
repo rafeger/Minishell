@@ -1,94 +1,125 @@
 #include "../../include/minishell.h"
 
-/*
- * Determines if command is a dot of double dot command.
- * Returns:
- * - 1 for single dot.
- * - 2 for double dot or multiple dots.
- * - 0 for other commands.
-*/
+/**
+ * @brief Categorizes a given command string based on whether it represents a dot command.
+ *
+ * This function examines the input command string to determine if it's a special
+ * dot command ('.') or a double-dot command ('..'). It helps in identifying
+ * commands that require specific handling due to their filesystem implications.
+ *
+ * @param cmd The command string to evaluate.
+ * @return Returns 1 if the command is a single dot ('.').
+ * @return Returns 2 if the command is a double dot ('..') or multiple dots (e.g., '...').
+ * @return Returns 0 if the command is neither a single dot nor a double/multiple dot command.
+ */
 int	is_dot_command(const char *cmd)
 {
+	int	len;
+
 	if (!cmd)
 		return (0);
-	if (ft_strcmp(cmd, ".") == 0)
+	len = ft_strlen(cmd);
+	if (len == 1 && cmd[0] == '.')
 		return (1);
-	if (cmd[0] == '.' && cmd[1] == '.' && !cmd[2])
-		return (2);
+	if (len >= 2 && cmd[0] == '.' && cmd[1] == '.')
+	{
+		int i = 2;
+		while (i < len && cmd[i] == '.')
+			i++;
+		if (i == len)
+			return (2);
+	}
+	// Check for commands that start with '/' or '.' but are not just dots
 	if (cmd[0] != '/' && cmd[0] != '.')
 		return (0);
-	while (*cmd == '.')
-		cmd++;
-	if (*cmd == '\0')
-		return (2);
 	return (0);
 }
 
-/*
- * Checks if input contains only path-related characters (/, ., spaces).
- * Requires at least one dot or slash.
- * Returns 1 if string contains only path chars, 0 otherwise.
- * Used to identify potential directory paths.
-*/
+/**
+ * @brief Verifies if a given string consists solely of characters typically found in file paths.
+ *
+ * This function checks if the input string contains only path-related characters
+ * such as slashes ('/'), dots ('.'), and whitespace. It also requires that
+ * the string contains at least one dot or slash to be considered a path.
+ * This helps in pre-validating user input that is expected to be a directory path.
+ *
+ * @param input The string to be checked.
+ * @return Returns 1 if the string contains only path characters and meets the minimum path criteria.
+ * @return Returns 0 otherwise.
+ */
 int	is_only_path_chars(char *input)
 {
-	int	i;
-	int	has_dot;
+	int	idx;
+	int	found_path_char;
 
-	i = 0;
-	has_dot = 0;
-	while (input[i])
+	idx = 0;
+	found_path_char = 0;
+	if (!input)
+		return (0);
+	while (input[idx])
 	{
-		if (input[i] != '/' && input[i] != '.' && !ft_isspace(input[i]))
+		if (input[idx] != '/' && input[idx] != '.' && !ft_isspace(input[idx]))
 			return (0);
-		if (input[i] == '.')
-			has_dot = 1;
-		i++;
+		if (input[idx] == '/' || input[idx] == '.')
+			found_path_char = 1;
+		idx++;
 	}
-	return (i > 0 && (input[0] == '/' || has_dot));
+	return (idx > 0 && found_path_char);
 }
 
-/*
- * Handles special dot command cases with appropriate error messages.
- * For single dot: displays usage error.
- * For double dot: displays command not found error.
- * Updates shell exit status accordingly.
-*/
+/**
+ * @brief Manages the display of error messages and updates shell status for special dot commands.
+ *
+ * This function differentiates between single dot ('.') and double dot ('..')
+ * commands and outputs the appropriate error messages to standard error.
+ * It also sets the shell's last exit status according to the type of dot command encountered.
+ * This ensures consistent error reporting for these specific built-in command variations.
+ *
+ * @param cmd The command string that was identified as a dot command.
+ * @param shell_data A pointer to the shell's data structure to update the exit status.
+ */
 void	handle_dot_command(const char *cmd, t_shell_data *shell_data)
 {
-	int	type;
+	int	command_category;
 
-	type = is_dot_command(cmd);
-	if (type == 1)
+	command_category = is_dot_command(cmd);
+	if (command_category == 1)
 	{
-		write(2, "minishell: .: filename argument required\n", 41);
-		write(2, ".: usage: . filename [arguments]\n", 33);
+		ft_putstr_fd("minishell: .: filename argument required\n", 2);
+		ft_putstr_fd(".: usage: . filename [arguments]\n", 2);
 		shell_data->last_exit_status = 2;
 	}
-	else if (type == 2)
+	else if (command_category == 2)
 	{
-		write(2, "minishell: ", 11);
-		write(2, (char *)cmd, ft_strlen(cmd));
-		write(2, ": command not found\n", 20);
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd((char *)cmd, 2);
+		ft_putstr_fd(": command not found\n", 2);
 		shell_data->last_exit_status = 127;
 	}
 }
 
-/*
- * Verifies if input represents a directory path.
- * Checks both path format and actual filesystem status.
- * Returns 1 and displays error if path is directory.
- * Returns 0 for non-directory paths or invalid paths.
-*/
+/**
+ * @brief Determines if the given input string corresponds to an existing directory path.
+ *
+ * This function first checks if the input string is composed entirely of valid
+ * path characters. If it is, it then uses `stat` to check the actual filesystem
+ * entry. If the path exists and points to a directory, an error message is
+ * printed to standard error, and the function returns true.
+ * This is crucial for preventing commands from attempting to execute directories.
+ *
+ * @param input The string representing a potential path.
+ * @return Returns 1 if the input is a valid path to a directory, and an error message is displayed.
+ * @return Returns 0 if the input is not a directory or is an invalid path.
+ */
 int	check_directory_path(char *input)
 {
-	struct stat	path_stat;
+	struct stat	file_info;
 
 	if (!is_only_path_chars(input))
 		return (0);
-	if (stat(input, &path_stat) == 0)
+	if (stat(input, &file_info) == 0)
 	{
-		if (S_ISDIR(path_stat.st_mode))
+		if (S_ISDIR(file_info.st_mode))
 		{
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(input, 2);

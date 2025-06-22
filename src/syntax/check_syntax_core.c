@@ -1,6 +1,7 @@
 
 #include "../../include/minishell.h"
 
+
 /*
  * Checks for multiple consecutive redirection symbols (> or <).
  * Detects invalid sequences like >>> or <<<.

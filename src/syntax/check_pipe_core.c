@@ -1,18 +1,27 @@
 #include "../../include/minishell.h"
 
-/*
- * Validates redirection followed by pipe.
- * Checks for invalid sequences like >| or <|.
- * Returns 1 and displays error if invalid, 0 if valid.
-*/
+
+/**
+ * @brief Validates if a redirection operator is immediately followed by a pipe.
+ *
+ * This function checks for invalid syntax patterns where a redirection symbol
+ * (like '>' or '<') is directly succeeded by a pipe symbol ('|'), optionally
+ * with whitespace in between. Such sequences are syntactically incorrect
+ * in shell commands.
+ *
+ * @param input The entire command line input string.
+ * @param i A pointer to the current index in the input string, pointing to the redirection operator.
+ * @return Returns 1 if an invalid redirection-pipe sequence is found and prints an error message.
+ * @return Returns 0 if the sequence is valid or no such sequence is present.
+ */
 int	check_redir_pipe(char *input, int *i)
 {
-	int	j;
+	int	next_char_idx;
 
-	j = *i + 1;
-	while (input[j] && ft_isspace(input[j]))
-		j++;
-	if (input[j] == '|')
+	next_char_idx = *i + 1;
+	while (input[next_char_idx] && ft_isspace(input[next_char_idx]))
+		next_char_idx++;
+	if (input[next_char_idx] == '|')
 	{
 		ft_putendl_fd("minishell: syntax error near unexpected token '|'", 2);
 		return (1);
@@ -20,31 +29,37 @@ int	check_redir_pipe(char *input, int *i)
 	return (0);
 }
 
-/*
- * Checks for consecutive pipe characters and following content.
- * Validates that:
- * - No more than one pipe character in sequence.
- * - Content follows pipe character.
- * Returns 1 and displays error if invalid, 0 if valid.
-*/
+/**
+ * @brief Examines a sequence of pipe characters for syntax correctness.
+ *
+ * This function ensures that there are no more than one consecutive pipe
+ * characters (e.g., "||" is an error) and that a pipe character is always
+ * followed by some command or argument, not immediately another pipe or end of string.
+ * It helps catch common pipe-related syntax errors.
+ *
+ * @param input The entire command line input string.
+ * @param i A pointer to the current index in the input string, pointing to a pipe character.
+ * @return Returns 1 if an invalid pipe sequence is found and prints an error message.
+ * @return Returns 0 if the pipe sequence is syntactically valid.
+ */
 int	check_pipe_sequence(char *input, int *i)
 {
-	int	count;
-	int	j;
+	int	pipe_count;
+	int	trailing_char_idx;
 
-	count = 1;
-	while (input[*i + count] && input[*i + count] == '|')
-		count++;
-	if (count > 1)
+	pipe_count = 1;
+	while (input[*i + pipe_count] && input[*i + pipe_count] == '|')
+		pipe_count++;
+	if (pipe_count > 1)
 	{
 		ft_putendl_fd("minishell: syntax error near unexpected token '||'", 2);
-		*i += count - 1;
+		*i += pipe_count - 1;
 		return (1);
 	}
-	j = *i + 1;
-	while (input[j] && ft_isspace(input[j]))
-		j++;
-	if (!input[j] || input[j] == '|')
+	trailing_char_idx = *i + 1;
+	while (input[trailing_char_idx] && ft_isspace(input[trailing_char_idx]))
+		trailing_char_idx++;
+	if (!input[trailing_char_idx] || input[trailing_char_idx] == '|')
 	{
 		ft_putendl_fd("minishell: syntax error near unexpected token '|'", 2);
 		return (1);
@@ -52,58 +67,63 @@ int	check_pipe_sequence(char *input, int *i)
 	return (0);
 }
 
-/*
- * Verifies input doesn't start with pipe character.
- * Skips leading whitespace before check.
- * Returns 1 and displays error if pipe at start.
- * Returns 0 if start is valid.
-*/
+/**
+ * @brief Checks if the command input begins with a pipe character after skipping leading whitespace.
+ *
+ * A command line should not start with a pipe symbol, as it implies an
+ * unnamed input source which is typically invalid. This function identifies
+ * and reports such syntax errors.
+ *
+ * @param input The command line input string.
+ * @return Returns 1 if the input string starts with a pipe (after trimming whitespace) and prints an error.
+ * @return Returns 0 if the input does not start with a pipe.
+ */
 int	check_pipe_start(char *input)
 {
-	int	i;
+	int	current_idx;
 
-	i = 0;
-	while (input[i] && ft_isspace(input[i]))
-		i++;
-	if (input[i] == '|')
+	current_idx = 0;
+	while (input[current_idx] && ft_isspace(input[current_idx]))
+		current_idx++;
+	if (input[current_idx] == '|')
 	{
-		if (input[i + 1] == '|')
-		{
-			ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd("minishell: ", 2);
+		if (input[current_idx + 1] == '|')
 			ft_putendl_fd("syntax error near unexpected token '||'", 2);
-		}
 		else
-		{
-			ft_putstr_fd("minishell: ", 2);
 			ft_putendl_fd("syntax error near unexpected token '|'", 2);
-		}
 		return (1);
 	}
 	return (0);
 }
 
-/*
- * Main pipe syntax validation function.
- * Checks:
- * - Valid start.
- * - Proper pipe sequences throughout input.
- * Returns 1 if any pipe syntax error found, 0 if valid.
-*/
+/**
+ * @brief Performs a comprehensive syntax check specifically for pipe characters within the input.
+ *
+ * This is the main entry point for validating pipe-related syntax. It first
+ * verifies that the input does not begin with a pipe. Then, it iterates
+ * through the entire input string, checking for correctly formed pipe sequences
+ * wherever a pipe character is encountered.
+ *
+ * @param input The complete command line string to be validated.
+ * @return Returns 1 if any pipe syntax error is detected.
+ * @return Returns 0 if all pipe syntax within the input is valid.
+ */
 int	check_pipe_syntax(char *input)
 {
-	int	i;
+	int	current_pos;
 
 	if (check_pipe_start(input))
 		return (1);
-	i = 0;
-	while (input[i])
+	current_pos = 0;
+	while (input[current_pos])
 	{
-		if (input[i] == '|')
+		if (input[current_pos] == '|')
 		{
-			if (check_pipe_sequence(input, &i))
+			if (check_pipe_sequence(input, &current_pos))
 				return (1);
 		}
-		i++;
+		current_pos++;
 	}
 	return (0);
 }
