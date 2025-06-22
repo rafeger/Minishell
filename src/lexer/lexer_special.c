@@ -14,7 +14,7 @@ void	handle_trailing_space(t_ta *ta, int was_quoted)
 	{
 		ta->token[0] = ' ';
 		ta->token[1] = '\0';
-		append_token_to_array(ta, ta->token);
+		add_token(ta, ta->token);
 	}
 	else
 	{
@@ -22,7 +22,7 @@ void	handle_trailing_space(t_ta *ta, int was_quoted)
 		if (tmp)
 		{
 			ta->quoted[ta->t_tot] = was_quoted;
-			append_token_to_array(ta, tmp);
+			add_token(ta, tmp);
 			free(tmp);
 		}
 	}
@@ -46,7 +46,7 @@ static void	process_special_token(t_ta *ta, char **input)
 	}
 	else
 		ta->token[1] = '\0';
-	append_token_to_array(ta, ta->token);
+	add_token(ta, ta->token);
 }
 
 /*
@@ -70,7 +70,7 @@ void	handle_special_chars(t_ta *ta, char **input)
 		if (ta->tokenindex > 0)
 		{
 			ta->token[ta->tokenindex] = '\0';
-			append_token_to_array(ta, ta->token);
+			add_token(ta, ta->token);
 			ta->tokenindex = 0;
 		}
 		ta->token[0] = **input;

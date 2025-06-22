@@ -49,7 +49,7 @@ t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 	if (!expanded_input)
 		return (NULL);
 	is_empty = (expanded_input[0] == '\0');
-	ta = tokenize_input_string(expanded_input);
+	ta = lexer(expanded_input);
 	free(expanded_input);
 	if (!ta && is_empty)
 	{

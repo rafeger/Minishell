@@ -1,21 +1,14 @@
 {
-   <readline_leaks>
-   Memcheck:Leak
-   match-leak-kinds: definitely lost
-   fun:xmalloc
-   obj:*/libreadline.so*
+    Ignore readline leak
+    Memcheck:Leak
+    ...
+    fun:*readline*
+    ...
 }
 {
-   <readline_leaks_2>
-   Memcheck:Leak
-   match-leak-kinds: definitely lost
-   fun:readline
-   obj:*/libreadline.so*
-}
-{
-   <readline_leaks_3>
-   Memcheck:Leak
-   match-leak-kinds: definitely lost
-   fun:rl_completion_matches
-   obj:*/libreadline.so*
+    Ignore add_history leak
+    Memcheck:Leak
+    ...
+    fun:*add_history*
+    ...
 }

@@ -463,67 +463,67 @@ int				check_if_quotes(char *input, int *i);
 
 /*================================== lexer ===================================*/
 
-void	handle_char_tokenization(t_ta *ta, char **input);
-void	process_input(t_ta *ta, char **input);
-void	handle_token_end(t_ta *ta);
-int	append_token_to_array(t_ta *ta, char *token);
-t_ta	*tokenize_input_string(char *input);
+// void	handle_char_tokenization(t_ta *ta, char **input);
+// void	process_input(t_ta *ta, char **input);
+// void	handle_token_end(t_ta *ta);
+// int	append_token_to_array(t_ta *ta, char *token);
+// t_ta	*tokenize_input_string(char *input);
 
-// From lexer_quote.c
-int	contains_only_quotes(const char *input);
-t_ta	*create_empty_quoted_token(t_ta *ta);
-void	process_empty_quotes(t_ta *ta, char **input);
-void	manage_quote_processing(t_ta *ta, char **input);
-void	process_quote_character(t_ta *ta, char *input);
+// // From lexer_quote.c
+// int	contains_only_quotes(const char *input);
+// t_ta	*create_empty_quoted_token(t_ta *ta);
+// void	process_empty_quotes(t_ta *ta, char **input);
+// void	manage_quote_processing(t_ta *ta, char **input);
+// void	process_quote_character(t_ta *ta, char *input);
 
-// From lexer_special.c
-void	handle_trailing_space(t_ta *ta, int was_quoted);
-void	handle_special_chars(t_ta *ta, char **input);
-void	resize_token_array_capacity(t_ta *ta);
+// // From lexer_special.c
+// void	handle_trailing_space(t_ta *ta, int was_quoted);
+// void	handle_special_chars(t_ta *ta, char **input);
+// void	resize_token_array_capacity(t_ta *ta);
 
-// From lexer_util.c
-int	handle_token_add_failure(t_ta *ta);
-int	validate_quote_closure(t_ta *ta);
-t_ta	*cleanup_lexer_resources(t_ta *ta);
-
-
+// // From lexer_util.c
+// int	handle_token_add_failure(t_ta *ta);
+// int	validate_quote_closure(t_ta *ta);
+// t_ta	*cleanup_lexer_resources(t_ta *ta);
 
 
-// /* lexer_core.c */
-// void			process_char(t_ta *ta, char **input);
 
-// void			process_input(t_ta *ta, char *input);
 
-// void			handle_token_end(t_ta *ta);
+/* lexer_core.c */
+void			process_char(t_ta *ta, char **input);
 
-// int				add_token(t_ta *ta, char *token);
+void			process_input(t_ta *ta, char *input);
 
-// t_ta			*lexer(char *input);
+void			handle_token_end(t_ta *ta);
 
-// /* lexer_quote.c */
-// int				is_only_quotes(const char *input);
+int				add_token(t_ta *ta, char *token);
 
-// t_ta			*create_special_empty_token(t_ta *ta);
+t_ta			*lexer(char *input);
 
-// void			handle_empty_quotes(t_ta *ta, char **input);
+/* lexer_quote.c */
+int				is_only_quotes(const char *input);
 
-// void			process_quotes(t_ta *ta, char **input);
+t_ta			*create_special_empty_token(t_ta *ta);
 
-// void			handle_quotes(t_ta *ta, char *input);
+void			handle_empty_quotes(t_ta *ta, char **input);
 
-// /* lexer_special.c */
-// void			handle_trailing_space(t_ta *ta, int was_quoted);
+void			process_quotes(t_ta *ta, char **input);
 
-// void			handle_special_chars(t_ta *ta, char **input);
+void			handle_quotes(t_ta *ta, char *input);
 
-// void			resize_token_array(t_ta *ta);
+/* lexer_special.c */
+void			handle_trailing_space(t_ta *ta, int was_quoted);
 
-// /* lexer_util.c */
-// int				add_token_failed(t_ta *ta);
+void			handle_special_chars(t_ta *ta, char **input);
 
-// t_ta			*clean_lexer(t_ta *ta);
+void			resize_token_array(t_ta *ta);
 
-// int				check_unclosed_quotes(t_ta *ta);
+/* lexer_util.c */
+int				add_token_failed(t_ta *ta);
+
+t_ta			*clean_lexer(t_ta *ta);
+
+int				check_unclosed_quotes(t_ta *ta);
 
 /*================================== parser ==================================*/
 
