@@ -36,20 +36,13 @@ SRCS		=	$(addprefix $(SRC_DIR)/, \
 				parser/parse_redirect.c parser/tokenarray_utils.c \
 				expand/expand_core.c expand/expand_size_utils.c \
 				expand/expand_var_utils.c \
-				execute/command_path.c execute/execute_external.c \
-				execute/fork_and_execute.c execute/invalid_command_exp.c \
-				execute/pipe_setup.c execute/execute_and_pipe_utils.c \
-				execute/execute_external_utils.c execute/heredoc_core.c \
-				execute/pipe_cleanup.c execute/pipe_utils.c \
-				execute/execute_core.c execute/execute_single.c \
-				execute/invalid_command_core.c execute/pipe_core.c \
-				execute/redirections_core.c execute/execute_utils.c \
-				execute/heredoc_sig.c execute/heredoc_utils.c \
-				builtins/cd_builtin.c builtins/env_builtin.c \
-				builtins/export_builtin.c builtins/export_builtin_utils.c \
-				builtins/unset_builtin.c builtins/echo_builtin.c \
-				builtins/exit_builtin.c builtins/export_builtin_error.c \
-				builtins/pwd_builtin.c)
+				exec_zoe/builtin.c exec_zoe/exec.c \
+				exec_zoe/find_cmd.c exec_zoe/here_doc.c \
+				exec_zoe/redirections.c exec_zoe/utils.c \
+				builtin_zoe/ft_cd.c builtin_zoe/ft_echo.c \
+				builtin_zoe/ft_env.c builtin_zoe/ft_exit.c \
+				builtin_zoe/ft_export.c builtin_zoe/ft_export2.c \
+				builtin_zoe/ft_pwd.c builtin_zoe/ft_unset.c)
 
 OBJS		=	$(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 

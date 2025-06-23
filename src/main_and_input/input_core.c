@@ -74,7 +74,7 @@ static void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd)
 	if (cmd)
 	{
 		sd->cmd = cmd;
-		execute_commands(cmd, sd);
+		execute_commands(sd);
 	}
 }
 

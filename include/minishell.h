@@ -22,6 +22,11 @@
 # include <errno.h>
 
 # define PROMPT "minishell> "
+# define REDIR_IN    0
+# define REDIR_OUT   1
+# define HERE_DOC    2
+# define APPEND      3
+
 
 extern volatile sig_atomic_t	g_sig;
 
@@ -138,6 +143,41 @@ typedef struct s_heredoc_data
 	t_shell_data		*sd;
 }	t_heredoc_data;
 
+/*============================== builtin_zoe =================================*/
+int		ft_cd(t_cmd *cmd, t_shell_data *shell_data);
+
+int		ft_echo(t_cmd *cmd);
+
+int		ft_env(t_shell_data *shell_data);
+
+void	ft_exit(t_cmd *cmd, t_shell_data *data);
+
+int		check_valid_name_var(char *str);
+
+int		ft_export(t_cmd *cmd, t_shell_data *shell_data);
+
+int		ft_pwd(void);
+
+int		ft_unset(t_cmd *cmd, t_shell_data *shell_data);
+
+/*============================== exec_zoe ====================================*/
+int		is_builtin(char *cmd);
+
+void	do_builtin(t_shell_data *data, t_cmd *cmd);
+
+int		execute_commands(t_shell_data *data);
+
+char	*get_pathname(char *cmd, t_env *env);
+
+int		heredoc(char *delim, t_shell_data *data);
+
+void 	redirections(t_shell_data *data, t_cmd *cmd);
+
+void	free_all(t_shell_data *data);
+
+char	**convert_list_to_tab_str(t_env *env);
+
+int		ft_envsize(t_env *lst);
 
 /*============================== main_and_input ==============================*/
 
@@ -154,102 +194,102 @@ int	has_eof_been_reached(void);
 
 /*================================= execute ==================================*/
 
-/* command_path.c */
+// /* command_path.c */
 
-char			*find_command_path(const char *cmd, t_env *env);
+// char			*find_command_path(const char *cmd, t_env *env);
 
-/* execute_and_pipe_utils.c */
-int				is_pipeline(t_cmd *cmd);
+// /* execute_and_pipe_utils.c */
+// int				is_pipeline(t_cmd *cmd);
 
-int				is_builtin(char *cmd_name);
+// int				is_builtin(char *cmd_name);
 
-/* execute_utils.c */
-int				handle_special_cases(t_cmd *cmd, t_shell_data *shell_data);
+// /* execute_utils.c */
+// int				handle_special_cases(t_cmd *cmd, t_shell_data *shell_data);
 
-/* execute_core.c */
-void			execute_commands(t_cmd *cmd, t_shell_data *shell_data);
+// /* execute_core.c */
+// void			execute_commands(t_cmd *cmd, t_shell_data *shell_data);
 
-/* execute_single.c */
-int				execute_builtin(t_cmd *cmd, t_shell_data *shell_data);
+// /* execute_single.c */
+// int				execute_builtin(t_cmd *cmd, t_shell_data *shell_data);
 
-void			execute_child_process(t_cmd *cmd, t_shell_data *shell_data);
+// void			execute_child_process(t_cmd *cmd, t_shell_data *shell_data);
 
-/* pipe_core.c */
-void			execute_pipeline(t_cmd *cmd, t_shell_data *shell_data);
+// /* pipe_core.c */
+// void			execute_pipeline(t_cmd *cmd, t_shell_data *shell_data);
 
-/* pipe_setup.c */
+// /* pipe_setup.c */
 
-int				handle_pipe(t_cmd *cmd, t_ta *ta, int index);
+// int				handle_pipe(t_cmd *cmd, t_ta *ta, int index);
 
-void			create_all_pipes(t_cmd *cmd_list);
+// void			create_all_pipes(t_cmd *cmd_list);
 
-/* pipe_cleanup.c */
-void			cleanup_pipeline_fds(t_cmd *cmd);
+// /* pipe_cleanup.c */
+// void			cleanup_pipeline_fds(t_cmd *cmd);
 
-void			cleanup_command_fds(t_cmd *cmd);
+// void			cleanup_command_fds(t_cmd *cmd);
 
-void			cleanup_pipe(t_fd_info *fd_info);
+// void			cleanup_pipe(t_fd_info *fd_info);
 
-void			cleanup_all_pipes(t_cmd *cmd);
+// void			cleanup_all_pipes(t_cmd *cmd);
 
-void			cleanup_heredocs(t_cmd *cmd);
+// void			cleanup_heredocs(t_cmd *cmd);
 
-/* pipe_utils.c */
-void			backup_fds(t_fd_info *fd_info);
+// /* pipe_utils.c */
+// void			backup_fds(t_fd_info *fd_info);
 
-void			restore_fds(t_fd_info *fd_info, t_cmd *cmd);
+// void			restore_fds(t_fd_info *fd_info, t_cmd *cmd);
 
-/* redirections_core.c */
-int				apply_heredocs_only(t_redirect *redirects, t_shell_data *sd);
+// /* redirections_core.c */
+// int				apply_heredocs_only(t_redirect *redirects, t_shell_data *sd);
 
-int				apply_other_redirs(t_redirect *redirects, t_cmd *cmd);
+// int				apply_other_redirs(t_redirect *redirects, t_cmd *cmd);
 
-/* fork_and_execute.c */
+// /* fork_and_execute.c */
 
-int				fork_and_execute(t_cmd *cmd, t_shell_data *sd, \
-					int input_fd, int *pipe_fd);
+// int				fork_and_execute(t_cmd *cmd, t_shell_data *sd, \
+// 					int input_fd, int *pipe_fd);
 
-/* invalid_command_core.c */
+// /* invalid_command_core.c */
 
-int				handle_invalid_command(t_cmd *cmd, t_shell_data *shell_data);
+// int				handle_invalid_command(t_cmd *cmd, t_shell_data *shell_data);
 
-/* invalid_command_expanded.c */
-int				is_expanded_invalid_cmd(const char *name, int quoted, \
-					t_shell_data *sd);
+// /* invalid_command_expanded.c */
+// int				is_expanded_invalid_cmd(const char *name, int quoted, \
+// 					t_shell_data *sd);
 
-void			handle_expanded_invalid_cmd(t_cmd *cmd, t_shell_data *sd);
+// void			handle_expanded_invalid_cmd(t_cmd *cmd, t_shell_data *sd);
 
-/* execute_external.c */
+// /* execute_external.c */
 
-void			execute_external(t_cmd *cmd, t_shell_data *shell_data);
+// void			execute_external(t_cmd *cmd, t_shell_data *shell_data);
 
-void			handle_external_command(t_cmd *cmd, t_shell_data *shell_data);
+// void			handle_external_command(t_cmd *cmd, t_shell_data *shell_data);
 
-/* execute_external_utils.c */
-void			check_file_permissions(char *path, t_cmd *cmd, \
-										t_shell_data *sd);
+// /* execute_external_utils.c */
+// void			check_file_permissions(char *path, t_cmd *cmd, \
+// 										t_shell_data *sd);
 
-void			handle_command_error(t_cmd *cmd, t_shell_data *sd, \
-										int is_permission);
+// void			handle_command_error(t_cmd *cmd, t_shell_data *sd, \
+// 										int is_permission);
 
-int				check_redirect_arg_error(char **args, t_shell_data *shell_data);
+// int				check_redirect_arg_error(char **args, t_shell_data *shell_data);
 
-/* heredoc_core.c */
-int				handle_heredoc(char *delimiter, int eof_quoted, \
-					t_shell_data *sd);
+// /* heredoc_core.c */
+// int				handle_heredoc(char *delimiter, int eof_quoted, \
+// 					t_shell_data *sd);
 
-/* heredoc_sig.c */
-int				setup_signal_handlers(struct sigaction *sa_new, struct \
-					sigaction *sa_old);
+// /* heredoc_sig.c */
+// int				setup_signal_handlers(struct sigaction *sa_new, struct \
+// 					sigaction *sa_old);
 
-int				handle_heredoc_input(t_heredoc_data *her_data, \
-					struct sigaction *sa_old);
+// int				handle_heredoc_input(t_heredoc_data *her_data, \
+// 					struct sigaction *sa_old);
 
-/* heredoc_utils.c */
-int				process_heredoc(t_redirect *current, t_shell_data *sd);
+// /* heredoc_utils.c */
+// int				process_heredoc(t_redirect *current, t_shell_data *sd);
 
-int				handle_single_heredoc(t_cmd *current, t_redirect *redir, \
-					t_shell_data *sd);
+// int				handle_single_heredoc(t_cmd *current, t_redirect *redir, \
+// 					t_shell_data *sd);
 
 /*=================================== env ====================================*/
 
@@ -293,40 +333,40 @@ void			initialize_shlvl(t_env **env);
 
 /*================================= builtins =================================*/
 
-/* cd_builtin.c */
-int				builtin_cd(t_cmd *cmd, t_shell_data *shell_data);
+// /* cd_builtin.c */
+// int				builtin_cd(t_cmd *cmd, t_shell_data *shell_data);
 
-/* echo_builtin.c */
-int				builtin_echo(t_cmd *cmd);
+// /* echo_builtin.c */
+// int				builtin_echo(t_cmd *cmd);
 
-/* env_builtin.c */
-void			builtin_env(t_shell_data *shell_data);
+// /* env_builtin.c */
+// void			builtin_env(t_shell_data *shell_data);
 
-/* exit_builtin.c */
-int				builtin_exit(t_cmd *cmd, t_shell_data *shell_data);
+// /* exit_builtin.c */
+// int				builtin_exit(t_cmd *cmd, t_shell_data *shell_data);
 
-/* export_builtin.c */
-int				builtin_export(t_cmd *cmd, t_shell_data *shell_data);
+// /* export_builtin.c */
+// int				builtin_export(t_cmd *cmd, t_shell_data *shell_data);
 
-/* export_builtin_utils.c */
-void			export_error(char *identifier, char *arg, t_shell_data *sd);
+// /* export_builtin_utils.c */
+// void			export_error(char *identifier, char *arg, t_shell_data *sd);
 
-int				check_exclamation_export(const char *str);
+// int				check_exclamation_export(const char *str);
 
-int				is_valid_first_char(char c);
+// int				is_valid_first_char(char c);
 
-int				is_valid_identifier_char(char c);
+// int				is_valid_identifier_char(char c);
 
-int				is_valid_identifier(const char *str);
+// int				is_valid_identifier(const char *str);
 
-/* export_builtin_error.c */
-void			export_event_error(char *full_arg);
+// /* export_builtin_error.c */
+// void			export_event_error(char *full_arg);
 
-/* unset_builtin.c */
-void			builtin_unset(t_cmd *cmd, t_shell_data *shell_data);
+// /* unset_builtin.c */
+// void			builtin_unset(t_cmd *cmd, t_shell_data *shell_data);
 
-/* pwd_builtin.c */
-int				builtin_pwd(t_cmd *cmd);
+// /* pwd_builtin.c */
+// int				builtin_pwd(t_cmd *cmd);
 
 /*================================== syntax ==================================*/
 

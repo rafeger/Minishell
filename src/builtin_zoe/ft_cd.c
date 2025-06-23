@@ -64,6 +64,7 @@ static void	update_old_pwd(char *arg, t_env *env)
 int	ft_cd(t_cmd *cmd, t_shell_data *shell_data)
 {
 	char	*path;
+
 	if (cmd->arg_count == 1)
 		return (0);
 	if (cmd->arg_count >= 3)
@@ -71,6 +72,7 @@ int	ft_cd(t_cmd *cmd, t_shell_data *shell_data)
 		ft_putstr_fd("bash: cd: too many arguments\n", 2);
 		return (1);
 	}
+	path = cmd->args[1];
 	if (!chdir(path))
 	{
 		update_old_pwd(path, shell_data->env);

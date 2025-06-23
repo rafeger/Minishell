@@ -57,14 +57,14 @@ static int	print_all_var_env(t_env *env)
 	while (tmp_env)
 	{
 		printf("declare -x ");
-		printf(env->key);
+		printf("%s", env->key);
 		printf("=\"%s\"\n", env->value);
 		tmp_env = tmp_env->next;
 	}
 	return (0);
 }
 
-static int	update_env_var(char *str, t_env *env, int len_name)
+static int	update_env_var(char *str, t_env *env, size_t len_name)
 {
 	t_env	*tmp_env;
 
@@ -82,7 +82,7 @@ static int	update_env_var(char *str, t_env *env, int len_name)
 
 static int	name_var_exist(char *str, t_env *env)
 {
-	int		len_name;
+	size_t		len_name;
 	t_env	*tmp_env;
 
 	len_name = 0;
