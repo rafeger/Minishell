@@ -2,12 +2,39 @@
 #include "../../include/minishell.h"
 
 /*
+ * Joins directory and file paths.
+ * Handles memory allocation and path construction.
+ * Returns combined path string.
+ * Returns NULL on allocation failure.
+*/
+static char	*join_path(const char *dir, const char *file)
+{
+	char	*path;
+	char	*tmp;
+
+	if (!dir || !file)
+		return (NULL);
+	path = ft_strdup(dir);
+	if (!path)
+		return (NULL);
+	tmp = path;
+	path = ft_strjoin(path, "/");
+	free(tmp);
+	if (!path)
+		return (NULL);
+	tmp = path;
+	path = ft_strjoin(tmp, file);
+	free(tmp);
+	return (path);
+}
+
+/*
  * Attempts to access command in specified directory.
  * Creates full path by joining directory and command.
  * Verifies execute permission.
  * Returns path if command is executable, NULL otherwise.
 */
-char	*try_path_access(const char *dir, const char *cmd)
+static char	*try_path_access(const char *dir, const char *cmd)
 {
 	char	*full_path;
 	char	*dir_copy;
@@ -30,7 +57,7 @@ char	*try_path_access(const char *dir, const char *cmd)
  * Handles directory path extraction from PATH.
  * Returns full command path if found, NULL otherwise.
 */
-char	*check_single_path(char *dir_start, const char *cmd)
+static char	*check_single_path(char *dir_start, const char *cmd)
 {
 	char	*dir;
 	char	*result;
@@ -53,7 +80,7 @@ char	*check_single_path(char *dir_start, const char *cmd)
  * Returns first matching executable path.
  * Returns NULL if command not found in PATH.
 */
-char	*search_in_path(char *path_env, const char *cmd)
+static char	*search_in_path(char *path_env, const char *cmd)
 {
 	char	*dir_start;
 	char	*result;
@@ -72,33 +99,6 @@ char	*search_in_path(char *path_env, const char *cmd)
 		dir_start++;
 	}
 	return (NULL);
-}
-
-/*
- * Joins directory and file paths.
- * Handles memory allocation and path construction.
- * Returns combined path string.
- * Returns NULL on allocation failure.
-*/
-char	*join_path(const char *dir, const char *file)
-{
-	char	*path;
-	char	*tmp;
-
-	if (!dir || !file)
-		return (NULL);
-	path = ft_strdup(dir);
-	if (!path)
-		return (NULL);
-	tmp = path;
-	path = ft_strjoin(path, "/");
-	free(tmp);
-	if (!path)
-		return (NULL);
-	tmp = path;
-	path = ft_strjoin(tmp, file);
-	free(tmp);
-	return (path);
 }
 
 /*

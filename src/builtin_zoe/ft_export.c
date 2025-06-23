@@ -57,18 +57,18 @@ static int	print_all_var_env(t_env *env)
 	while (tmp_env)
 	{
 		printf("declare -x ");
-		printf(env->key);
+		printf("%s", env->key);
 		printf("=\"%s\"\n", env->value);
 		tmp_env = tmp_env->next;
 	}
 	return (0);
 }
 
-static int	update_env_var(char *str, t_env **env, int len_name)
+static int	update_env_var(char *str, t_env *env, size_t len_name)
 {
 	t_env	*tmp_env;
 
-	tmp_env = *env;
+	tmp_env = env;
 	while (tmp_env)
 	{
 		if ((ft_strncmp(str, tmp_env->key, len_name)) == 0
@@ -80,15 +80,15 @@ static int	update_env_var(char *str, t_env **env, int len_name)
 	return (1);
 }
 
-static int	name_var_exist(char *str, t_env **env)
+static int	name_var_exist(char *str, t_env *env)
 {
-	int		len_name;
+	size_t		len_name;
 	t_env	*tmp_env;
 
 	len_name = 0;
 	while (str[len_name] != '=')
 		len_name++;
-	tmp_env = *env;
+	tmp_env = env;
 	while (tmp_env)
 	{
 		if ((ft_strncmp(str, tmp_env->key, len_name)) == 0
@@ -99,7 +99,7 @@ static int	name_var_exist(char *str, t_env **env)
 	return (0);
 }
 
-static int	create_new_env_var(char *str, t_env **env)
+static int	create_new_env_var(char *str, t_env *env)
 {
 	t_env	*tmp_env;
 	t_env	*new_node;
@@ -113,12 +113,12 @@ static int	create_new_env_var(char *str, t_env **env)
 	new_node->value = get_value(str);
 	new_node->next = NULL;
 	new_node->prev = NULL;
-	if (!(*env))
+	if (!(env))
 	{
-		*env = new_node;
+		env = new_node;
 		return (0);
 	}
-	tmp_env = *env;
+	tmp_env = env;
 	while (tmp_env->next)
 		tmp_env = tmp_env->next;
 	tmp_env->next = new_node;
@@ -126,16 +126,16 @@ static int	create_new_env_var(char *str, t_env **env)
 	return (0);
 }
 
-int	ft_export(char **args, t_env **env)
+int	ft_export(t_cmd *cmd, t_shell_data *shell_data)
 {
 	int	i;
 
-	if (!args[1])
-		return (print_all_var_env(*env));
+	if (!cmd->args[1])
+		return (print_all_var_env(shell_data->env));
 	i = 1;
-	while (args[i])
+	while (cmd->args[i])
 	{
-		create_new_env_var(args[i], env);
+		create_new_env_var(cmd->args[i], shell_data->env);
 		i++;
 	}
 	return (0);

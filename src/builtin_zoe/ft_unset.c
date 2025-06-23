@@ -29,11 +29,11 @@ void	delete_env_var(t_env *tmp_env)
 	tmp_env->next->prev = tmp_env->prev;
 }
 
-int	check_is_in_env(char *var, t_env **env)
+int	check_is_in_env(char *var, t_env *env)
 {
 	t_env	*tmp_env;
 
-	tmp_env = *env;
+	tmp_env = env;
 	while (tmp_env)
 	{
 		if (!ft_strncmp(var, tmp_env->value, ft_strlen(var)))
@@ -48,14 +48,14 @@ int	check_is_in_env(char *var, t_env **env)
 	return (0);
 }
 
-int	ft_unset(char **args, t_env **env)
+int	ft_unset(t_cmd *cmd, t_shell_data *shell_data)
 {
 	int		i;
 
 	i = 0;
-	while (args[i])
+	while (cmd->args[i])
 	{
-		check_is_in_env(args[i], env);
+		check_is_in_env(cmd->args[i], shell_data->env);
 		i++;
 	}
 	return (0);

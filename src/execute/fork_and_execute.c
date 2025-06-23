@@ -7,7 +7,7 @@
  * Closes unused pipe ends.
  * Essential for pipeline communication setup.
 */
-void	handle_pipe_fds(int *pipe_fd)
+static void	handle_pipe_fds(int *pipe_fd)
 {
 	if (!pipe_fd)
 		return ;
@@ -26,7 +26,7 @@ void	handle_pipe_fds(int *pipe_fd)
  * Closes original fd after duplication.
  * Ensures proper input handling for commands.
 */
-void	handle_input_fd(int input_fd)
+static void	handle_input_fd(int input_fd)
 {
 	if (input_fd == STDIN_FILENO)
 		return ;

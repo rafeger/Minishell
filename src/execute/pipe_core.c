@@ -7,7 +7,7 @@
  * Manages file descriptors and process creation.
  * Coordinates entire pipeline execution process.
 */
-void	execute_piped_commands(t_cmd *cmd, t_shell_data *sd)
+static void	execute_piped_commands(t_cmd *cmd, t_shell_data *sd)
 {
 	t_cmd		*current;
 	int			input_fd;
@@ -36,7 +36,7 @@ void	execute_piped_commands(t_cmd *cmd, t_shell_data *sd)
  * Updates shell status based on last command's result.
  * Special handling for SIGQUIT in pipeline.
 */
-void	handle_pid_value(pid_t wpid, int status, t_shell_data *sd, t_cmd *cmd)
+static void	handle_pid_value(pid_t wpid, int status, t_shell_data *sd, t_cmd *cmd)
 {
 	if (wpid == cmd->pid)
 	{
@@ -63,7 +63,7 @@ void	handle_pid_value(pid_t wpid, int status, t_shell_data *sd, t_cmd *cmd)
  * Manages signal handling during wait.
  * Updates shell status based on last command result.
 */
-void	wait_for_children(t_shell_data *shell_data, int child_count)
+static void	wait_for_children(t_shell_data *shell_data, int child_count)
 {
 	int		status;
 	int		i;

@@ -7,7 +7,7 @@
  * Handles execve call and error cases.
  * Performs cleanup and exit on execution failure.
 */
-void	execute_with_path(char *path, t_cmd *cmd, t_shell_data *sd)
+static void	execute_with_path(char *path, t_cmd *cmd, t_shell_data *sd)
 {
 	char	**env_array;
 

@@ -6,7 +6,7 @@
  * Updates shell status and displays error if match found.
  * Used to prevent direct execution of home directory.
 */
-void	handle_home_directory(t_cmd *cmd, t_shell_data *shell_data)
+static void	handle_home_directory(t_cmd *cmd, t_shell_data *shell_data)
 {
 	char	*path;
 

@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
-void	write_in_heredoc(int fd, char *delim, t_shell_data *data)
+static void	write_in_heredoc(int fd, char *delim, t_shell_data *data)
 {
 	char	*buf;
 	(void)data;

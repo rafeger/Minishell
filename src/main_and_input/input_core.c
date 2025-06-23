@@ -4,7 +4,7 @@
  * Safely frees and nullifies the current command structure in shell_data.
  * Essential for preventing memory leaks between command executions.
 */
-void	clear_current_command(t_shell_data *shell_data)
+static void	clear_current_command(t_shell_data *shell_data)
 {
 	if (shell_data->cmd)
 	{
@@ -20,7 +20,7 @@ void	clear_current_command(t_shell_data *shell_data)
  * - Frees input.
  * Returns 1 on syntax error, 0 if syntax is valid.
 */
-int	perform_syntax_validation(char *input, t_shell_data *shell_data)
+static int	perform_syntax_validation(char *input, t_shell_data *shell_data)
 {
 	if (check_syntax(input) != 0)
 	{
@@ -38,7 +38,7 @@ int	perform_syntax_validation(char *input, t_shell_data *shell_data)
  * - Parses tokens into command structure.
  * Returns NULL if any step fails, otherwise returns prepared command.
 */
-t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
+static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 {
 	char	*expanded_input;
 	t_ta	*ta;
@@ -69,12 +69,12 @@ t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
  * - Triggers command execution.
  * No return value as execution status is stored in t_shell_data.
 */
-void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd)
+static void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd)
 {
 	if (cmd)
 	{
 		sd->cmd = cmd;
-		execute_commands(cmd, sd);
+		execute_commands(sd);
 	}
 }
 

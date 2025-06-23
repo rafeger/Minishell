@@ -4,7 +4,7 @@
  * Handles EOF (Ctrl-D) by returning NULL.
  * Before getting input, ensures stdin is properly configured.
 */
-char	*read_user_input(void)
+static char	*read_user_input(void)
 {
 	char	*line;
 

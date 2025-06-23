@@ -1,5 +1,24 @@
-
 #include "../../include/minishell.h"
+
+/*
+ * Handles SIGINT (Ctrl+C) signals during heredoc input.
+ * Updates global signal state and manages readline behavior.
+ * Ensures proper terminal display after interruption using ioctl.
+*/
+static void	sigint_handler_heredoc(int sig)
+{
+	(void)sig;
+	g_sig = SIGINT;
+	rl_done = 1;
+	if (waitpid(-1, NULL, WNOHANG) == -1)
+	{
+		ft_putchar_fd('\n', 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+		ioctl(STDIN_FILENO, TIOCSTI, "");
+	}
+}
 
 /*
  * Sets up signal handling for heredoc operations.
@@ -13,26 +32,6 @@ int	setup_signal_handlers(struct sigaction *sa_new, struct sigaction *sa_old)
 	sa_new->sa_flags = 0;
 	sigaction(SIGINT, sa_new, sa_old);
 	return (0);
-}
-
-/*
- * Handles SIGINT (Ctrl+C) signals during heredoc input.
- * Updates global signal state and manages readline behavior.
- * Ensures proper terminal display after interruption using ioctl.
-*/
-void	sigint_handler_heredoc(int sig)
-{
-	(void)sig;
-	g_sig = SIGINT;
-	rl_done = 1;
-	if (waitpid(-1, NULL, WNOHANG) == -1)
-	{
-		ft_putchar_fd('\n', 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-		ioctl(STDIN_FILENO, TIOCSTI, "");
-	}
 }
 
 /*

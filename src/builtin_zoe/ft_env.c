@@ -11,11 +11,11 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
-int	ft_env(t_env *env)
+int	ft_env(t_shell_data *shell_data)
 {
 	t_env	*tmp;
 
-	tmp = env;
+	tmp = shell_data->env;
 	while (tmp)
 	{
 		ft_printf(tmp->key);
