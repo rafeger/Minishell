@@ -1,19 +1,7 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   exec.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zmurie <marvin@42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/01 14:39:34 by zmurie            #+#    #+#             */
-/*   Updated: 2025/04/01 14:39:36 by zmurie           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 #include "../../include/minishell.h"
 
 pid_t g_signal;
 
-// Fixed: renamed to better reflect its purpose
 int is_builtin_no_fork(char *cmd)
 {
     if (!ft_strcmp(cmd, "cd") || !ft_strcmp(cmd, "export")
@@ -44,17 +32,15 @@ static void execute(t_shell_data *data, t_cmd *cmd)
     pathname = get_pathname(commande[0], data->env);
     if (!pathname)
     {
-        perror(commande[0]); // Fixed: use command name for error
-        data->last_exit_status = 127;
-        exit(127); // Fixed: child must exit
+        perror(commande[0]);
+        exit(127);
     }
     
     if (access(pathname, X_OK) != 0)
     {
         perror(pathname);
-        data->last_exit_status = 126;
-        free(pathname); // Fixed: free pathname before exit
-        exit(126); // Fixed: child must exit
+        free(pathname);
+        exit(126);
     }
     
     tab_env = convert_list_to_tab_str(data->env);
@@ -62,149 +48,129 @@ static void execute(t_shell_data *data, t_cmd *cmd)
     {
         perror("execve");
         free(pathname);
-        cleanup_split(tab_env); // Fixed: free tab_env
+        cleanup_split(tab_env);
         exit(EXIT_FAILURE);
     }
-    // Note: This line is never reached if execve succeeds
 }
 
-static void setup_child_fds(t_cmd *cmd, int *pipefd, int has_pipe)
+static void setup_pipes_and_redirections(t_cmd *cmd, int pipe_in, int pipe_out)
 {
-    // Handle input redirection
-    if (cmd->fd_info && cmd->fd_info->stdin_backup >= 0)
+	(void)cmd;
+    // Setup input
+    if (pipe_in != STDIN_FILENO)
     {
-        dup2(cmd->fd_info->stdin_backup, STDIN_FILENO);
-        close(cmd->fd_info->stdin_backup);
+        dup2(pipe_in, STDIN_FILENO);
+        close(pipe_in);
     }
     
-    // Handle output redirection
-    if (cmd->fd_info && cmd->fd_info->stdout_backup >= 0)
+    // Setup output
+    if (pipe_out != STDOUT_FILENO)
     {
-        dup2(cmd->fd_info->stdout_backup, STDOUT_FILENO);
-        close(cmd->fd_info->stdout_backup);
-    }
-    else if (cmd->fd_info && cmd->fd_info->stdout_backup == -2 && has_pipe)
-    {
-        // Pipe output to next command
-        dup2(pipefd[1], STDOUT_FILENO);
-    }
-    
-    // Close pipe fds only if pipe was created
-    if (has_pipe)
-    {
-        close(pipefd[0]);
-        close(pipefd[1]);
+        dup2(pipe_out, STDOUT_FILENO);
+        close(pipe_out);
     }
 }
 
-static void child_process(t_shell_data *data, t_cmd *cmd, int *pipefd, int has_pipe)
+static void child_process(t_shell_data *data, t_cmd *cmd, int pipe_in, int pipe_out)
 {
-    setup_child_fds(cmd, pipefd, has_pipe);
+    setup_pipes_and_redirections(cmd, pipe_in, pipe_out);
     
-    // Apply redirections
+    // Apply file redirections (< > >> <<)
     redirections(data, cmd);
     
     if (is_builtin(cmd->args[0]))
     {
         do_builtin(data, cmd);
-        exit(data->last_exit_status); // Fixed: builtin must exit in child
+        exit(data->last_exit_status);
     }
     else
     {
         execute(data, cmd);
-        // execute() will exit, so this line is never reached
     }
-}
-
-static void parent_process(t_cmd *cmd, int *pipefd, int has_pipe)
-{
-    // Only handle pipe if it was created
-    if (has_pipe)
-    {
-        // Close write end of pipe
-        close(pipefd[1]);
-        
-        // Set up pipe for next command if needed
-        if (cmd->fd_info && cmd->fd_info->stdin_backup == -2)
-        {
-            cmd->fd_info->stdin_backup = pipefd[0];
-        }
-        else if (cmd->next && cmd->next->fd_info && cmd->next->fd_info->stdin_backup == -2)
-        {
-            cmd->next->fd_info->stdin_backup = pipefd[0];
-        }
-        else
-        {
-            close(pipefd[0]); // Close read end if not needed
-        }
-    }
-    
-    // Handle stdin backup cleanup
-    if (cmd->fd_info && cmd->fd_info->stdin_backup >= 0)
-        close(cmd->fd_info->stdin_backup);
 }
 
 int execute_commands(t_shell_data *data)
 {
-    int pipefd[2];
-    t_cmd *tmp_cmd;
-    int has_pipe;
+    t_cmd *cmd;
+    int pipe_fd[2];
+    int input_fd = STDIN_FILENO;
+    pid_t pid;
+    int status;
     
-    tmp_cmd = data->cmd;
+    cmd = data->cmd;
     
-    // Single command that doesn't need forking
-    if (tmp_cmd->next == NULL && is_builtin_no_fork(tmp_cmd->args[0]))
+    // Handle single builtin command that doesn't need fork
+    if (!cmd->next && is_builtin_no_fork(cmd->args[0]))
     {
-        do_builtin(data, tmp_cmd);
+        redirections(data, cmd);
+        do_builtin(data, cmd);
         return (0);
     }
     
-    while (tmp_cmd)
+    while (cmd)
     {
-        // Determine if we need a pipe for this command
-        has_pipe = (tmp_cmd->next != NULL);
+        int output_fd = STDOUT_FILENO;
         
-        // Only create pipe if there's a next command
-        if (has_pipe && pipe(pipefd) == -1)
+        // If there's a next command, create a pipe
+        if (cmd->next)
         {
-            perror("pipe");
-            return (1);
+            if (pipe(pipe_fd) == -1)
+            {
+                perror("pipe");
+                return (1);
+            }
+            output_fd = pipe_fd[1];
         }
         
-        g_signal = fork();
-        if (g_signal == -1)
+        pid = fork();
+        if (pid == -1)
         {
             perror("fork");
-            if (has_pipe)
-            {
-                close(pipefd[0]);
-                close(pipefd[1]);
-            }
             return (1);
         }
         
-        if (g_signal == 0)
+        if (pid == 0)
         {
             // Child process
-            child_process(data, tmp_cmd, pipefd, has_pipe);
-            // Should never reach here
+            if (cmd->next)
+                close(pipe_fd[0]); // Close unused read end
+            
+            child_process(data, cmd, input_fd, output_fd);
+            // Never reached
         }
         else
         {
             // Parent process
-            int status;
-            waitpid(g_signal, &status, 0);
+            if (input_fd != STDIN_FILENO)
+                close(input_fd); // Close previous pipe read end
             
-            if (WIFEXITED(status))
-                data->last_exit_status = WEXITSTATUS(status);
-            else if (WIFSIGNALED(status))
-                data->last_exit_status = 128 + WTERMSIG(status);
+            if (cmd->next)
+            {
+                close(pipe_fd[1]); // Close write end
+                input_fd = pipe_fd[0]; // Save read end for next command
+            }
             
-            parent_process(tmp_cmd, pipefd, has_pipe);
+            // If this is the last command, wait for it
+            if (!cmd->next)
+            {
+                waitpid(pid, &status, 0);
+                if (WIFEXITED(status))
+                    data->last_exit_status = WEXITSTATUS(status);
+                else if (WIFSIGNALED(status))
+                    data->last_exit_status = 128 + WTERMSIG(status);
+            }
         }
         
-        tmp_cmd = tmp_cmd->next;
+        cmd = cmd->next;
     }
+    
+    // Wait for any remaining child processes
+    while (wait(NULL) > 0)
+        ; // Wait for all children to finish
+    
+    // Close any remaining input fd
+    if (input_fd != STDIN_FILENO)
+        close(input_fd);
     
     return (0);
 }
