@@ -13,8 +13,6 @@
 
 void	ft_exit(t_cmd *cmd, t_shell_data *data)
 {
-	int	std_out;
-
 	if (cmd->args[1] && ft_isnumber(cmd->args[1]))
 	{
 		data->last_exit_status = 2;
@@ -33,9 +31,9 @@ void	ft_exit(t_cmd *cmd, t_shell_data *data)
 		ft_putendl_fd("exit", 2);
 	else
 	{
-		std_out = ft_atoi(cmd->args[1]) % 256;
-		data->last_exit_status = std_out;
-		ft_putendl_fd("exit", std_out);
+		data->last_exit_status= ft_atoi(cmd->args[1]) % 256;
+		ft_putendl_fd("exit", data->last_exit_status);
 	}
 	free_all(data);
+	exit(data->last_exit_status);
 }

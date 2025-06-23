@@ -12,6 +12,14 @@
 #include "../../include/minishell.h"
 pid_t	g_signal;
 
+int	is_to_fork(char *cmd)
+{
+	if (!ft_strcmp(cmd, "cd") || !ft_strcmp(cmd, "export")
+		|| !ft_strcmp(cmd, "unset") || !ft_strcmp(cmd, "exit"))
+		return (1);
+	return (0);
+}
+
 static void	cleanup_split(char **array)
 {
 	int	i;
@@ -102,6 +110,11 @@ int	execute_commands(t_shell_data *data)
 	t_cmd		*tmp_cmd;
 
 	tmp_cmd = data->cmd;
+	if (tmp_cmd->next == NULL && is_to_fork(tmp_cmd->args[0]))
+	{
+		do_builtin(data, tmp_cmd);
+		return (0);
+	}
 	while (tmp_cmd)
 	{
 		if (pipe(pipefd) == -1)

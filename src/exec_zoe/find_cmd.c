@@ -52,7 +52,7 @@ char	*get_pathname(char *cmd, t_env *env)
 	t_env	*tmp_env;
 
 	tmp_env = env;
-	while (tmp_env && ft_strnstr(tmp_env->value, "PATH", 4) == 0)
+	while (tmp_env && ft_strnstr(tmp_env->key, "PATH", 4) == 0)
 		tmp_env = tmp_env->next;
 	paths = ft_split(tmp_env->value + 5, ':');
 	i = 0;
