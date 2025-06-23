@@ -61,7 +61,7 @@ static int	shell_main_loop(t_shell_data *shell)
  * - Handles cleanup on exit.
  * Returns final program exit status.
 */
-int	main(int ac, char **av, char **envp)
+int	main(int ac, char *av[], char **envp)
 {
 	t_shell_data	*shell;
 	int				exit_status;

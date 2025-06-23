@@ -190,7 +190,7 @@ void	process_shell_input(char *input, t_shell_data *shell_data);
 
 char	*read_user_input(void);
 
-int	main(int ac, char **av, char **envp);
+int	main(int ac, char *av[], char **envp);
 
 
 void	ensure_stdin_tty(void);
