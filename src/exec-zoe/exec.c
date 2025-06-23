@@ -104,9 +104,16 @@ int	exec(t_shell_data *data)
 		if (g_signal == -1)
 			exit(1);
 		if (g_signal == 0)
+		{
+			redirections(data, tmp_cmd);
 			child_process(data, tmp_cmd, pipefd);
+		}
 		else
+		{
+			waitpid(g_signal, &data->last_exit_status, 0);
+			data->last_exit_status = WEXITSTATUS(data->last_exit_status);
 			parent_process(tmp_cmd, pipefd);
+		}
 		tmp_cmd = tmp_cmd->next;
 	}
 	return (0);
