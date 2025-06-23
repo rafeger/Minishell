@@ -58,19 +58,22 @@ static void	execute(t_shell_data *data, t_cmd *cmd)
 static void	child_process(t_shell_data *data, t_cmd *cmd, int *pipefd)
 {
 	close(pipefd[0]);
-	if (cmd->fd_info->stdin_backup >= 0)
+
+	if (cmd->fd_info && cmd->fd_info->stdin_backup >= 0)
 	{
 		dup2(cmd->fd_info->stdin_backup, STDIN_FILENO);
 		close(cmd->fd_info->stdin_backup);
 	}
-	if (cmd->fd_info->stdout_backup >= 0 || cmd->fd_info->stdout_backup == -2)
+	if (cmd->fd_info && (cmd->fd_info->stdout_backup >= 0 || cmd->fd_info->stdout_backup == -2))
 	{
 		if (cmd->fd_info->stdout_backup == -2)
 			cmd->fd_info->stdout_backup = pipefd[1];
 		dup2(cmd->fd_info->stdout_backup, STDOUT_FILENO);
 		close(cmd->fd_info->stdout_backup);
-	}	
+	}
+
 	close(pipefd[1]);
+
 	if (is_builtin(cmd->args[0]))
 		do_builtin(data, cmd);
 	else
@@ -80,20 +83,23 @@ static void	child_process(t_shell_data *data, t_cmd *cmd, int *pipefd)
 static void	parent_process(t_cmd *cmd, int *pipefd)
 {
 	close(pipefd[1]);
-	if (cmd->fd_info->stdin_backup >= 0)
+
+	if (cmd->fd_info && cmd->fd_info->stdin_backup >= 0)
 		close(cmd->fd_info->stdin_backup);
-	if (cmd->fd_info->stdin_backup == -2)
+
+	if (cmd->fd_info && cmd->fd_info->stdin_backup == -2)
 		cmd->fd_info->stdin_backup = pipefd[0];
-	if (cmd->next && cmd->next->fd_info->stdin_backup == -2)
+	else if (cmd->next && cmd->next->fd_info && cmd->next->fd_info->stdin_backup == -2)
 		cmd->next->fd_info->stdin_backup = pipefd[0];
 	else
 		close(pipefd[0]);
 }
 
+
 int	execute_commands(t_shell_data *data)
 {
 	int			pipefd[2];
-	t_cmd	*tmp_cmd;
+	t_cmd		*tmp_cmd;
 
 	tmp_cmd = data->cmd;
 	while (tmp_cmd)
