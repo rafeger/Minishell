@@ -173,8 +173,6 @@ int		heredoc(char *delim, t_shell_data *data);
 
 void 	redirections(t_shell_data *data, t_cmd *cmd);
 
-void	free_all(t_shell_data *data);
-
 char	**convert_list_to_tab_str(t_env *env);
 
 int		ft_envsize(t_env *lst);

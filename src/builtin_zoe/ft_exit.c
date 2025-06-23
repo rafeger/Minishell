@@ -13,9 +13,13 @@
 
 void	ft_exit(t_cmd *cmd, t_shell_data *data)
 {
+	int	status;
+
+	status = 0;
 	if (cmd->args[1] && ft_isnumber(cmd->args[1]))
 	{
 		data->last_exit_status = 2;
+		status = data->last_exit_status;
 		ft_putendl_fd("exit", 2);
 		ft_putstr_fd("bash: exit: ", 2);
 		ft_putstr_fd(cmd->args[1], 2);
@@ -32,8 +36,9 @@ void	ft_exit(t_cmd *cmd, t_shell_data *data)
 	else
 	{
 		data->last_exit_status= ft_atoi(cmd->args[1]) % 256;
+		status = data->last_exit_status;
 		ft_putendl_fd("exit", data->last_exit_status);
 	}
-	free_all(data);
-	exit(data->last_exit_status);
+	ft_cleanup_shell(&data);
+	exit(status);
 }
