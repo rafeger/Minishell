@@ -14,7 +14,7 @@
  * @param i A pointer to the current index in the token array, which will be advanced by this function.
  * @return Returns 0 on failure during pipe handling, 1 on success for all other token types.
  */
-int	process_token(t_cmd *cmd, t_ta *ta, int *i)
+static int	process_token(t_cmd *cmd, t_ta *ta, int *i)
 {
 	if (!handle_pipe_token(cmd, ta, i))
 		return (0);
@@ -55,7 +55,7 @@ int	process_token(t_cmd *cmd, t_ta *ta, int *i)
  * @param ta A pointer to the token array.
  * @param i A pointer to the current index in the token array, pointing to the redirection operator.
  */
-void	handle_redirect(t_cmd *cmd, t_ta *ta, int *i)
+static void	handle_redirect(t_cmd *cmd, t_ta *ta, int *i)
 {
 	int	redir_kind;
 	int	file_token_idx;
@@ -90,7 +90,7 @@ void	handle_redirect(t_cmd *cmd, t_ta *ta, int *i)
  * @param i A pointer to the current index in the token array, pointing to the pipe.
  * @return Returns 0 if `handle_pipe` fails, 1 on successful handling of the pipe.
  */
-int	handle_pipe_token(t_cmd *cmd, t_ta *ta, int *i)
+static int	handle_pipe_token(t_cmd *cmd, t_ta *ta, int *i)
 {
 	if (ft_strcmp(ta->tokens[*i], "|") == 0 && !ta->quoted[*i])
 	{
@@ -115,7 +115,7 @@ int	handle_pipe_token(t_cmd *cmd, t_ta *ta, int *i)
  * @param ta A pointer to the token array.
  * @param i A pointer to the current index in the token array, pointing to the empty token.
  */
-void	handle_empty_token(t_cmd *cmd, t_ta *ta, int *i)
+static void	handle_empty_token(t_cmd *cmd, t_ta *ta, int *i)
 {
 	char	*space_content;
 

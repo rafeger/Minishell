@@ -16,7 +16,7 @@ void	cleanup_pipe_data(t_ta *new_ta, char **sub_tokens, int last_alloc)
 		free_tokenarray(new_ta);
 }
 
-int	is_redirect(const char *token)
+static int	is_redirect(const char *token)
 {
 	if (!token)
 		return (0);

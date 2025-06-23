@@ -139,42 +139,6 @@ typedef struct s_heredoc_data
 }	t_heredoc_data;
 
 
-
-// typedef struct s_command
-// {
-// 	char				**args;
-// 	int					infile;
-// 	int					outfile;
-// 	int					append;
-// 	char 				*heredoc_delim;
-// 	struct s_command	*next;
-// }	t_command;
-
-// typedef struct s_env
-// {
-// 	char			*str;
-// 	struct s_env	*prev;
-// 	struct s_env	*next;
-// }					t_env;
-
-
-// extern pid_t	g_signal;
-
-// int		ft_cd(char **args, t_env *env);
-// int		ft_echo(char **arg);
-// int		ft_env(t_env *env);
-// void	ft_exit(t_shell_data *data, char **args);
-// int		check_valid_name_var(char *str);
-// int		ft_export(char **args, t_env **env);
-// int		ft_pwd(void);
-// int		ft_unset(char **args, t_env **env);
-// int		is_builtin(char *cmd);
-// void	do_builtin(t_shell_data *data, t_cmd *cmd);
-// char	*get_pathname(char *cmd, t_env *env);
-// char	**convert_list_to_tab_str(t_env *env);
-// void	free_all(t_shell_data *data);
-// int		ft_envsize(t_env *lst);
-
 /*============================== main_and_input ==============================*/
 
 void	process_shell_input(char *input, t_shell_data *shell_data);
@@ -186,27 +150,6 @@ void	ensure_stdin_tty(void);
 
 int	has_eof_been_reached(void);
 
-// /* main.c */
-// char			*get_input(void);
-
-// int				main(int ac, char **av, char **envp);
-
-// /* input_core.c */
-// void			cleanup_current_cmd(t_shell_data *shell_data);
-
-// int				handle_syntax_check(char *input, t_shell_data *shell_data);
-
-// t_cmd			*execute_input(char *input, t_shell_data *shell_data);
-
-// void			execute_if_valid(t_cmd *cmd, t_shell_data *sd);
-
-// void			handle_input(char *input, t_shell_data *shel_data);
-
-// /* main_utils.c */
-
-// void			check_and_restore_stdin(void);
-
-// int				is_eof_reached(void);
 
 /*================================= execute ==================================*/
 
@@ -418,33 +361,6 @@ int				check_syntax(char *input);
 /* check_quotes_core.c */
 int				check_if_quotes(char *input, int *i);
 
-/*================================== lexer ===================================*/
-
-// void	handle_char_tokenization(t_ta *ta, char **input);
-// void	process_input(t_ta *ta, char **input);
-// void	handle_token_end(t_ta *ta);
-// int	append_token_to_array(t_ta *ta, char *token);
-// t_ta	*tokenize_input_string(char *input);
-
-// // From lexer_quote.c
-// int	contains_only_quotes(const char *input);
-// t_ta	*create_empty_quoted_token(t_ta *ta);
-// void	process_empty_quotes(t_ta *ta, char **input);
-// void	manage_quote_processing(t_ta *ta, char **input);
-// void	process_quote_character(t_ta *ta, char *input);
-
-// // From lexer_special.c
-// void	handle_trailing_space(t_ta *ta, int was_quoted);
-// void	handle_special_chars(t_ta *ta, char **input);
-// void	resize_token_array_capacity(t_ta *ta);
-
-// // From lexer_util.c
-// int	handle_token_add_failure(t_ta *ta);
-// int	validate_quote_closure(t_ta *ta);
-// t_ta	*cleanup_lexer_resources(t_ta *ta);
-
-
-
 
 /* lexer_core.c */
 void			process_char(t_ta *ta, char **input);
@@ -484,36 +400,11 @@ int				check_unclosed_quotes(t_ta *ta);
 
 /*================================== parser ==================================*/
 
-/* parse_args.c */
-void			concat_argument(t_cmd *cmd, char *arg);
-
-void			add_argument(t_cmd *cmd, char *arg, int quoted);
-
-/* parse_core.c */
-int				process_token(t_cmd *cmd, t_ta *ta, int *i);
-
-void			handle_redirect(t_cmd *cmd, t_ta *ta, int *i);
-
-int				handle_pipe_token(t_cmd *cmd, t_ta *ta, int *i);
-
-void			handle_empty_token(t_cmd *cmd, t_ta *ta, int *i);
-
-t_cmd			*parse_tokens(t_ta *ta);
-
-/* parse_redirect.c */
-void			cleanup_pipe_data(t_ta *new_ta, char **sub_tokens, \
-					int last_alloc);
-
-int				is_redirect(const char *token);
-
 int				get_redirect_type(char *token);
 
 void			add_redirect(t_cmd *cmd, int type, char *file, int eof_quoted);
 
 /* tokenarray_utils.c */
-t_ta			*init_new_ta(t_ta *ta, int index);
-
-char			**create_sub_tokens(t_ta *ta, int index, t_ta *new_ta);
 
 int				init_quoted_array(t_ta *new_ta, t_ta *ta, int index);
 

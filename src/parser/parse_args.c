@@ -15,7 +15,7 @@
  * @return Returns 1 if concatenation is required.
  * @return Returns 0 otherwise.
  */
-int	should_concat(char *prev_arg, char *curr_arg)
+static int	should_concat(char *prev_arg, char *curr_arg)
 {
 	if (!prev_arg || !curr_arg || !*prev_arg || !*curr_arg)
 		return (0);
@@ -44,7 +44,7 @@ int	should_concat(char *prev_arg, char *curr_arg)
  * @param cmd A pointer to the command structure where arguments are stored.
  * @param arg The current argument string to be concatenated.
  */
-void	concat_argument(t_cmd *cmd, char *arg)
+static void	concat_argument(t_cmd *cmd, char *arg)
 {
 	char	*combined_arg;
 	int		last_index;
