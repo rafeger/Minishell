@@ -16,21 +16,6 @@ void	cleanup_pipe_data(t_ta *new_ta, char **sub_tokens, int last_alloc)
 		free_tokenarray(new_ta);
 }
 
-static int	is_redirect(const char *token)
-{
-	if (!token)
-		return (0);
-	if (ft_strcmp(token, ">") == 0)
-		return (1);
-	if (ft_strcmp(token, "<") == 0)
-		return (1);
-	if (ft_strcmp(token, ">>") == 0)
-		return (1);
-	if (ft_strcmp(token, "<<") == 0)
-		return (1);
-	return (0);
-}
-
 int	get_redirect_type(char *token)
 {
 	if (ft_strcmp(token, "<") == 0)
