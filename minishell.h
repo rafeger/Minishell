@@ -16,6 +16,10 @@
 # include <readline/history.h>
 
 # define PROMPT "minishell> "
+#define REDIR_IN    0  // <
+#define REDIR_OUT   1  // >
+#define HERE_DOC    2  // <<
+#define APPEND      3  // >>
 
 extern volatile sig_atomic_t	g_sig;
 
