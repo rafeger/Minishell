@@ -1,19 +1,4 @@
-
 #include "../../include/minishell.h"
-
-/*
- * Sets up signal handling for heredoc operations.
- * Configures SIGINT handler specifically for heredoc context.
- * Returns 0 on successful setup.
-*/
-int	setup_signal_handlers(struct sigaction *sa_new, struct sigaction *sa_old)
-{
-	sa_new->sa_handler = sigint_handler_heredoc;
-	sigemptyset(&sa_new->sa_mask);
-	sa_new->sa_flags = 0;
-	sigaction(SIGINT, sa_new, sa_old);
-	return (0);
-}
 
 /*
  * Handles SIGINT (Ctrl+C) signals during heredoc input.
@@ -33,6 +18,20 @@ static void	sigint_handler_heredoc(int sig)
 		rl_redisplay();
 		ioctl(STDIN_FILENO, TIOCSTI, "");
 	}
+}
+
+/*
+ * Sets up signal handling for heredoc operations.
+ * Configures SIGINT handler specifically for heredoc context.
+ * Returns 0 on successful setup.
+*/
+int	setup_signal_handlers(struct sigaction *sa_new, struct sigaction *sa_old)
+{
+	sa_new->sa_handler = sigint_handler_heredoc;
+	sigemptyset(&sa_new->sa_mask);
+	sa_new->sa_flags = 0;
+	sigaction(SIGINT, sa_new, sa_old);
+	return (0);
 }
 
 /*

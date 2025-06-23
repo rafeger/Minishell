@@ -406,6 +406,12 @@ int				get_redirect_type(char *token);
 
 void			add_redirect(t_cmd *cmd, int type, char *file, int eof_quoted);
 
+void			cleanup_pipe_data(t_ta *new_ta, char **sub_tokens, int last_alloc);
+
+t_ta			*init_new_ta(t_ta *ta, int index);
+
+char			**create_sub_tokens(t_ta *ta, int index, t_ta *new_ta);
+
 /* tokenarray_utils.c */
 
 int				init_quoted_array(t_ta *new_ta, t_ta *ta, int index);

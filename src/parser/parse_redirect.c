@@ -29,7 +29,6 @@ int	get_redirect_type(char *token)
 	return (-1);
 }
 
-
 void	add_redirect(t_cmd *cmd, int type, char *file, int eof_quoted)
 {
 	t_redirect	*new_redir_node;

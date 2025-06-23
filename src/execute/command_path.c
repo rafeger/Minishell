@@ -2,6 +2,33 @@
 #include "../../include/minishell.h"
 
 /*
+ * Joins directory and file paths.
+ * Handles memory allocation and path construction.
+ * Returns combined path string.
+ * Returns NULL on allocation failure.
+*/
+static char	*join_path(const char *dir, const char *file)
+{
+	char	*path;
+	char	*tmp;
+
+	if (!dir || !file)
+		return (NULL);
+	path = ft_strdup(dir);
+	if (!path)
+		return (NULL);
+	tmp = path;
+	path = ft_strjoin(path, "/");
+	free(tmp);
+	if (!path)
+		return (NULL);
+	tmp = path;
+	path = ft_strjoin(tmp, file);
+	free(tmp);
+	return (path);
+}
+
+/*
  * Attempts to access command in specified directory.
  * Creates full path by joining directory and command.
  * Verifies execute permission.
@@ -72,33 +99,6 @@ static char	*search_in_path(char *path_env, const char *cmd)
 		dir_start++;
 	}
 	return (NULL);
-}
-
-/*
- * Joins directory and file paths.
- * Handles memory allocation and path construction.
- * Returns combined path string.
- * Returns NULL on allocation failure.
-*/
-static char	*join_path(const char *dir, const char *file)
-{
-	char	*path;
-	char	*tmp;
-
-	if (!dir || !file)
-		return (NULL);
-	path = ft_strdup(dir);
-	if (!path)
-		return (NULL);
-	tmp = path;
-	path = ft_strjoin(path, "/");
-	free(tmp);
-	if (!path)
-		return (NULL);
-	tmp = path;
-	path = ft_strjoin(tmp, file);
-	free(tmp);
-	return (path);
 }
 
 /*
