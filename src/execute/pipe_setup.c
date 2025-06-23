@@ -7,7 +7,7 @@
  * Manages quote status and token copying.
  * Returns initialized command structure or NULL on failure.
 */
-t_cmd	*setup_pipe_cmd(t_ta *new_ta, t_ta *ta, int idx, char **stok)
+static t_cmd	*setup_pipe_cmd(t_ta *new_ta, t_ta *ta, int idx, char **stok)
 {
 	t_cmd	*next_cmd;
 
@@ -27,7 +27,7 @@ t_cmd	*setup_pipe_cmd(t_ta *new_ta, t_ta *ta, int idx, char **stok)
  * Initializes fd_info if needed.
  * Returns 1 on pipe creation failure, 0 on success.
 */
-int	create_pipe_for_cmd(t_cmd *cmd)
+static int	create_pipe_for_cmd(t_cmd *cmd)
 {
 	if (!cmd->fd_info)
 		fd_info_init(cmd);

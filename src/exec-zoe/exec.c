@@ -90,7 +90,7 @@ static void	parent_process(t_cmd *cmd, int *pipefd)
 		close(pipefd[0]);
 }
 
-int	exec(t_shell_data *data)
+int	execute_commands(t_shell_data *data)
 {
 	int			pipefd[2];
 	t_cmd	*tmp_cmd;

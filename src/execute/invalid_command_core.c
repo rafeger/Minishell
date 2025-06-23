@@ -6,7 +6,7 @@
  * Displays appropriate error message for invalid bin paths.
  * Updates shell exit status to 127.
 */
-void	handle_bin_error(t_cmd *cmd, t_shell_data *shell_data)
+static void	handle_bin_error(t_cmd *cmd, t_shell_data *shell_data)
 {
 	write(2, "minishell: ", 11);
 	write(2, cmd->name, ft_strlen(cmd->name));
@@ -19,7 +19,7 @@ void	handle_bin_error(t_cmd *cmd, t_shell_data *shell_data)
  * Displays "command not found" error.
  * Sets exit status to 127.
 */
-void	handle_empty_quotes_cmd(t_shell_data *shell_data)
+static void	handle_empty_quotes_cmd(t_shell_data *shell_data)
 {
 	write(2, "minishell: : command not found\n", 31);
 	shell_data->last_exit_status = 127;
@@ -30,7 +30,7 @@ void	handle_empty_quotes_cmd(t_shell_data *shell_data)
  * Sets appropriate exit status based on character.
  * Handles error messages for special cases.
 */
-void	handle_special_char_cmd(t_cmd *cmd, t_shell_data *shell_data)
+static void	handle_special_char_cmd(t_cmd *cmd, t_shell_data *shell_data)
 {
 	if (cmd->name[0] == '?')
 	{

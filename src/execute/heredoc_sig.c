@@ -20,7 +20,7 @@ int	setup_signal_handlers(struct sigaction *sa_new, struct sigaction *sa_old)
  * Updates global signal state and manages readline behavior.
  * Ensures proper terminal display after interruption using ioctl.
 */
-void	sigint_handler_heredoc(int sig)
+static void	sigint_handler_heredoc(int sig)
 {
 	(void)sig;
 	g_sig = SIGINT;

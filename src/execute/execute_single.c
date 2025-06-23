@@ -39,7 +39,7 @@ int	execute_builtin(t_cmd *cmd, t_shell_data *shell_data)
  * Handles heredoc and pipe cleanup on error.
  * Essential for proper I/O handling in command execution.
 */
-void	tiny_child_redirect(t_cmd *cmd, t_shell_data *shell_data)
+static void	tiny_child_redirect(t_cmd *cmd, t_shell_data *shell_data)
 {
 	t_cmd	*current;
 

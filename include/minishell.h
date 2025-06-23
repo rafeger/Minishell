@@ -177,18 +177,7 @@ typedef struct s_heredoc_data
 
 /*============================== main_and_input ==============================*/
 
-void	clear_current_command(t_shell_data *shell_data);
-
-int	perform_syntax_validation(char *input, t_shell_data *shell_data);
-
-t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data);
-
-void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd);
-
 void	process_shell_input(char *input, t_shell_data *shell_data);
-
-
-char	*read_user_input(void);
 
 int	main(int ac, char **av, char **envp);
 
@@ -222,13 +211,6 @@ int	has_eof_been_reached(void);
 /*================================= execute ==================================*/
 
 /* command_path.c */
-char			*try_path_access(const char *dir, const char *cmd);
-
-char			*check_single_path(char *dir_start, const char *cmd);
-
-char			*search_in_path(char *path_env, const char *cmd);
-
-char			*join_path(const char *dir, const char *file);
 
 char			*find_command_path(const char *cmd, t_env *env);
 
@@ -238,8 +220,6 @@ int				is_pipeline(t_cmd *cmd);
 int				is_builtin(char *cmd_name);
 
 /* execute_utils.c */
-void			handle_home_directory(t_cmd *cmd, t_shell_data *shell_data);
-
 int				handle_special_cases(t_cmd *cmd, t_shell_data *shell_data);
 
 /* execute_core.c */
@@ -250,22 +230,10 @@ int				execute_builtin(t_cmd *cmd, t_shell_data *shell_data);
 
 void			execute_child_process(t_cmd *cmd, t_shell_data *shell_data);
 
-void			tiny_child_redirect(t_cmd *cmd, t_shell_data *shell_data);
-
 /* pipe_core.c */
-void			execute_piped_commands(t_cmd *cmd, t_shell_data *sd);
-
-void			wait_for_children(t_shell_data *shell_data, int child_count);
-
-void			handle_pid_value(pid_t wpid, int status, t_shell_data *sd, \
-									t_cmd *cmd);
-
 void			execute_pipeline(t_cmd *cmd, t_shell_data *shell_data);
 
 /* pipe_setup.c */
-t_cmd			*setup_pipe_cmd(t_ta *new_ta, t_ta *ta, int idx, char **stock);
-
-int				create_pipe_for_cmd(t_cmd *cmd);
 
 int				handle_pipe(t_cmd *cmd, t_ta *ta, int index);
 
@@ -293,21 +261,13 @@ int				apply_heredocs_only(t_redirect *redirects, t_shell_data *sd);
 int				apply_other_redirs(t_redirect *redirects, t_cmd *cmd);
 
 /* fork_and_execute.c */
-void			handle_pipe_fds(int *pipe_fd);
-
-void			handle_input_fd(int input_fd);
 
 int				fork_and_execute(t_cmd *cmd, t_shell_data *sd, \
 					int input_fd, int *pipe_fd);
 
 /* invalid_command_core.c */
-void			handle_bin_error(t_cmd *cmd, t_shell_data *shell_data);
-
-void			handle_special_char_cmd(t_cmd *cmd, t_shell_data *shell_data);
 
 int				handle_invalid_command(t_cmd *cmd, t_shell_data *shell_data);
-
-void			handle_empty_quotes_cmd(t_shell_data *shell_data);
 
 /* invalid_command_expanded.c */
 int				is_expanded_invalid_cmd(const char *name, int quoted, \
@@ -316,7 +276,6 @@ int				is_expanded_invalid_cmd(const char *name, int quoted, \
 void			handle_expanded_invalid_cmd(t_cmd *cmd, t_shell_data *sd);
 
 /* execute_external.c */
-void			execute_with_path(char *path, t_cmd *cmd, t_shell_data *sd);
 
 void			execute_external(t_cmd *cmd, t_shell_data *shell_data);
 
@@ -341,8 +300,6 @@ int				setup_signal_handlers(struct sigaction *sa_new, struct \
 
 int				handle_heredoc_input(t_heredoc_data *her_data, \
 					struct sigaction *sa_old);
-
-void			sigint_handler_heredoc(int sig);
 
 /* heredoc_utils.c */
 int				process_heredoc(t_redirect *current, t_shell_data *sd);

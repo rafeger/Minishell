@@ -7,7 +7,7 @@
  * Verifies execute permission.
  * Returns path if command is executable, NULL otherwise.
 */
-char	*try_path_access(const char *dir, const char *cmd)
+static char	*try_path_access(const char *dir, const char *cmd)
 {
 	char	*full_path;
 	char	*dir_copy;
@@ -30,7 +30,7 @@ char	*try_path_access(const char *dir, const char *cmd)
  * Handles directory path extraction from PATH.
  * Returns full command path if found, NULL otherwise.
 */
-char	*check_single_path(char *dir_start, const char *cmd)
+static char	*check_single_path(char *dir_start, const char *cmd)
 {
 	char	*dir;
 	char	*result;
@@ -53,7 +53,7 @@ char	*check_single_path(char *dir_start, const char *cmd)
  * Returns first matching executable path.
  * Returns NULL if command not found in PATH.
 */
-char	*search_in_path(char *path_env, const char *cmd)
+static char	*search_in_path(char *path_env, const char *cmd)
 {
 	char	*dir_start;
 	char	*result;
@@ -80,7 +80,7 @@ char	*search_in_path(char *path_env, const char *cmd)
  * Returns combined path string.
  * Returns NULL on allocation failure.
 */
-char	*join_path(const char *dir, const char *file)
+static char	*join_path(const char *dir, const char *file)
 {
 	char	*path;
 	char	*tmp;
