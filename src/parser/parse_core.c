@@ -1,6 +1,99 @@
 #include "../../include/minishell.h"
 
 /**
+ * @brief Processes a pipe token in the command sequence.
+ *
+ * When a pipe character ('|') is found, this function is responsible for
+ * creating a new command structure for the command that follows the pipe.
+ * It links the current command to this new command, effectively building
+ * the pipeline. If the `handle_pipe` operation fails, it cleans up the
+ * current command and signals failure.
+ *
+ * @param cmd A pointer to the current command structure, which will be linked to the next.
+ * @param ta A pointer to the token array.
+ * @param i A pointer to the current index in the token array, pointing to the pipe.
+ * @return Returns 0 if `handle_pipe` fails, 1 on successful handling of the pipe.
+ */
+static int	handle_pipe_token(t_cmd *cmd, t_ta *ta, int *i)
+{
+	if (ft_strcmp(ta->tokens[*i], "|") == 0 && !ta->quoted[*i])
+	{
+		if (!handle_pipe(cmd, ta, *i))
+		{
+			free_command(cmd); 
+			return (0);
+		}
+		*i = ta->t_tot; 
+	}
+	return (1);
+}
+
+
+/**
+ * @brief Handles redirection tokens and their associated file names.
+ *
+ * This function is invoked when a redirection operator (`<`, `>`, `<<`, `>>`)
+ * is encountered. It determines the type of redirection, then finds the
+ * subsequent token which represents the target filename (skipping any
+ * intervening whitespace tokens). Finally, it creates and adds a new
+ * redirection structure to the current command.
+ *
+ * @param cmd A pointer to the current command structure.
+ * @param ta A pointer to the token array.
+ * @param i A pointer to the current index in the token array, pointing to the redirection operator.
+ */
+static void	handle_redirect(t_cmd *cmd, t_ta *ta, int *i)
+{
+	int	redir_kind;
+	int	file_token_idx;
+
+	redir_kind = get_redirect_type(ta->tokens[*i]);
+	if (redir_kind >= 0)
+	{
+		file_token_idx = *i + 1;
+		while (file_token_idx < ta->t_tot && ft_strcmp(ta->tokens[file_token_idx], " ") == 0)
+			file_token_idx++;
+		if (file_token_idx < ta->t_tot && ta->tokens[file_token_idx])
+		{
+			add_redirect(cmd, redir_kind, ta->tokens[file_token_idx], ta->quoted[file_token_idx]);
+			*i = file_token_idx + 1; 
+		}
+		else
+			(*i)++;
+	}
+}
+
+/**
+ * @brief Processes empty tokens, particularly those resulting from unquoted spaces.
+ *
+ * This function handles scenarios where an empty token (e.g., from `""` or `''`)
+ * is encountered. It specifically deals with empty tokens that might be
+ * followed by a space, ensuring they are correctly added as arguments.
+ *
+ * @param cmd A pointer to the current command structure.
+ * @param ta A pointer to the token array.
+ * @param i A pointer to the current index in the token array, pointing to the empty token.
+ */
+static void	handle_empty_token(t_cmd *cmd, t_ta *ta, int *i)
+{
+	char	*space_content;
+
+    if ((*i + 1) < ta->t_tot && ft_strcmp(ta->tokens[*i + 1], " ") == 0 && !ta->quoted[*i + 1])
+    {
+        space_content = ft_strdup(ta->tokens[*i + 1]);
+        if (space_content)
+        {
+            add_argument(cmd, space_content, ta->quoted[*i + 1]); 
+            free(space_content);
+        }
+    }
+    else
+    {
+        add_argument(cmd, "", ta->quoted[*i]);
+	}
+}
+
+/**
  * @brief Processes a single token during the parsing phase.
  *
  * This function acts as a dispatcher, handling different types of tokens
@@ -40,98 +133,6 @@ static int	process_token(t_cmd *cmd, t_ta *ta, int *i)
 		(*i)++; 
 	}
 	return (1);
-}
-
-/**
- * @brief Handles redirection tokens and their associated file names.
- *
- * This function is invoked when a redirection operator (`<`, `>`, `<<`, `>>`)
- * is encountered. It determines the type of redirection, then finds the
- * subsequent token which represents the target filename (skipping any
- * intervening whitespace tokens). Finally, it creates and adds a new
- * redirection structure to the current command.
- *
- * @param cmd A pointer to the current command structure.
- * @param ta A pointer to the token array.
- * @param i A pointer to the current index in the token array, pointing to the redirection operator.
- */
-static void	handle_redirect(t_cmd *cmd, t_ta *ta, int *i)
-{
-	int	redir_kind;
-	int	file_token_idx;
-
-	redir_kind = get_redirect_type(ta->tokens[*i]);
-	if (redir_kind >= 0)
-	{
-		file_token_idx = *i + 1;
-		while (file_token_idx < ta->t_tot && ft_strcmp(ta->tokens[file_token_idx], " ") == 0)
-			file_token_idx++;
-		if (file_token_idx < ta->t_tot && ta->tokens[file_token_idx])
-		{
-			add_redirect(cmd, redir_kind, ta->tokens[file_token_idx], ta->quoted[file_token_idx]);
-			*i = file_token_idx + 1; 
-		}
-		else
-			(*i)++;
-	}
-}
-
-/**
- * @brief Processes a pipe token in the command sequence.
- *
- * When a pipe character ('|') is found, this function is responsible for
- * creating a new command structure for the command that follows the pipe.
- * It links the current command to this new command, effectively building
- * the pipeline. If the `handle_pipe` operation fails, it cleans up the
- * current command and signals failure.
- *
- * @param cmd A pointer to the current command structure, which will be linked to the next.
- * @param ta A pointer to the token array.
- * @param i A pointer to the current index in the token array, pointing to the pipe.
- * @return Returns 0 if `handle_pipe` fails, 1 on successful handling of the pipe.
- */
-static int	handle_pipe_token(t_cmd *cmd, t_ta *ta, int *i)
-{
-	if (ft_strcmp(ta->tokens[*i], "|") == 0 && !ta->quoted[*i])
-	{
-		if (!handle_pipe(cmd, ta, *i))
-		{
-			free_command(cmd); 
-			return (0);
-		}
-		*i = ta->t_tot; 
-	}
-	return (1);
-}
-
-/**
- * @brief Processes empty tokens, particularly those resulting from unquoted spaces.
- *
- * This function handles scenarios where an empty token (e.g., from `""` or `''`)
- * is encountered. It specifically deals with empty tokens that might be
- * followed by a space, ensuring they are correctly added as arguments.
- *
- * @param cmd A pointer to the current command structure.
- * @param ta A pointer to the token array.
- * @param i A pointer to the current index in the token array, pointing to the empty token.
- */
-static void	handle_empty_token(t_cmd *cmd, t_ta *ta, int *i)
-{
-	char	*space_content;
-
-    if ((*i + 1) < ta->t_tot && ft_strcmp(ta->tokens[*i + 1], " ") == 0 && !ta->quoted[*i + 1])
-    {
-        space_content = ft_strdup(ta->tokens[*i + 1]);
-        if (space_content)
-        {
-            add_argument(cmd, space_content, ta->quoted[*i + 1]); 
-            free(space_content);
-        }
-    }
-    else
-    {
-        add_argument(cmd, "", ta->quoted[*i]);
-	}
 }
 
 /**

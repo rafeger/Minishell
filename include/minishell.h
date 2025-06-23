@@ -145,6 +145,7 @@ void	process_shell_input(char *input, t_shell_data *shell_data);
 
 int	main(int ac, char **av, char **envp);
 
+t_cmd	*parse_tokens(t_ta *ta);
 
 void	ensure_stdin_tty(void);
 
@@ -399,6 +400,7 @@ t_ta			*clean_lexer(t_ta *ta);
 int				check_unclosed_quotes(t_ta *ta);
 
 /*================================== parser ==================================*/
+void			add_argument(t_cmd *cmd, char *arg, int quoted);
 
 int				get_redirect_type(char *token);
 
