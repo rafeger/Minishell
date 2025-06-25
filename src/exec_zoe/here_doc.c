@@ -25,28 +25,42 @@ static void	write_in_heredoc(int fd, char *delim, t_shell_data *data)
 			ft_putstr_fd("bash: warning: here-document delimited by EOF\n", 2);
 			break;
 		}
-		if (ft_strcmp(buf, delim))
+		if (!ft_strcmp(buf, delim))
+		{
+			ft_putstr_fd("AAAAAA\n", 2);
+			free(buf);
 			break;
+		}
 		if (!ft_strchr(buf, '$'))
 			buf = expand_variables(buf, data);
 		ft_putstr_fd(buf, fd);
 		ft_putstr_fd("\n", fd);
+		free(buf);
 	}
-	free(buf);
-	close(fd);
-
 }
 
-int	heredoc(char *delim, t_shell_data *data)
+int heredoc(char *delim, t_shell_data *data)
 {
-	int	fd;
-	fd = open("heredoc.tmp", O_WRONLY, O_CREAT, O_TRUNC);
-	if (!fd)
-		return (-1);
-	write_in_heredoc(fd, delim, data);
-	if (unlink("heredoc.tmp"))
-		return (-1);
-	return (fd);
+    int fd;
+    
+    // Correction : utiliser les flags correctement combinés avec |
+    fd = open("heredoc.tmp", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (fd == -1)  // Correction : vérifier fd == -1, pas !fd
+        return (-1);
+    
+    write_in_heredoc(fd, delim, data);
+    close(fd);  // Fermer le fd d'écriture
+    
+    // Rouvrir le fichier en lecture
+    fd = open("heredoc.tmp", O_RDONLY);
+    if (fd == -1)
+    {
+        unlink("heredoc.tmp");  // Nettoyer en cas d'erreur
+        return (-1);
+    }
+    
+    unlink("heredoc.tmp");  // Supprimer le fichier (il reste accessible via fd)
+    return (fd);
 }
 
 

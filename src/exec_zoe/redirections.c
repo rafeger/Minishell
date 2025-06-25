@@ -79,9 +79,10 @@ static void here_document(t_cmd *cmd, t_shell_data *data)
         
     if (dup2(cmd->heredoc_fd, STDIN_FILENO) == -1)
     {
+        perror("dup2");
+        close(cmd->heredoc_fd);
         ft_cleanup_shell(&data);
 		rl_clear_history();
-        perror("dup2");
         exit(1);
     }
     close(cmd->heredoc_fd);

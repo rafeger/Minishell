@@ -63,6 +63,28 @@ static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 	return (cmd);
 }
 
+static int setup_heredocs(t_shell_data *data)
+{
+    t_cmd *cmd = data->cmd;
+    
+    while (cmd)
+    {
+        t_redirect *redir = cmd->redirects;
+        while (redir)
+        {
+            if (redir->type == HERE_DOC)
+            {
+                cmd->heredoc_fd = heredoc(redir->file, data);
+                if (cmd->heredoc_fd == -1)
+                    return (-1);
+            }
+            redir = redir->next;
+        }
+        cmd = cmd->next;
+    }
+    return (0);
+}
+
 /*
  * Executes command if valid:
  * - Stores command in shell data.
@@ -74,6 +96,7 @@ static void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd)
 	if (cmd)
 	{
 		sd->cmd = cmd;
+		setup_heredocs(sd);
 		execute_commands(sd);
 	}
 }
