@@ -13,7 +13,7 @@ NAME		=	minishell
 
 CC			=	cc
 
-CFLAGS		=	-Wall -Werror -Wextra -I./include -I./libft
+CFLAGS		=	-g3 -Wall -Werror -Wextra -I./include -I./libft
 
 SRC_DIR		=	src
 

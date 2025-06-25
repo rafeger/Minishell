@@ -8,11 +8,15 @@ static void input_redirection(t_shell_data *data, t_redirect *redir)
     fd = open(redir->file, O_RDONLY);
     if (fd == -1)
     {
+        ft_cleanup_shell(&data);
+		rl_clear_history();
         perror("open");
         exit(1);
     }
     if (dup2(fd, STDIN_FILENO) == -1)
     {
+        ft_cleanup_shell(&data);
+		rl_clear_history();
         perror("dup2");
         close(fd);
         exit(1);
@@ -28,11 +32,15 @@ static void output_redirection(t_shell_data *data, t_redirect *redir)
     fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (fd == -1)
     {
+        ft_cleanup_shell(&data);
+		rl_clear_history();
         perror("open");
         exit(1);
     }
     if (dup2(fd, STDOUT_FILENO) == -1)
     {
+        ft_cleanup_shell(&data);
+		rl_clear_history();
         perror("dup2");
         close(fd);
         exit(1);
@@ -48,11 +56,15 @@ static void append_redirection(t_shell_data *data, t_redirect *redir)
     fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
     if (fd == -1)
     {
+        ft_cleanup_shell(&data);
+		rl_clear_history();
         perror("open");
         exit(1);
     }
     if (dup2(fd, STDOUT_FILENO) == -1)
     {
+        ft_cleanup_shell(&data);
+		rl_clear_history();
         perror("dup2");
         close(fd);
         exit(1);
@@ -60,13 +72,15 @@ static void append_redirection(t_shell_data *data, t_redirect *redir)
     close(fd);
 }
 
-static void here_document(t_cmd *cmd)
+static void here_document(t_cmd *cmd, t_shell_data *data)
 {
     if (cmd->heredoc_fd == -1)
         return;
         
     if (dup2(cmd->heredoc_fd, STDIN_FILENO) == -1)
     {
+        ft_cleanup_shell(&data);
+		rl_clear_history();
         perror("dup2");
         exit(1);
     }
@@ -87,7 +101,7 @@ void redirections(t_shell_data *data, t_cmd *cmd)
         else if (redir->type == APPEND)
             append_redirection(data, redir);
         else if (redir->type == HERE_DOC)
-            here_document(cmd);
+            here_document(cmd, data);
         redir = redir->next;
     }
 }

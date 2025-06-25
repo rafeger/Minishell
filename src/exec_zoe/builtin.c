@@ -21,20 +21,21 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-void	do_builtin(t_shell_data *data, t_cmd *cmd)
+int	do_builtin(t_shell_data *data, t_cmd *cmd)
 {
 	if (!ft_strcmp(cmd->args[0], "cd"))
-		ft_cd(cmd, data);
+		data->last_exit_status = ft_cd(cmd, data);
 	else if (!ft_strcmp(cmd->args[0], "echo"))
-		ft_echo(cmd);
+		data->last_exit_status = ft_echo(cmd);
 	else if (!ft_strcmp(cmd->args[0], "env"))
-		ft_env(data);
+		data->last_exit_status = ft_env(data);
 	else if (!ft_strcmp(cmd->args[0], "exit"))
 		ft_exit(cmd, data);
 	else if (!ft_strcmp(cmd->args[0], "export"))
 		ft_export(cmd, data);
 	else if (!ft_strcmp(cmd->args[0], "pwd"))
-		ft_pwd();
+		data->last_exit_status = ft_pwd();
 	else if (!ft_strcmp(cmd->args[0], "unset"))
-		ft_unset(cmd, data);
+		data->last_exit_status = ft_unset(cmd, data);
+	return (data->last_exit_status);
 }

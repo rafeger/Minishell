@@ -73,6 +73,8 @@ static void setup_pipes_and_redirections(t_cmd *cmd, int pipe_in, int pipe_out)
 
 static void child_process(t_shell_data *data, t_cmd *cmd, int pipe_in, int pipe_out)
 {
+    int exit_status;
+
     setup_pipes_and_redirections(cmd, pipe_in, pipe_out);
     
     // Apply file redirections (< > >> <<)
@@ -80,8 +82,10 @@ static void child_process(t_shell_data *data, t_cmd *cmd, int pipe_in, int pipe_
     
     if (is_builtin(cmd->args[0]))
     {
-        do_builtin(data, cmd);
-        exit(data->last_exit_status);
+        exit_status = do_builtin(data, cmd);
+        ft_cleanup_shell(&data);
+		rl_clear_history();
+        exit(exit_status);
     }
     else
     {
