@@ -14,7 +14,6 @@
 static void	write_in_heredoc(int fd, char *delim, t_shell_data *data)
 {
 	char	*buf;
-	(void)data;
 
 	while(1)
 	{
@@ -30,8 +29,7 @@ static void	write_in_heredoc(int fd, char *delim, t_shell_data *data)
 			free(buf);
 			break;
 		}
-		if (!ft_strchr(buf, '$'))
-			buf = expand_variables(buf, data);
+		buf = expand_variables(buf, data);
 		ft_putstr_fd(buf, fd);
 		ft_putstr_fd("\n", fd);
 		free(buf);
