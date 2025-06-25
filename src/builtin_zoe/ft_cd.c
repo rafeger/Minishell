@@ -11,107 +11,98 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
-static void	update_pwd(char *arg, t_env *env)
+static t_env *find_env_var(t_env *env, const char *key)
 {
-	t_env	*tmp_env;
-	char	*cwd;
-	char	*pwd;
-
-	cwd = getcwd(NULL, 0);
-	if (!cwd)
-	{
-		perror(arg);
-		return ;
-	}
-	tmp_env = env;
-	while ((ft_strncmp("PWD", tmp_env->key, 3)) == 0
-		&& ft_strlen(tmp_env->key) == 3)
-		tmp_env = tmp_env->next;
-	pwd = ft_strjoin("PWD", cwd);
-	if (!pwd)
-	{
-		perror("malloc");
-		return ;
-	}
-	tmp_env->value = pwd;
+    t_env *tmp = env;
+    
+    while (tmp)
+    {
+        if (ft_strcmp(tmp->key, key) == 0)
+            return (tmp);
+        tmp = tmp->next;
+    }
+    return (NULL);
 }
 
-static void	update_old_pwd(char *arg, t_env *env)
+static void set_env_var(t_env **env, const char *key, const char *value)
 {
-	t_env	*tmp_env;
-	char	*old_pwd_value;
-	char	*new_old_pwd;
-
-	tmp_env = env;
-	while ((ft_strncmp("PWD", tmp_env->key, 3)) == 0
-		&& ft_strlen(tmp_env->key) == 3)
-		tmp_env = tmp_env->next;
-	old_pwd_value = tmp_env->value;
-	tmp_env = env;
-	while ((ft_strncmp("OLDPWD", tmp_env->key, 6)) == 0
-		&& ft_strlen(tmp_env->key) == 6)
-		tmp_env = tmp_env->next;
-	new_old_pwd = ft_strjoin("OLD", old_pwd_value);
-	if (!new_old_pwd)
-	{
-		perror("malloc");
-		return ;
-	}
-	tmp_env->value = new_old_pwd;
-	update_pwd(arg, env);
+    t_env *var = find_env_var(*env, key);
+    
+    if (var)
+    {
+        free(var->value);
+        var->value = ft_strdup(value);
+    }
+    else
+    {
+        t_env *new_var = malloc(sizeof(t_env));
+        if (!new_var)
+            return;
+        new_var->key = ft_strdup(key);
+        new_var->value = ft_strdup(value);
+        new_var->next = *env;
+        *env = new_var;
+    }
 }
 
-int	ft_cd(t_cmd *cmd, t_shell_data *shell_data)
+static void update_pwd_vars(t_env *env)
 {
-	char	*path;
+    char *old_pwd = NULL;
+    char *new_pwd = NULL;
+    t_env *pwd_var;
 
-	if (cmd->arg_count == 1)
-		return (0);
-	if (cmd->arg_count >= 3)
-	{
-		ft_putstr_fd("bash: cd: too many arguments\n", 2);
-		return (1);
-	}
-	path = cmd->args[1];
-	if (!chdir(path))
-	{
-		update_old_pwd(path, shell_data->env);
-		return (0);
-	}
-	else
-	{
-		ft_putstr_fd("bash: cd: ", 2);
-		perror(path);
-		return (1);
-	}
+    pwd_var = find_env_var(env, "PWD");
+    if (pwd_var && pwd_var->value)
+        old_pwd = ft_strdup(pwd_var->value);
+    new_pwd = getcwd(NULL, 0);
+    if (!new_pwd)
+    {
+        perror("getcwd");
+        if (old_pwd)
+            free(old_pwd);
+        return;
+    }
+    
+    if (old_pwd)
+    {
+        set_env_var(&env, "OLDPWD", old_pwd);
+        free(old_pwd);
+    }
+
+    set_env_var(&env, "PWD", new_pwd);
+    free(new_pwd);
 }
 
-// int	main(void)
-// {
-// 	t_env	**env;
-// 	char	**str = malloc(sizeof(char *)*2);
-
-// 	env = malloc(4 * sizeof(t_env));
-// 	env[0] = malloc(sizeof(t_env));
-// 	env[1] = malloc(sizeof(t_env));
-// 	env[2] = malloc(sizeof(t_env));
-// 	env[0]->prev = NULL;
-// 	env[0]->str ="USER=zmurie";
-// 	env[0]->next = env[1];
-// 	env[1]->prev = env[0];
-// 	env[1]->str = "OLDPWD=/home/zmurie";
-// 	env[1]->next = env[2];
-// 	env[2]->prev = env[1];
-// 	env[2]->str = "PWD=/home/zmurie/Minishell";
-// 	env[2]->next = NULL;
-// 	str[0] = "cd";
-// 	str[1] = "ouistiti";
-// 	ft_cd(str, *env);
-// 	t_env *tmp = env[0];
-// 	while(tmp)
-// 	{
-// 		printf("%s\n", tmp->str);
-// 		tmp = tmp->next;
-// 	}	
-// 	return (0);
-// }
+int ft_cd(t_cmd *cmd, t_shell_data *shell_data)
+{
+    char *path;
+    t_env *home_var;
+    
+    if (cmd->arg_count == 1)
+    {
+        home_var = find_env_var(shell_data->env, "HOME");
+        if (!home_var || !home_var->value)
+        {
+            ft_putstr_fd("bash: cd: HOME not set\n", 2);
+            return (1);
+        }
+        path = home_var->value;
+    }
+    else if (cmd->arg_count > 2)
+    {
+        ft_putstr_fd("bash: cd: too many arguments\n", 2);
+        return (1);
+    }
+    else
+    {
+        path = cmd->args[1];
+    }
+    if (chdir(path) != 0)
+    {
+        ft_putstr_fd("bash: cd: ", 2);
+        perror(path);
+        return (1);
+    }
+    update_pwd_vars(shell_data->env);
+    return (0);
+}

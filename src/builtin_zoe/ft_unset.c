@@ -11,39 +11,26 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
-void	delete_env_var(t_env *tmp_env)
+int	check_is_in_env(char *var, t_env **env)
 {
-	if (tmp_env->prev == NULL && tmp_env->next == NULL)
-		return ;
-	else if (tmp_env->prev == NULL)
-	{
-		tmp_env->next->prev = tmp_env->prev;
-		return ;
-	}
-	else if (tmp_env->next == NULL)
-	{
-		tmp_env->prev->next = tmp_env->next;
-		return ;
-	}
-	tmp_env->prev->next = tmp_env->next;
-	tmp_env->next->prev = tmp_env->prev;
-}
-
-int	check_is_in_env(char *var, t_env *env)
-{
-	t_env	*tmp_env;
-
-	tmp_env = env;
-	while (tmp_env)
-	{
-		if (!ft_strncmp(var, tmp_env->value, ft_strlen(var)))
+    t_env *current;
+    t_env *prev;
+    
+    if (!var || !env || !*env)
+        return (0);
+    
+    current = *env;
+    prev = NULL;
+    
+    while (current)
+    {
+        if (ft_strncmp(var, current->key, ft_strlen(var)) == 0 && 
+            ft_strlen(var) == ft_strlen(current->key))
 		{
-			delete_env_var(tmp_env);
-			tmp_env->value = NULL;
-			tmp_env->key = NULL;
+			remove_env_var(env, current->key);
 			return (0);
 		}			
-		tmp_env = tmp_env->next;
+		current = current->next;
 	}
 	return (0);
 }
@@ -55,7 +42,7 @@ int	ft_unset(t_cmd *cmd, t_shell_data *shell_data)
 	i = 0;
 	while (cmd->args[i])
 	{
-		check_is_in_env(cmd->args[i], shell_data->env);
+		check_is_in_env(cmd->args[i], &shell_data->env);
 		i++;
 	}
 	return (0);

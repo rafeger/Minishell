@@ -57,8 +57,8 @@ static int	print_all_var_env(t_env *env)
 	while (tmp_env)
 	{
 		printf("declare -x ");
-		printf("%s", env->key);
-		printf("=\"%s\"\n", env->value);
+		printf("%s", tmp_env->key);
+		printf("=\"%s\"\n", tmp_env->value);
 		tmp_env = tmp_env->next;
 	}
 	return (0);
