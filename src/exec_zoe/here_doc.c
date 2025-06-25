@@ -27,7 +27,6 @@ static void	write_in_heredoc(int fd, char *delim, t_shell_data *data)
 		}
 		if (!ft_strcmp(buf, delim))
 		{
-			ft_putstr_fd("AAAAAA\n", 2);
 			free(buf);
 			break;
 		}
@@ -37,6 +36,7 @@ static void	write_in_heredoc(int fd, char *delim, t_shell_data *data)
 		ft_putstr_fd("\n", fd);
 		free(buf);
 	}
+	close(fd);
 }
 
 int heredoc(char *delim, t_shell_data *data)

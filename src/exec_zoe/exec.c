@@ -2,6 +2,19 @@
 
 pid_t g_signal;
 
+static void close_heredoc_fds(t_cmd *cmd_list)
+{
+    t_cmd *cmd = cmd_list;
+    
+    while (cmd) {
+        if (cmd->heredoc_fd != -1) {
+            close(cmd->heredoc_fd);
+            cmd->heredoc_fd = -1;
+        }
+        cmd = cmd->next;
+    }
+}
+
 int is_builtin_no_fork(char *cmd)
 {
     if (!ft_strcmp(cmd, "cd") || !ft_strcmp(cmd, "export")
@@ -104,59 +117,63 @@ int execute_commands(t_shell_data *data)
     cmd = data->cmd;
     
     // Handle single builtin command that doesn't need fork
-    if (!cmd->next && is_builtin_no_fork(cmd->args[0]))
-    {
+    if (!cmd->next && is_builtin_no_fork(cmd->args[0])) {
         redirections(data, cmd);
         do_builtin(data, cmd);
+        // Close heredoc FDs after builtin execution
+        close_heredoc_fds(data->cmd);
         return (0);
     }
     
-    while (cmd)
-    {
+    while (cmd) {
         int output_fd = STDOUT_FILENO;
         
         // If there's a next command, create a pipe
-        if (cmd->next)
-        {
-            if (pipe(pipe_fd) == -1)
-            {
+        if (cmd->next) {
+            if (pipe(pipe_fd) == -1) {
                 perror("pipe");
+                // Close any remaining heredoc FDs before returning
+                close_heredoc_fds(data->cmd);
                 return (1);
             }
             output_fd = pipe_fd[1];
         }
         
         pid = fork();
-        if (pid == -1)
-        {
+        if (pid == -1) {
             perror("fork");
+            // Close pipe FDs and heredoc FDs
+            if (cmd->next) {
+                close(pipe_fd[0]);
+                close(pipe_fd[1]);
+            }
+            close_heredoc_fds(data->cmd);
             return (1);
         }
         
-        if (pid == 0)
-        {
+        if (pid == 0) {
             // Child process
             if (cmd->next)
                 close(pipe_fd[0]); // Close unused read end
-            
             child_process(data, cmd, input_fd, output_fd);
             // Never reached
-        }
-        else
-        {
-            // Parent process
+        } else {
+            // Parent process - close heredoc FD for this command after fork
+            if (cmd->heredoc_fd != -1) {
+                close(cmd->heredoc_fd);
+                cmd->heredoc_fd = -1;
+            }
+            
             if (input_fd != STDIN_FILENO)
                 close(input_fd); // Close previous pipe read end
-            
-            if (cmd->next)
-            {
+                
+            if (cmd->next) {
                 close(pipe_fd[1]); // Close write end
                 input_fd = pipe_fd[0]; // Save read end for next command
             }
             
             // If this is the last command, wait for it
-            if (!cmd->next)
-            {
+            if (!cmd->next) {
                 waitpid(pid, &status, 0);
                 if (WIFEXITED(status))
                     data->last_exit_status = WEXITSTATUS(status);
@@ -164,17 +181,19 @@ int execute_commands(t_shell_data *data)
                     data->last_exit_status = 128 + WTERMSIG(status);
             }
         }
-        
         cmd = cmd->next;
     }
     
     // Wait for any remaining child processes
     while (wait(NULL) > 0)
         ; // Wait for all children to finish
-    
+        
     // Close any remaining input fd
     if (input_fd != STDIN_FILENO)
         close(input_fd);
+        
+    // Ensure all heredoc FDs are closed
+    close_heredoc_fds(data->cmd);
     
     return (0);
 }

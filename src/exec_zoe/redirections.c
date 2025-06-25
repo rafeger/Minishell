@@ -52,7 +52,7 @@ static void append_redirection(t_shell_data *data, t_redirect *redir)
 {
 	(void)data;
     int fd;
-    
+
     fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
     if (fd == -1)
     {
@@ -86,6 +86,7 @@ static void here_document(t_cmd *cmd, t_shell_data *data)
         exit(1);
     }
     close(cmd->heredoc_fd);
+    cmd->heredoc_fd = -1;
 }
 
 void redirections(t_shell_data *data, t_cmd *cmd)
