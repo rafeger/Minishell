@@ -76,7 +76,9 @@ static int	update_env_var(char *str, t_env *env, size_t len_name)
 			break ;
 		tmp_env = tmp_env->next;
 	}
-	tmp_env->value = ft_strdup(str);
+	if (tmp_env->value)
+		free(tmp_env->value);
+	tmp_env->value = ft_strdup(&str[len_name + 1]);
 	return (1);
 }
 
@@ -104,7 +106,7 @@ static int	create_new_env_var(char *str, t_env *env)
 	t_env	*tmp_env;
 	t_env	*new_node;
 
-	if (!env || !str || check_valid_name_var(str) || name_var_exist(str, env))
+	if (!env || !str || !ft_strchr(str, '=' ) || check_valid_name_var(str) || name_var_exist(str, env))
 		return (1);
 	new_node = malloc(sizeof(t_env));
 	if (!new_node)

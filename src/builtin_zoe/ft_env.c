@@ -19,7 +19,9 @@ int	ft_env(t_shell_data *shell_data)
 	while (tmp)
 	{
 		ft_printf("%s=", tmp->key);
-		ft_putendl_fd(tmp->value, 1);
+		if (tmp->value)
+			ft_printf("%s", tmp->value);
+		ft_printf("\n");
 		tmp = tmp->next;
 	}
 	return (0);
