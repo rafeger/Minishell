@@ -23,6 +23,8 @@ int	check_valid_name_var(char *str)
 		ft_putstr_fd("': not a valid identifier\n", 2);
 		return (1);
 	}
+	if (!ft_strchr(str, '=' ))
+		return (1);
 	i++;
 	while (str[i] && str[i] != '=')
 	{

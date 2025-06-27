@@ -49,21 +49,6 @@ static char *get_key(char *str)
 	return (key);
 }
 
-static int	print_all_var_env(t_env *env)
-{
-	t_env	*tmp_env;
-
-	tmp_env = env;
-	while (tmp_env)
-	{
-		printf("declare -x ");
-		printf("%s", tmp_env->key);
-		printf("=\"%s\"\n", tmp_env->value);
-		tmp_env = tmp_env->next;
-	}
-	return (0);
-}
-
 static int	update_env_var(char *str, t_env *env, size_t len_name)
 {
 	t_env	*tmp_env;
@@ -106,7 +91,7 @@ static int	create_new_env_var(char *str, t_env *env)
 	t_env	*tmp_env;
 	t_env	*new_node;
 
-	if (!env || !str || !ft_strchr(str, '=' ) || check_valid_name_var(str) || name_var_exist(str, env))
+	if (!env || check_valid_name_var(str) || name_var_exist(str, env))
 		return (1);
 	new_node = malloc(sizeof(t_env));
 	if (!new_node)
@@ -133,7 +118,11 @@ int	ft_export(t_cmd *cmd, t_shell_data *shell_data)
 	int	i;
 
 	if (!cmd->args[1])
-		return (print_all_var_env(shell_data->env));
+	{
+		ft_putstr_fd("bash: export: `", 2);
+		ft_putstr_fd("': not a valid identifier\n", 2);
+	}
+		return (1);
 	i = 1;
 	while (cmd->args[i])
 	{
