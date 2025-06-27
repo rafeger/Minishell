@@ -27,10 +27,14 @@ static char	*get_value(char *str)
 	return (ft_substr(str, i, len));
 }
 
-static void	len_key(char *str, int *len, char stop)
+static int	len_key(char *str, char stop)
 {
-	while (str[*len] != stop)
-			*len++;
+	int	i;
+
+	i = 0;
+	while (str[i] != stop)
+			i++;
+	return (i);
 }
 
 static char	*get_key(char *str, bool *concat)
@@ -40,11 +44,10 @@ static char	*get_key(char *str, bool *concat)
 	char	*key;
 
 	i = 0;
-	len = 0;
 	if (*concat == true)
-		len_key(str, &len, '+');
+		len = len_key(str, '+');
 	else
-		len_key(str, &len, '=');
+		len = len_key(str, '=');
 	key = malloc(sizeof(char *) * len + 1);
 	if (!key)
 		exit(EXIT_FAILURE);
