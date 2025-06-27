@@ -1,36 +1,21 @@
 syntax today
-
 parser  today
-
-
-
 main_input (change some logic)
-
-
 lexer
-
-
 init_and_free
-
-
 expand
-
-
 exec(low prio)
-
-
 env
-
-
 builtins(low prio)
-
 STRUCTS TODAY
-
-
 what changed 
-
 renamed all struct vars
 renamed lots of functions
 modified some variable types
+
+
+todo 26/06
+
+
 
 
