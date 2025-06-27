@@ -27,7 +27,7 @@ static char	*get_value(char *str)
 	return (ft_substr(str, i, len));
 }
 
-static char *get_key(char *str)
+static char *get_key(char *str, bool *concat)
 {
 	int		len;
 	int		i;
@@ -35,8 +35,16 @@ static char *get_key(char *str)
 
 	i = 0;
 	len = 0;
-	while (str[len] != '=')
-		len++;
+	if (*concat == true)
+	{
+		while (str[len] != '+')
+			len++;
+	}
+	else
+	{
+		while (str[len] != '=')
+			len++;
+	}
 	key = malloc(sizeof(char *) * len + 1);
 	if (!key)
 		exit(EXIT_FAILURE);
@@ -49,7 +57,7 @@ static char *get_key(char *str)
 	return (key);
 }
 
-static int	update_env_var(char *str, t_env *env, size_t len_name, bool concat)
+static int	update_env_var(char *str, t_env *env, size_t len_name, bool *concat)
 {
 	t_env	*tmp_env;
 	char	*tmp_value;
@@ -77,19 +85,17 @@ static int	update_env_var(char *str, t_env *env, size_t len_name, bool concat)
 	return (1);
 }
 
-static int	name_var_exist(char *str, t_env *env)
+static int	name_var_exist(char *str, t_env *env, bool *concat)
 {
 	size_t		len_name;
 	t_env	*tmp_env;
-	bool	concat;
 
-	concat = false;
 	len_name = 0;
 	while (str[len_name] != '=')
 		len_name++;
 	if (str[len_name - 1] == '+')
 	{
-		concat = true;
+		*concat = true;
 		len_name--;
 	}
 	tmp_env = env;
@@ -105,15 +111,17 @@ static int	name_var_exist(char *str, t_env *env)
 
 static int	create_new_env_var(char *str, t_env *env)
 {
+	bool	concat;
 	t_env	*tmp_env;
 	t_env	*new_node;
 
-	if (!env || check_valid_name_var(str) || name_var_exist(str, env))
+	concat = false;
+	if (!env || check_valid_name_var(str) || name_var_exist(str, env, &concat))
 		return (1);
 	new_node = malloc(sizeof(t_env));
 	if (!new_node)
 		return (1);
-	new_node->key = get_key(str);
+	new_node->key = get_key(str, &concat);
 	new_node->value = get_value(str);
 	new_node->next = NULL;
 	new_node->prev = NULL;
