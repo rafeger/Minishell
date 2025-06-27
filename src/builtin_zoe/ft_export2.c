@@ -18,9 +18,9 @@ int	check_valid_name_var(char *str)
 	i = 0;
 	if (!str[0] || (str[0] != '_' && !ft_isalpha(str[0])))
 	{
-		ft_putstr_fd("bash: export: ", 2);
+		ft_putstr_fd("bash: export: `", 2);
 		ft_putstr_fd(str, 2);
-		ft_putstr_fd(": not a valid identifier\n", 2);
+		ft_putstr_fd("': not a valid identifier\n", 2);
 		return (1);
 	}
 	i++;
