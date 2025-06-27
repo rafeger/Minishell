@@ -53,7 +53,7 @@ static int	update_env_var(char *str, t_env *env, size_t len_name, bool *concat)
 			break ;
 		tmp_env = tmp_env->next;
 	}
-	if (concat && tmp_env->value)
+	if (*concat && tmp_env->value)
 	{
 		tmp_value = tmp_env->value;
 		tmp_env->value = ft_strjoin(tmp_value, &str[len_name + 2]);
