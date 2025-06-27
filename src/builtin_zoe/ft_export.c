@@ -49,9 +49,10 @@ static char *get_key(char *str)
 	return (key);
 }
 
-static int	update_env_var(char *str, t_env *env, size_t len_name)
+static int	update_env_var(char *str, t_env *env, size_t len_name, bool concat)
 {
 	t_env	*tmp_env;
+	char	*tmp_value;
 
 	tmp_env = env;
 	while (tmp_env)
@@ -61,9 +62,18 @@ static int	update_env_var(char *str, t_env *env, size_t len_name)
 			break ;
 		tmp_env = tmp_env->next;
 	}
-	if (tmp_env->value)
-		free(tmp_env->value);
-	tmp_env->value = ft_strdup(&str[len_name + 1]);
+	if (concat && tmp_env->value)
+	{
+		tmp_value = tmp_env->value;
+		tmp_env->value = ft_strjoin(tmp_value, &str[len_name + 2]);
+		free(tmp_value);
+	}
+	else
+	{
+		if (tmp_env->value)
+			free(tmp_env->value);
+		tmp_env->value = ft_strdup(&str[len_name + 1]);
+	}
 	return (1);
 }
 
@@ -71,16 +81,23 @@ static int	name_var_exist(char *str, t_env *env)
 {
 	size_t		len_name;
 	t_env	*tmp_env;
+	bool	concat;
 
+	concat = false;
 	len_name = 0;
 	while (str[len_name] != '=')
 		len_name++;
+	if (str[len_name - 1] == '+')
+	{
+		concat = true;
+		len_name--;
+	}
 	tmp_env = env;
 	while (tmp_env)
 	{
 		if ((ft_strncmp(str, tmp_env->key, len_name)) == 0
 			&& ft_strlen(tmp_env->key) == len_name)
-			return (update_env_var(str, env, len_name));
+				return (update_env_var(str, env, len_name, concat));
 		tmp_env = tmp_env->next;
 	}
 	return (0);
@@ -121,8 +138,8 @@ int	ft_export(t_cmd *cmd, t_shell_data *shell_data)
 	{
 		ft_putstr_fd("bash: export: `", 2);
 		ft_putstr_fd("': not a valid identifier\n", 2);
-	}
 		return (1);
+	}
 	i = 1;
 	while (cmd->args[i])
 	{

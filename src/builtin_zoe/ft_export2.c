@@ -28,7 +28,9 @@ int	check_valid_name_var(char *str)
 	i++;
 	while (str[i] && str[i] != '=')
 	{
-		if (!ft_isalnum(str[i]) && str[i] != '_')
+		if (str[i] == '+' && str[i+1] == '=')
+			return (0);
+		else if (!ft_isalnum(str[i]) && str[i] != '_')
 		{
 			ft_putstr_fd("bash: export: ", 2);
 			ft_putstr_fd(str, 2);
