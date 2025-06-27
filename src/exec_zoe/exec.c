@@ -45,23 +45,27 @@ static void execute(t_shell_data *data, t_cmd *cmd)
     pathname = get_pathname(commande[0], data->env);
     if (!pathname)
     {
-        perror(commande[0]);
+        ft_cleanup_shell(&data);
+		rl_clear_history();
         exit(127);
     }
     
     if (access(pathname, X_OK) != 0)
     {
         perror(pathname);
+        ft_cleanup_shell(&data);
+		rl_clear_history();
         free(pathname);
         exit(126);
     }
-    
     tab_env = convert_list_to_tab_str(data->env);
     if (execve(pathname, commande, tab_env) == -1)
     {
         perror("execve");
         free(pathname);
         cleanup_split(tab_env);
+        ft_cleanup_shell(&data);
+		rl_clear_history();
         exit(EXIT_FAILURE);
     }
 }
