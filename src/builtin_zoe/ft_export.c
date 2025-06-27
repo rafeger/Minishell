@@ -27,7 +27,13 @@ static char	*get_value(char *str)
 	return (ft_substr(str, i, len));
 }
 
-static char *get_key(char *str, bool *concat)
+static void	len_key(char *str, int *len, char stop)
+{
+	while (str[*len] != stop)
+			*len++;
+}
+
+static char	*get_key(char *str, bool *concat)
 {
 	int		len;
 	int		i;
@@ -36,15 +42,9 @@ static char *get_key(char *str, bool *concat)
 	i = 0;
 	len = 0;
 	if (*concat == true)
-	{
-		while (str[len] != '+')
-			len++;
-	}
+		len_key(str, &len, '+');
 	else
-	{
-		while (str[len] != '=')
-			len++;
-	}
+		len_key(str, &len, '=');
 	key = malloc(sizeof(char *) * len + 1);
 	if (!key)
 		exit(EXIT_FAILURE);
@@ -55,58 +55,6 @@ static char *get_key(char *str, bool *concat)
 	}
 	key[i] = '\0';
 	return (key);
-}
-
-static int	update_env_var(char *str, t_env *env, size_t len_name, bool *concat)
-{
-	t_env	*tmp_env;
-	char	*tmp_value;
-
-	tmp_env = env;
-	while (tmp_env)
-	{
-		if ((ft_strncmp(str, tmp_env->key, len_name)) == 0
-			&& ft_strlen(tmp_env->key) == len_name)
-			break ;
-		tmp_env = tmp_env->next;
-	}
-	if (concat && tmp_env->value)
-	{
-		tmp_value = tmp_env->value;
-		tmp_env->value = ft_strjoin(tmp_value, &str[len_name + 2]);
-		free(tmp_value);
-	}
-	else
-	{
-		if (tmp_env->value)
-			free(tmp_env->value);
-		tmp_env->value = ft_strdup(&str[len_name + 1]);
-	}
-	return (1);
-}
-
-static int	name_var_exist(char *str, t_env *env, bool *concat)
-{
-	size_t		len_name;
-	t_env	*tmp_env;
-
-	len_name = 0;
-	while (str[len_name] != '=')
-		len_name++;
-	if (str[len_name - 1] == '+')
-	{
-		*concat = true;
-		len_name--;
-	}
-	tmp_env = env;
-	while (tmp_env)
-	{
-		if ((ft_strncmp(str, tmp_env->key, len_name)) == 0
-			&& ft_strlen(tmp_env->key) == len_name)
-				return (update_env_var(str, env, len_name, concat));
-		tmp_env = tmp_env->next;
-	}
-	return (0);
 }
 
 static int	create_new_env_var(char *str, t_env *env)
