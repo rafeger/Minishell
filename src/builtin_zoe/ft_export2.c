@@ -11,16 +11,16 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
-static int	check_valid_value(char *str)
+int	check_valid_value(char *str)
 {
 	int	i;
 
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '('|| str[i] == ')')
+		if (str[i] == '(' || str[i] == ')')
 			return (syntax_error(str[i]));
-		else if (str[i] == '&'|| str[i] == ';')
+		else if (str[i] == '&' || str[i] == ';')
 		{
 			ft_putstr_fd(&str[i + 1], 2);
 			ft_putstr_fd(": command not found\n", 2);
@@ -39,7 +39,7 @@ static int	check_valid_value(char *str)
 	return (0);
 }
 
-static int	not_valid_id(char *str)
+int	not_valid_id(char *str)
 {
 	ft_putstr_fd("bash: export: `", 2);
 	ft_putstr_fd(str, 2);
@@ -47,31 +47,10 @@ static int	not_valid_id(char *str)
 	return (1);
 }
 
-int	check_valid_key(char *str)
-{
-	int	i;
-
-	i = 0;
-	if (!str[0] || (str[0] != '_' && !ft_isalpha(str[0])))
-		return (not_valid_id(str));
-	if (!ft_strchr(str, '=' ))
-		return (1);
-	i++;
-	while (str[i] && str[i] != '=')
-	{
-		if (str[i] == '+' && str[i + 1] == '=')
-			return (0);
-		else if (!ft_isalnum(str[i]) && str[i] != '_')
-			return (not_valid_id(str));
-		i++;
-	}
-	return (check_valid_value(&str[i]));
-}
-
 static void	update_env_value(t_env *env, char *str, bool concat)
 {
-	char *tmp_value;
-	char *tmp_value2;
+	char	*tmp_value;
+	char	*tmp_value2;
 
 	if (concat && env->value)
 	{
@@ -90,7 +69,6 @@ static void	update_env_value(t_env *env, char *str, bool concat)
 		env->value = get_value(str);
 	}
 }
-
 
 static int	update_env_var(char *str, t_env *env, size_t len_name, bool *concat)
 {

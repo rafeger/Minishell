@@ -170,7 +170,9 @@ int		ft_env(t_shell_data *shell_data);
 
 void	ft_exit(t_cmd *cmd, t_shell_data *data);
 
-int		check_valid_key(char *str);
+int		not_valid_id(char *str);
+
+int		check_valid_value(char *str);
 
 char	*get_value(char *str);
 
