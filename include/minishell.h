@@ -170,11 +170,13 @@ int		ft_env(t_shell_data *shell_data);
 
 void	ft_exit(t_cmd *cmd, t_shell_data *data);
 
-int		check_valid_name_var(char *str);
+int		check_valid_key(char *str);
 
 int		ft_export(t_cmd *cmd, t_shell_data *shell_data);
 
 int		name_var_exist(char *str, t_env *env, bool *concat);
+
+char	*get_value(char *str);
 
 int		ft_pwd(void);
 

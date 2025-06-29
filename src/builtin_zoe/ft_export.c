@@ -11,22 +11,6 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
-static char	*get_value(char *str)
-{
-	int	len;
-	int	i;
-
-	len = 0;
-	i = 1;
-	while (str[i - 1] != '=')
-		i++;
-	if (str[i] == '\0')
-		return (NULL);
-	while (str[i + len])
-		len++;
-	return (ft_substr(str, i, len));
-}
-
 static int	len_key(char *str, char stop)
 {
 	int	i;
@@ -67,7 +51,7 @@ static int	create_new_env_var(char *str, t_env *env)
 	t_env	*new_node;
 
 	concat = false;
-	if (!env || check_valid_name_var(str) || name_var_exist(str, env, &concat))
+	if (!env || check_valid_key(str) || name_var_exist(str, env, &concat))
 		return (1);
 	new_node = malloc(sizeof(t_env));
 	if (!new_node)

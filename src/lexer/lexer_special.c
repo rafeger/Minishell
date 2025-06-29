@@ -89,7 +89,6 @@ void	resize_token_array(t_ta *ta)
 	int		new_capacity;
 	char	**new_tokens;
 	int		*new_quoted;
-	int		i;
 
 	new_capacity = ta->cap * 2;
 	new_tokens = ft_realloc(ta->tokens, ta->cap * sizeof(char *), \

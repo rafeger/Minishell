@@ -11,6 +11,31 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
+int	check_valid_value(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '('|| str[i] == ')')
+		{
+			ft_putstr_fd("bash: syntax error near unexpected token `", 2);
+			ft_putstr_fd(str[i], 2);
+			ft_putstr_fd("'\n", 2);
+			return(1);
+		}
+		if (str[i] == '&'|| str[i] == ';')
+		{
+			ft_putstr_fd(&str[i], 2);
+			ft_putstr_fd(": command not found\n", 2);
+			if (str[i] == '&')
+				return (1);
+		}
+	}
+	return (0);
+}
+
 static int	not_valid_id(char *str)
 {
 	ft_putstr_fd("bash: export: `", 2);
@@ -19,7 +44,7 @@ static int	not_valid_id(char *str)
 	return (1);
 }
 
-int	check_valid_name_var(char *str)
+int	check_valid_key(char *str)
 {
 	int	i;
 
@@ -37,7 +62,7 @@ int	check_valid_name_var(char *str)
 			return (not_valid_id(str));
 		i++;
 	}
-	return (0);
+	return (check_valid_value(&str[i]));
 }
 
 static int	update_env_var(char *str, t_env *env, size_t len_name, bool *concat)
