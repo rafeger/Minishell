@@ -143,6 +143,13 @@ typedef struct s_heredoc_data
 	t_shell_data		*sd;
 }	t_heredoc_data;
 
+ typedef enum e_quote_state
+{
+    STATE_NONE,
+    STATE_IN_SINGLE_QUOTE,
+    STATE_IN_DOUBLE_QUOTE
+} t_quote_state;
+
 /*============================== builtin_zoe =================================*/
 int		ft_cd(t_cmd *cmd, t_shell_data *shell_data);
 
@@ -178,6 +185,8 @@ void 	redirections(t_shell_data *data, t_cmd *cmd);
 char	**convert_list_to_tab_str(t_env *env);
 
 int		ft_envsize(t_env *lst);
+
+char    *shell_quote_removal(char *str);
 
 /*============================== main_and_input ==============================*/
 
