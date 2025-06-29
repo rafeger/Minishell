@@ -21,27 +21,6 @@ static t_cmd	*setup_pipe_cmd(t_ta *new_ta, t_ta *ta, int idx, char **stok)
 	return (next_cmd);
 }
 
-/**
- * @brief Processes a pipe token in the command sequence.
- *
- * When a pipe character ('|') is found, this function is responsible for
- * creating a new command structure for the command that follows the pipe.
- * It links the current command to this new command, effectively building
- * the pipeline. If the `handle_pipe` operation fails, it cleans up the
- * current command and signals failure.
- *
- * @param cmd A pointer to the current command structure, which will be linked to the next.
- * @param ta A pointer to the token array.
- * @param i A pointer to the current index in the token array, pointing to the pipe.
- * @return Returns 0 if `handle_pipe` fails, 1 on successful handling of the pipe.
- */
-/*
- * Processes pipe token in parsing.
- * Creates and links new command structure.
- * Sets up command relationship in pipeline.
- * Returns 0 on failure, 1 on success.
-*/
-
 int	handle_pipe(t_cmd *cmd, t_ta *ta, int index)
 {
 	t_ta	*new_ta;
@@ -81,20 +60,6 @@ static int	handle_pipe_token(t_cmd *cmd, t_ta *ta, int *i)
 	return (1);
 }
 
-
-/**
- * @brief Handles redirection tokens and their associated file names.
- *
- * This function is invoked when a redirection operator (`<`, `>`, `<<`, `>>`)
- * is encountered. It determines the type of redirection, then finds the
- * subsequent token which represents the target filename (skipping any
- * intervening whitespace tokens). Finally, it creates and adds a new
- * redirection structure to the current command.
- *
- * @param cmd A pointer to the current command structure.
- * @param ta A pointer to the token array.
- * @param i A pointer to the current index in the token array, pointing to the redirection operator.
- */
 static void	handle_redirect(t_cmd *cmd, t_ta *ta, int *i)
 {
 	int	redir_kind;

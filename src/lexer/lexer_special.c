@@ -100,12 +100,5 @@ void	resize_token_array(t_ta *ta)
 		return ;
 	ta->tokens = new_tokens;
 	ta->quoted = new_quoted;
-	i = ta->cap;
-	while (i < new_capacity)
-	{
-		ta->tokens[i] = NULL;
-		ta->quoted[i] = 0;
-		i++;
-	}
 	ta->cap = new_capacity;
 }
