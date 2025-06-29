@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
-int	check_valid_value(char *str)
+static int	check_valid_value(char *str)
 {
 	int	i;
 
@@ -19,19 +19,22 @@ int	check_valid_value(char *str)
 	while (str[i])
 	{
 		if (str[i] == '('|| str[i] == ')')
+			return (syntax_error(str[i]));
+		else if (str[i] == '&'|| str[i] == ';')
 		{
-			ft_putstr_fd("bash: syntax error near unexpected token `", 2);
-			ft_putstr_fd(str[i], 2);
-			ft_putstr_fd("'\n", 2);
-			return(1);
-		}
-		if (str[i] == '&'|| str[i] == ';')
-		{
-			ft_putstr_fd(&str[i], 2);
+			ft_putstr_fd(&str[i + 1], 2);
 			ft_putstr_fd(": command not found\n", 2);
 			if (str[i] == '&')
 				return (1);
 		}
+		else if (str[i] == '!')
+		{
+			ft_putstr_fd("bash: ", 2);
+			ft_putstr_fd(&str[i], 2);
+			ft_putstr_fd(": event not found\n", 2);
+			return (1);
+		}
+		i++;
 	}
 	return (0);
 }
@@ -65,10 +68,33 @@ int	check_valid_key(char *str)
 	return (check_valid_value(&str[i]));
 }
 
+static void	update_env_value(t_env *env, char *str, bool concat)
+{
+	char *tmp_value;
+	char *tmp_value2;
+
+	if (concat && env->value)
+	{
+		tmp_value = env->value;
+		tmp_value2 = get_value(str);
+		env->value = ft_strjoin(tmp_value, tmp_value2);
+		if (tmp_value2)
+			free(tmp_value2);
+		if (tmp_value)
+			free(tmp_value);
+	}
+	else
+	{
+		if (env->value)
+			free(env->value);
+		env->value = get_value(str);
+	}
+}
+
+
 static int	update_env_var(char *str, t_env *env, size_t len_name, bool *concat)
 {
 	t_env	*tmp_env;
-	char	*tmp_value;
 
 	tmp_env = env;
 	while (tmp_env)
@@ -78,18 +104,7 @@ static int	update_env_var(char *str, t_env *env, size_t len_name, bool *concat)
 			break ;
 		tmp_env = tmp_env->next;
 	}
-	if (*concat && tmp_env->value)
-	{
-		tmp_value = tmp_env->value;
-		tmp_env->value = ft_strjoin(tmp_value, &str[len_name + 2]);
-		free(tmp_value);
-	}
-	else
-	{
-		if (tmp_env->value)
-			free(tmp_env->value);
-		tmp_env->value = ft_strdup(&str[len_name + 1]);
-	}
+	update_env_value(tmp_env, str, *concat);
 	return (1);
 }
 

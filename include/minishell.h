@@ -172,11 +172,13 @@ void	ft_exit(t_cmd *cmd, t_shell_data *data);
 
 int		check_valid_key(char *str);
 
+char	*get_value(char *str);
+
+int		syntax_error(char c);
+
 int		ft_export(t_cmd *cmd, t_shell_data *shell_data);
 
 int		name_var_exist(char *str, t_env *env, bool *concat);
-
-char	*get_value(char *str);
 
 int		ft_pwd(void);
 

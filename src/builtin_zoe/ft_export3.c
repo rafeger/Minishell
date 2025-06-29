@@ -76,14 +76,17 @@ char	*get_value(char *str)
 		return (NULL);
 	while (str[i + len])
 	{
-		if (str[i] == ';')
-		{
-			len--;
+		if (str[i + len] == ';')
 			break;
-		}
 		len++;
 	}
-	return (ft_substr(str, i, len));
+	return (substr_value(str, i, len));
 }
 
-
+int	syntax_error(char c)
+{
+	ft_putstr_fd("bash: syntax error near unexpected token `", 2);
+	ft_putchar_fd(c, 2);
+	ft_putstr_fd("'\n", 2);
+	return(1);
+}
