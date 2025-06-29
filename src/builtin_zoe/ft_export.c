@@ -27,16 +27,27 @@ static char	*get_value(char *str)
 	return (ft_substr(str, i, len));
 }
 
-static char *get_key(char *str)
+static int	len_key(char *str, char stop)
+{
+	int	i;
+
+	i = 0;
+	while (str[i] != stop)
+			i++;
+	return (i);
+}
+
+static char	*get_key(char *str, bool *concat)
 {
 	int		len;
 	int		i;
 	char	*key;
 
 	i = 0;
-	len = 0;
-	while (str[len] != '=')
-		len++;
+	if (*concat == true)
+		len = len_key(str, '+');
+	else
+		len = len_key(str, '=');
 	key = malloc(sizeof(char *) * len + 1);
 	if (!key)
 		exit(EXIT_FAILURE);
@@ -49,67 +60,19 @@ static char *get_key(char *str)
 	return (key);
 }
 
-static int	print_all_var_env(t_env *env)
-{
-	t_env	*tmp_env;
-
-	tmp_env = env;
-	while (tmp_env)
-	{
-		printf("declare -x ");
-		printf("%s", tmp_env->key);
-		printf("=\"%s\"\n", tmp_env->value);
-		tmp_env = tmp_env->next;
-	}
-	return (0);
-}
-
-static int	update_env_var(char *str, t_env *env, size_t len_name)
-{
-	t_env	*tmp_env;
-
-	tmp_env = env;
-	while (tmp_env)
-	{
-		if ((ft_strncmp(str, tmp_env->key, len_name)) == 0
-			&& ft_strlen(tmp_env->key) == len_name)
-			break ;
-		tmp_env = tmp_env->next;
-	}
-	tmp_env->value = ft_strdup(str);
-	return (1);
-}
-
-static int	name_var_exist(char *str, t_env *env)
-{
-	size_t		len_name;
-	t_env	*tmp_env;
-
-	len_name = 0;
-	while (str[len_name] != '=')
-		len_name++;
-	tmp_env = env;
-	while (tmp_env)
-	{
-		if ((ft_strncmp(str, tmp_env->key, len_name)) == 0
-			&& ft_strlen(tmp_env->key) == len_name)
-			return (update_env_var(str, env, len_name));
-		tmp_env = tmp_env->next;
-	}
-	return (0);
-}
-
 static int	create_new_env_var(char *str, t_env *env)
 {
+	bool	concat;
 	t_env	*tmp_env;
 	t_env	*new_node;
 
-	if (!env || !str || check_valid_name_var(str) || name_var_exist(str, env))
+	concat = false;
+	if (!env || check_valid_name_var(str) || name_var_exist(str, env, &concat))
 		return (1);
 	new_node = malloc(sizeof(t_env));
 	if (!new_node)
 		return (1);
-	new_node->key = get_key(str);
+	new_node->key = get_key(str, &concat);
 	new_node->value = get_value(str);
 	new_node->next = NULL;
 	new_node->prev = NULL;
@@ -131,7 +94,11 @@ int	ft_export(t_cmd *cmd, t_shell_data *shell_data)
 	int	i;
 
 	if (!cmd->args[1])
-		return (print_all_var_env(shell_data->env));
+	{
+		ft_putstr_fd("bash: export: `", 2);
+		ft_putstr_fd("': not a valid identifier\n", 2);
+		return (1);
+	}
 	i = 1;
 	while (cmd->args[i])
 	{

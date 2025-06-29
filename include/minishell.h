@@ -167,6 +167,8 @@ int		check_valid_name_var(char *str);
 
 int		ft_export(t_cmd *cmd, t_shell_data *shell_data);
 
+int		name_var_exist(char *str, t_env *env, bool *concat);
+
 int		ft_pwd(void);
 
 int		ft_unset(t_cmd *cmd, t_shell_data *shell_data);
