@@ -54,6 +54,11 @@ char	*get_pathname(char *cmd, t_env *env)
 	tmp_env = env;
 	while (tmp_env && ft_strnstr(tmp_env->key, "PATH", 4) == 0)
 		tmp_env = tmp_env->next;
+	if (!tmp_env)
+	{
+		print_command_not_found(cmd);
+		return (NULL);
+	}
 	paths = ft_split(tmp_env->value + 5, ':');
 	i = 0;
 	while (paths[i])
