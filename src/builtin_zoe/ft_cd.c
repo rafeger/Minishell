@@ -45,13 +45,13 @@ static void set_env_var(t_env **env, const char *key, const char *value)
     }
 }
 
-static void update_pwd_vars(t_env *env)
+static void update_pwd_vars(t_env **env)
 {
     char *old_pwd = NULL;
     char *new_pwd = NULL;
     t_env *pwd_var;
 
-    pwd_var = find_env_var(env, "PWD");
+    pwd_var = find_env_var(*env, "PWD");
     if (pwd_var && pwd_var->value)
         old_pwd = ft_strdup(pwd_var->value);
     new_pwd = getcwd(NULL, 0);
@@ -65,11 +65,11 @@ static void update_pwd_vars(t_env *env)
     
     if (old_pwd)
     {
-        set_env_var(&env, "OLDPWD", old_pwd);
+        set_env_var(env, "OLDPWD", old_pwd);
         free(old_pwd);
     }
 
-    set_env_var(&env, "PWD", new_pwd);
+    set_env_var(env, "PWD", new_pwd);
     free(new_pwd);
 }
 
@@ -103,6 +103,6 @@ int ft_cd(t_cmd *cmd, t_shell_data *shell_data)
         perror(path);
         return (1);
     }
-    update_pwd_vars(shell_data->env);
+    update_pwd_vars(&shell_data->env);
     return (0);
 }
