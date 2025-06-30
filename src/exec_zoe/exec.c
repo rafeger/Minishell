@@ -23,17 +23,43 @@ int is_builtin_no_fork(char *cmd)
 	return (0);
 }
 
-static void cleanup_split(char **array)
+static void execute(t_shell_data *data, t_cmd *cmd)
 {
-	int i;
+	char *pathname;
+	char **commande;
+	char **tab_env;
+	int need_free_pathname = 0;
 
-	i = 0;
-	if (!array)
-		return ;
-	while (array[i])
-		free(array[i++]);
-	free(array);
+	commande = cmd->args;
+	if (access(commande[0], F_OK) == 0)
+	{
+		pathname = commande[0];
+		need_free_pathname = 0;
+	}
+	else
+	{
+		pathname = get_pathname(commande[0], data->env);
+		need_free_pathname = 1;
+	}
+	if (!pathname)
+	{
+		ft_cleanup_shell(&data);
+		rl_clear_history();
+		exit(127);
+	}
+	tab_env = convert_list_to_tab_str(data->env);
+	if (execve(pathname, commande, tab_env) == -1)
+	{
+		perror("execve");
+		if (need_free_pathname)
+			free(pathname);
+		free(tab_env);
+		ft_cleanup_shell(&data);
+		rl_clear_history();
+		exit(EXIT_FAILURE);
+	}
 }
+
 
 static void execute(t_shell_data *data, t_cmd *cmd)
 {
