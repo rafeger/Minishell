@@ -13,7 +13,7 @@ static void close_heredoc_fds(t_cmd *cmd_list)
 		}
 		cmd = cmd->next;
 	}
-	}
+}
 
 int is_builtin_no_fork(char *cmd)
 {
@@ -42,21 +42,15 @@ static void execute(t_shell_data *data, t_cmd *cmd)
 	char **tab_env;
 
 	commande = cmd->args;
-	pathname = get_pathname(commande[0], data->env);
+	if (access(commande[0], F_OK) == 0)
+		pathname = commande[0];
+	else
+		pathname = get_pathname(commande[0], data->env);
 	if (!pathname)
 	{
 		ft_cleanup_shell(&data);
 		rl_clear_history();
 		exit(127);
-	}
-
-	if (access(pathname, X_OK) != 0)
-	{
-		perror(pathname);
-		ft_cleanup_shell(&data);
-		rl_clear_history();
-		free(pathname);
-		exit(126);
 	}
 	tab_env = convert_list_to_tab_str(data->env);
 	if (execve(pathname, commande, tab_env) == -1)
