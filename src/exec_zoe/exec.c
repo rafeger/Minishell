@@ -60,36 +60,6 @@ static void execute(t_shell_data *data, t_cmd *cmd)
 	}
 }
 
-
-static void execute(t_shell_data *data, t_cmd *cmd)
-{
-	char *pathname;
-	char **commande;
-	char **tab_env;
-
-	commande = cmd->args;
-	if (access(commande[0], F_OK) == 0)
-		pathname = commande[0];
-	else
-		pathname = get_pathname(commande[0], data->env);
-	if (!pathname)
-	{
-		ft_cleanup_shell(&data);
-		rl_clear_history();
-		exit(127);
-	}
-	tab_env = convert_list_to_tab_str(data->env);
-	if (execve(pathname, commande, tab_env) == -1)
-	{
-		perror("execve");
-		free(pathname);
-		cleanup_split(tab_env);
-		ft_cleanup_shell(&data);
-		rl_clear_history();
-		exit(EXIT_FAILURE);
-	}
-}
-
 static void setup_pipes_and_redirections(t_cmd *cmd, int pipe_in, int pipe_out)
 {
 	(void)cmd;
