@@ -2,12 +2,6 @@
 #include "../../include/minishell.h"
 
 
-/*
- * Checks for multiple consecutive redirection symbols (> or <).
- * Detects invalid sequences like >>> or <<<.
- * Returns 1 and displays error if invalid, 0 if valid.
- * Updates index to skip processed characters.
-*/
 int	check_multi_redir(char *input, int *i)
 {
 	int	count;
@@ -37,12 +31,6 @@ int	check_multi_redir(char *input, int *i)
 	return (0);
 }
 
-/*
- * Verifies presence of content after redirection symbol.
- * Skips whitespace to find next meaningful character.
- * Returns 1 and desplays error if newline found immediately after redirecton.
- * Returns 0 if valid content follows redirection.
-*/
 int	check_newline_after_redir(char *input, int i)
 {
 	while (input[i] && ft_isspace(input[i]))
@@ -56,12 +44,6 @@ int	check_newline_after_redir(char *input, int i)
 	return (0);
 }
 
-/*
- * Detects invalid consecutive redirection operators.
- * Looks for sequences like >< or <>.
- * Returns 1 and displays error if invalid sequence found.
- * Returns 0 if redirections are properly separated.
-*/
 int	check_consecutive_redir(char *input, int *i)
 {
 	int		j;
@@ -89,14 +71,6 @@ int	check_consecutive_redir(char *input, int *i)
 	return (0);
 }
 
-/*
- * Validates redirection syntax at current position:
- * - Checks for quotes context.
- * - Validates pipe combinations.
- * - Checks multiple redirections.
- * - Verifies following content.
- * Returns 1 on any error, 0 if valid.
-*/
 int	check_redirections(char *input, int *i)
 {
 	if (check_if_quotes(input, i))
@@ -114,12 +88,6 @@ int	check_redirections(char *input, int *i)
 	return (0);
 }
 
-/*
- * Main syntax validation function that:
- * - Validates pipe syntax.
- * - Checks all redirection operators.
- * Returns 1 if any syntax error found, 0 if input is valid.
-*/
 int	check_syntax(char *input)
 {
 	int	i;
