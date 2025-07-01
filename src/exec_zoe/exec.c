@@ -29,8 +29,18 @@ static void execute(t_shell_data *data, t_cmd *cmd)
 	char **commande;
 	char **tab_env;
 	int need_free_pathname = 0;
+	struct stat file_stat;
 
 	commande = cmd->args;
+	if (!stat(commande[0], &file_stat))
+	{
+		ft_putstr_fd("bash: ", 2);
+		ft_putstr_fd(commande[0], 2);
+		ft_putstr_fd(": Is a directory\n", 2);
+		ft_cleanup_shell(&data);
+		rl_clear_history();
+		exit(126);
+	}
 	if (access(commande[0], F_OK) == 0)
 	{
 		pathname = commande[0];
