@@ -18,6 +18,7 @@ static void	error_not_number(char *str)
 	ft_putstr_fd(str, 2);
 	ft_putendl_fd(": numeric argument required", 2);
 }
+
 static int	check_number(char *str)
 {
 	int	i;
