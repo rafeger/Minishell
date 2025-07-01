@@ -44,22 +44,11 @@ static char	*construct_and_check_path(char *path, char *cmd)
 	return (NULL);
 }
 
-char	*get_pathname(char *cmd, t_env *env)
+static char	*search_cmd_in_paths(char **paths, char *cmd)
 {
-	char	**paths;
 	char	*exec;
 	int		i;
-	t_env	*tmp_env;
 
-	tmp_env = env;
-	while (tmp_env && ft_strnstr(tmp_env->key, "PATH", 4) == 0)
-		tmp_env = tmp_env->next;
-	if (!tmp_env)
-	{
-		print_command_not_found(cmd);
-		return (NULL);
-	}
-	paths = ft_split(tmp_env->value + 5, ':');
 	i = 0;
 	while (paths[i])
 	{
@@ -72,7 +61,28 @@ char	*get_pathname(char *cmd, t_env *env)
 		i++;
 	}
 	cleanup_split(paths);
-	print_command_not_found(cmd);
 	return (NULL);
 }
 
+char	*get_pathname(char *cmd, t_env *env)
+{
+	t_env	*tmp_env;
+	char	**paths;
+	char	*result;
+
+	tmp_env = env;
+	while (tmp_env && ft_strnstr(tmp_env->key, "PATH", 4) == 0)
+		tmp_env = tmp_env->next;
+	if (!tmp_env)
+	{
+		print_command_not_found(cmd);
+		return (NULL);
+	}
+	paths = ft_split(tmp_env->value + 5, ':');
+	if (!paths)
+		return (NULL);
+	result = search_cmd_in_paths(paths, cmd);
+	if (!result)
+		print_command_not_found(cmd);
+	return (result);
+}

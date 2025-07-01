@@ -193,9 +193,32 @@ int		do_builtin(t_shell_data *data, t_cmd *cmd);
 
 int		execute_commands(t_shell_data *data);
 
+int		is_builtin_no_fork(char *cmd);
+
+void	handle_builtin_child(t_shell_data *data, t_cmd *cmd);
+
+int		handle_fork_error(t_cmd *cmd, int pipe_fd[2], t_shell_data *data);
+
+void	wait_for_last_command(t_cmd *cmd, pid_t pid, int *status,
+	t_shell_data *data);
+
+void	close_heredoc_fds(t_cmd *cmd_list);
+
+void	handle_parent_cleanup(t_cmd *cmd, int pipe_fd[2], int *input_fd);
+
+int		create_pipe_if_needed(t_cmd *cmd, int pipe_fd[2], int *output_fd);
+
+void	setup_pipes_and_redirections(t_cmd *cmd, int pipe_in, int pipe_out);
+
+void	execute(t_shell_data *data, t_cmd *cmd);
+
 char	*get_pathname(char *cmd, t_env *env);
 
 int		heredoc(char *delim, t_shell_data *data);
+
+void	setup_heredoc_signals(struct sigaction *old_sa);
+
+int		check_signal_callback(void);
 
 void 	redirections(t_shell_data *data, t_cmd *cmd);
 

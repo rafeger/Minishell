@@ -36,8 +36,9 @@ SRCS		=	$(addprefix $(SRC_DIR)/, \
 				parser/parse_redirect.c parser/tokenarray_utils.c \
 				expand/expand_core.c expand/expand_size_utils.c \
 				expand/expand_var_utils.c \
-				exec_zoe/builtin.c exec_zoe/exec.c \
-				exec_zoe/find_cmd.c exec_zoe/here_doc.c \
+				exec_zoe/builtin.c \
+				exec_zoe/exec.c exec_zoe/exec_pipes.c exec_zoe/exec_process.c exec_zoe/exec_utils.c \
+				exec_zoe/find_cmd.c exec_zoe/here_doc.c exec_zoe/here_doc2.c\
 				exec_zoe/redirections.c exec_zoe/utils.c \
 				builtin_zoe/ft_cd.c builtin_zoe/ft_echo.c \
 				builtin_zoe/ft_env.c builtin_zoe/ft_exit.c \
