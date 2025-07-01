@@ -75,17 +75,6 @@ typedef struct s_ta
 	int					second_quote;
 }	t_ta;
 
-// typedef struct s_ta {
-//     char **tokens;         // Array of tokens
-//     char *current_token;   // Current token being constructed
-//     size_t token_index;    // Current position in the token buffer
-//     size_t token_capacity; // Capacity of the token buffer
-//     int token_count;       // Total number of tokens
-//     int inside_quotes;     // Boolean to track if inside quotes
-//     char quote_char;       // Type of quote (single or double)
-//     int trailing_space;    // Flag for trailing space
-// } t_ta;
-
 /* type : type of redirection, defined by 0 = <, 1 = >, 2 = << and 3 = >>.
    *file : it's the name of the file implicated in the redirection.
    *next : pointer to the next redirection. */

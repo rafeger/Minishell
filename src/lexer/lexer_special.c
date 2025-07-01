@@ -37,6 +37,15 @@ void	handle_trailing_space(t_ta *ta, int was_quoted)
 */
 static void	process_special_token(t_ta *ta, char **input)
 {
+	if (ta->tokensize < 2)
+	{
+        size_t oldsize = ta->tokensize + 1;
+        ta->tokensize = 2;
+        ta->token = ft_realloc(ta->token, oldsize * sizeof(char),\
+			(ta->tokensize + 1) * sizeof(char));
+        if (!ta->token)
+            return;
+    }
 	if ((**input == '<' && *(*input + 1) == '<') || \
 		(**input == '>' && *(*input + 1) == '>'))
 	{
