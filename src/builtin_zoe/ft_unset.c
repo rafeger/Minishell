@@ -14,13 +14,11 @@
 int	check_is_in_env(char *var, t_env **env)
 {
     t_env *current;
-    t_env *prev;
     
     if (!var || !env || !*env)
         return (0);
     
     current = *env;
-    prev = NULL;
     
     while (current)
     {
