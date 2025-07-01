@@ -11,6 +11,13 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
+static void	error_not_number(char *str)
+{
+	ft_putendl_fd("exit", 2);
+	ft_putstr_fd("bash: exit: ", 2);
+	ft_putstr_fd(str, 2);
+	ft_putendl_fd(": numeric argument required", 2);
+}
 static int	check_number(char *str)
 {
 	int	i;
@@ -24,7 +31,7 @@ static int	check_number(char *str)
 	{
 		if (str[i] >= '0' && str[i] <= '9')
 			i++;
-		else 
+		else
 			return (1);
 	}
 	return (0);
@@ -37,13 +44,9 @@ void	ft_exit(t_cmd *cmd, t_shell_data *data)
 	status = 0;
 	if (cmd->args[1] && check_number(cmd->args[1]))
 	{
-		ft_putendl_fd("exit", 2);
-		ft_putstr_fd("bash: exit: ", 2);
-		ft_putstr_fd(cmd->args[1], 2);
-		ft_putendl_fd(": numeric argument required", 2);
+		error_not_number(cmd->args[1]);
 		data->last_exit_status = 2;
 		status = data->last_exit_status;
-
 	}
 	else if (cmd->args[1] && cmd->args[2])
 	{
@@ -56,7 +59,7 @@ void	ft_exit(t_cmd *cmd, t_shell_data *data)
 	else
 	{
 		ft_putendl_fd("exit", data->last_exit_status);
-		data->last_exit_status= ft_atoi(cmd->args[1]) % 256;
+		data->last_exit_status = ft_atoi(cmd->args[1]) % 256;
 		status = data->last_exit_status;
 	}
 	ft_cleanup_shell(&data);

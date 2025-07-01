@@ -13,17 +13,15 @@
 
 int	check_is_in_env(char *var, t_env **env)
 {
-    t_env *current;
-    
-    if (!var || !env || !*env)
-        return (0);
-    
-    current = *env;
-    
-    while (current)
-    {
-        if (ft_strncmp(var, current->key, ft_strlen(var)) == 0 && 
-            ft_strlen(var) == ft_strlen(current->key))
+	t_env	*current;
+
+	if (!var || !env || !*env)
+		return (0);
+	current = *env;
+	while (current)
+	{
+		if (ft_strncmp(var, current->key, ft_strlen(var)) == 0
+			&& ft_strlen(var) == ft_strlen(current->key))
 		{
 			remove_env_var(env, current->key);
 			return (0);
