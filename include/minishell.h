@@ -60,31 +60,31 @@ typedef struct s_env
 	tokensize : contains the len of said tok
 	cap : total number of toks we can handle dinamically*/
 
-typedef struct s_ta
-{
-	char				**tokens;
-	char				*token;
-	char				quotechar;
-	size_t				tokenindex;
-	size_t				tokensize;
-	bool				in_q;
-	int					t_tot;
-	int					cap;
-	int					trailing_space;
-	int					*quoted;
-	int					second_quote;
-}	t_ta;
+// typedef struct s_ta
+// {
+// 	char				**tokens;
+// 	char				*token;
+// 	char				quotechar;
+// 	size_t				tokenindex;
+// 	size_t				tokensize;
+// 	bool				in_q;
+// 	int					t_tot;
+// 	int					cap;
+// 	int					trailing_space;
+// 	int					*quoted;
+// 	int					second_quote;
+// }	t_ta;
 
-// typedef struct s_ta {
-//     char **tokens;         // Array of tokens
-//     char *current_token;   // Current token being constructed
-//     size_t token_index;    // Current position in the token buffer
-//     size_t token_capacity; // Capacity of the token buffer
-//     int token_count;       // Total number of tokens
-//     int inside_quotes;     // Boolean to track if inside quotes
-//     char quote_char;       // Type of quote (single or double)
-//     int trailing_space;    // Flag for trailing space
-// } t_ta;
+typedef struct s_ta {
+    char **tokens;         // Array of tokens
+    char *current_token;   // Current token being constructed
+    size_t token_index;    // Current position in the token buffer
+    size_t token_capacity; // Capacity of the token buffer
+    int token_count;       // Total number of tokens
+    int inside_quotes;     // Boolean to track if inside quotes
+    char quote_char;       // Type of quote (single or double)
+    int trailing_space;    // Flag for trailing space
+} t_ta;
 
 /* type : type of redirection, defined by 0 = <, 1 = >, 2 = << and 3 = >>.
    *file : it's the name of the file implicated in the redirection.
@@ -272,7 +272,7 @@ int	has_eof_been_reached(void);
 
 // /* fork_and_execute.c */
 
-// int				fork_and_execute(t_cmd *cmd, t_shell_data *sd, \
+// int				fork_and_execute(t_cmd *cmd, t_shell_data *sd, 
 // 					int input_fd, int *pipe_fd);
 
 // /* invalid_command_core.c */
@@ -280,7 +280,7 @@ int	has_eof_been_reached(void);
 // int				handle_invalid_command(t_cmd *cmd, t_shell_data *shell_data);
 
 // /* invalid_command_expanded.c */
-// int				is_expanded_invalid_cmd(const char *name, int quoted, \
+// int				is_expanded_invalid_cmd(const char *name, int quoted, 
 // 					t_shell_data *sd);
 
 // void			handle_expanded_invalid_cmd(t_cmd *cmd, t_shell_data *sd);
@@ -292,29 +292,29 @@ int	has_eof_been_reached(void);
 // void			handle_external_command(t_cmd *cmd, t_shell_data *shell_data);
 
 // /* execute_external_utils.c */
-// void			check_file_permissions(char *path, t_cmd *cmd, \
+// void			check_file_permissions(char *path, t_cmd *cmd, 
 // 										t_shell_data *sd);
 
-// void			handle_command_error(t_cmd *cmd, t_shell_data *sd, \
+// void			handle_command_error(t_cmd *cmd, t_shell_data *sd, 
 // 										int is_permission);
 
 // int				check_redirect_arg_error(char **args, t_shell_data *shell_data);
 
 // /* heredoc_core.c */
-// int				handle_heredoc(char *delimiter, int eof_quoted, \
+// int				handle_heredoc(char *delimiter, int eof_quoted, 
 // 					t_shell_data *sd);
 
 // /* heredoc_sig.c */
-// int				setup_signal_handlers(struct sigaction *sa_new, struct \
+// int				setup_signal_handlers(struct sigaction *sa_new, struct 
 // 					sigaction *sa_old);
 
-// int				handle_heredoc_input(t_heredoc_data *her_data, \
+// int				handle_heredoc_input(t_heredoc_data *her_data, 
 // 					struct sigaction *sa_old);
 
 // /* heredoc_utils.c */
 // int				process_heredoc(t_redirect *current, t_shell_data *sd);
 
-// int				handle_single_heredoc(t_cmd *current, t_redirect *redir, \
+// int				handle_single_heredoc(t_cmd *current, t_redirect *redir, 
 // 					t_shell_data *sd);
 
 /*=================================== env ====================================*/
