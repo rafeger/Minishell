@@ -89,6 +89,12 @@ static void child_process(t_shell_data *data, t_cmd *cmd, int pipe_in, int pipe_
 
 	if (is_builtin(cmd->args[0]))
 	{
+		if (!ft_strcmp(cmd->args[0], "exit"))
+		{
+			ft_cleanup_shell(&data);
+			rl_clear_history();
+			exit(0);
+		}
 		exit_status = do_builtin(data, cmd);
 		ft_cleanup_shell(&data);
 		rl_clear_history();
