@@ -73,6 +73,27 @@ static int	execute_command_loop(t_shell_data *data)
 
 static int	handle_single_builtin(t_shell_data *data, t_cmd *cmd)
 {
+	int	fd;
+
+	fd = 0;
+	if (!cmd->args && cmd->redirects)
+	{
+		if (cmd->redirects->type == APPEND)
+			fd = open(cmd->redirects->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		if (cmd->redirects->type == REDIR_OUT)
+			fd = open(cmd->redirects->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (fd == -1)
+		{
+			ft_cleanup_shell(&data);
+			rl_clear_history();
+			perror("open");
+			exit(1);
+		}
+		close(fd);
+		close_heredoc_fds(data->cmd);
+		data->last_exit_status = 0;
+		return (1);
+	}
 	if (!cmd->next && is_builtin_no_fork(cmd->args[0]))
 	{
 		redirections(data, cmd);
