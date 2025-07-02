@@ -19,23 +19,51 @@ static void	error_not_number(char *str)
 	ft_putendl_fd(": numeric argument required", 2);
 }
 
-static int	check_number(char *str)
+static int	check_number2(char *str, int i, int is_negative)
 {
-	int	i;
+	unsigned long	number;
+	unsigned long	digit;
 
-	i = 0;
-	if (str == NULL)
-		return (0);
-	if (str[i] == '-' || str[i] == '+')
-		i++;
+	number = 0;
 	while (str[i])
 	{
 		if (str[i] >= '0' && str[i] <= '9')
+		{
+			digit = str[i] - '0';
+			if (number > LONG_MAX / 10)
+				return (1);
+			if (number == LONG_MAX / 10)
+			{
+				if (!is_negative && digit > LONG_MAX % 10)
+					return (1);
+				if (is_negative && digit > (unsigned long)LONG_MAX % 10 + 1)
+					return (1);
+			}
+			number = number * 10 + digit;
 			i++;
+		}
 		else
 			return (1);
 	}
 	return (0);
+}
+
+static int	check_number(char *str)
+{
+	int	i;
+	int	is_negative;
+
+	i = 0;
+	if (str == NULL)
+		return (0);
+	is_negative = 0;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			is_negative = 1;
+		i++;
+	}
+	return (check_number2(str, i, is_negative));
 }
 
 void	ft_exit(t_cmd *cmd, t_shell_data *data)
