@@ -106,7 +106,7 @@ char	*expand_variables(char *input, t_shell_data *shell_data)
 	size_t	size;
 
 	size = calculate_expanded_size(input, shell_data);
-	exp.result = calloc(size + 1, sizeof(char)); // ensures all bytes are zero
+	exp.result = calloc(size + 1, sizeof(char));
 	if (!exp.result)
 		return (NULL);
 	exp.i = 0;

@@ -89,12 +89,41 @@ int	handle_quoted_var(char **result, int *j, char *input)
 */
 int	handle_var(char **res, int *j, char *in, t_shell_data *sd)
 {
+    if (in[1] == '"')
+    {
+        int k = 2;
+        while (in[k] && in[k] != '"')
+        {
+            if (in[k] == '$')
+                k += handle_var(res, j, in + k, sd);
+            else
+            {
+                (*res)[(*j)++] = in[k];
+                k++;
+            }
+        }
+        if (in[k] == '"')
+            return k;
+        (*res)[(*j)++] = *in;
+        return 0;
+    }
+    else if (in[1] == '\'')
+    {
+        int k = 2;
+        while (in[k] && in[k] != '\'')
+        {
+            (*res)[(*j)++] = in[k];
+            k++;
+        }
+        if (in[k] == '\'')
+            return k;
+        (*res)[(*j)++] = *in;
+        return 0;
+    }
 	int		var_len;
 	char	*var_value;
 	char	var_name[256];
 
-	if (in[1] == '"' || in[1] == '\'')
-        return (0);
 	if (is_in_quotes(in + 1))
 		return (handle_quoted_var(res, j, in));
 	var_len = get_var_length(in + 1);

@@ -19,7 +19,7 @@ int	check_if_quotes(char *input, int *i)
 		else if (input[current_pos] == active_quote_type && is_within_quotes)
 		{
 			is_within_quotes = 0;
-			active_quote_type = 0; // Reset quote type
+			active_quote_type = 0;
 		}
 		current_pos++;
 	}
