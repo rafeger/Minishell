@@ -151,7 +151,8 @@ t_cmd	*parse_tokens(t_ta *ta)
 			return (NULL);
 		}
 	}
-	if (!command_structure->name && command_structure->arg_count == 0)
+	if (!command_structure->name && command_structure->arg_count == 0
+		&& command_structure->redirects == NULL)
 	{
 		free_command(command_structure);
 		return (NULL);

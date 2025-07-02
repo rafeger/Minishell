@@ -100,6 +100,42 @@ static void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd)
 		execute_commands(sd);
 	}
 }
+// static void print_cmd_args(t_cmd *cmd)
+// {
+//     int i;
+//     t_cmd *cur = cmd;
+//     int cmd_num = 1;
+//     t_redirect *redir;
+
+//     while (cur)
+//     {
+//         printf("---- Command %d ----\n", cmd_num++);
+//         if (cur->name)
+//             printf("name: [%s] (quoted: %d)\n", cur->name, cur->quoted);
+//         else
+//             printf("name: [NULL]\n");
+//         for (i = 0; i < cur->arg_count; i++)
+//             printf("arg[%d]: [%s] (quoted: %d)\n", i, cur->args[i], cur->arg_quoted[i]);
+//         redir = cur->redirects;
+//         while (redir)
+//         {
+//             const char *type_str = "UNKNOWN";
+//             if (redir->type == REDIR_IN)
+//                 type_str = "<";
+//             else if (redir->type == REDIR_OUT)
+//                 type_str = ">";
+//             else if (redir->type == APPEND)
+//                 type_str = ">>";
+//             else if (redir->type == HERE_DOC)
+//                 type_str = "<<";
+//             printf("redir: [%s] file: [%s]\n", type_str, redir->file);
+//             redir = redir->next;
+//         }
+//         printf("-------------------\n");
+//         cur = cur->next;
+//     }
+// }
+
 
 /*
  * Main input handling function that orchestrates:
@@ -119,6 +155,7 @@ void	process_shell_input(char *input, t_shell_data *shell_data)
 		return ;
 	clear_current_command(shell_data);
 	cmd = prepare_and_execute_input(input, shell_data);
+    // print_cmd_args(cmd);
 	free(input);
 	run_command_if_valid(cmd, shell_data);
 }
