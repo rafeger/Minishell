@@ -25,7 +25,17 @@ void	process_char(t_ta *ta, char **input)
 				(ta->tokensize + 1) * sizeof(char));
 		if (!ta->token)
 			return ;
+		ta->token[ta->tokenindex] = '\0';
 	}
+	if (!ta->in_q && **input == '$' && (*(*input + 1) == '"' || *(*input + 1) == '\''))
+	{
+		printf("test\n");
+        ta->token[ta->tokenindex++] = '$';
+        ta->token[ta->tokenindex] = '\0';
+        add_token(ta, ta->token);
+        ta->tokenindex = 0;
+        (*input)++;
+    }
 	if (**input == '"' || **input == '\'' || ta->in_q)
 		process_quotes(ta, input);
 	else if (**input == ' ' || **input == '\t')
@@ -46,8 +56,10 @@ void	process_input(t_ta *ta, char *input)
 {
 	while (*input)
 	{
+		char *before = input;
 		process_char(ta, &input);
-		input++;
+		if (input == before)
+			input++;
 	}
 	handle_token_end(ta);
 }

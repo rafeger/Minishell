@@ -93,6 +93,8 @@ int	handle_var(char **res, int *j, char *in, t_shell_data *sd)
 	char	*var_value;
 	char	var_name[256];
 
+	if (in[1] == '"' || in[1] == '\'')
+        return (0);
 	if (is_in_quotes(in + 1))
 		return (handle_quoted_var(res, j, in));
 	var_len = get_var_length(in + 1);
