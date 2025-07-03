@@ -76,7 +76,12 @@ static int setup_heredocs(t_shell_data *data)
             {
                 cmd->heredoc_fd = heredoc(redir->file, data);
                 if (cmd->heredoc_fd == -1)
+                {
+                    // Si le heredoc a été interrompu, on nettoie et on retourne
+                    if (data->last_exit_status == 130)
+                        return (-1);
                     return (-1);
+                }
             }
             redir = redir->next;
         }
@@ -96,7 +101,13 @@ static void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd)
 	if (cmd)
 	{
 		sd->cmd = cmd;
-		setup_heredocs(sd);
+		// Si setup_heredocs retourne -1, on n'exécute pas la commande
+		if (setup_heredocs(sd) == -1)
+		{
+			free_command(cmd);
+			sd->cmd = NULL;
+			return;
+		}
 		execute_commands(sd);
 	}
 }

@@ -16,6 +16,8 @@ static int	process_heredoc_line(char *buf, const char *delim, int fd,
 {
 	if (g_sig == SIGINT)
 	{
+		ft_putstr_fd(buf, fd);
+		ft_putstr_fd("\n", fd);
 		free(buf);
 		data->last_exit_status = 130;
 		return (1);
