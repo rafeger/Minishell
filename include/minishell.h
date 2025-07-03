@@ -175,6 +175,10 @@ int		ft_pwd(void);
 
 int		ft_unset(t_cmd *cmd, t_shell_data *shell_data);
 
+void	clean_spaces_loop(const char *str, char *result, int *i, int *j);
+
+char	*clean_spaces(const char *str);
+
 /*============================== exec_zoe ====================================*/
 int		is_builtin(char *cmd);
 
@@ -198,6 +202,8 @@ void	handle_parent_cleanup(t_cmd *cmd, int pipe_fd[2], int *input_fd);
 int		create_pipe_if_needed(t_cmd *cmd, int pipe_fd[2], int *output_fd);
 
 void	setup_pipes_and_redirections(t_cmd *cmd, int pipe_in, int pipe_out);
+
+int		just_redir(t_shell_data *data, t_redirect *redir);
 
 void	execute(t_shell_data *data, t_cmd *cmd);
 

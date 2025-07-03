@@ -40,7 +40,8 @@ SRCS		=	$(addprefix $(SRC_DIR)/, \
 				exec_zoe/redirections.c exec_zoe/utils.c \
 				builtin_zoe/ft_cd.c builtin_zoe/ft_echo.c \
 				builtin_zoe/ft_env.c builtin_zoe/ft_exit.c \
-				builtin_zoe/ft_export.c builtin_zoe/ft_export2.c builtin_zoe/ft_export3.c \
+				builtin_zoe/ft_export.c builtin_zoe/ft_export2.c \
+				builtin_zoe/ft_export3.c builtin_zoe/ft_export4.c\
 				builtin_zoe/ft_pwd.c builtin_zoe/ft_unset.c)
 
 OBJS		=	$(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

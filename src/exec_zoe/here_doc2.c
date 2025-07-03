@@ -16,7 +16,7 @@ static void	heredoc_sigint_handler(int sig)
 	(void)sig;
 	g_sig = SIGINT;
 	rl_done = 1;
-	write(STDOUT_FILENO, "\n", 1);
+	write(STDOUT_FILENO, "^C", 2);
 }
 
 int	check_signal_callback(void)
