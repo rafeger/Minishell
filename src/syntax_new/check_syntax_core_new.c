@@ -73,7 +73,7 @@ static int	redir_missing_target(const char *line, int pos)
         ft_putendl_fd("syntax error near unexpected token 'newline'", 2);
         return (1);
     }
-    if (line[next] == '<' || line[next] == '>')
+    if ((line[next] == '<' || line[next] == '>') && !(line[next] == line[pos] && next == pos + 1))
     {
         ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
         ft_putchar_fd(line[next], 2);
