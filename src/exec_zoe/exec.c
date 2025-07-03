@@ -73,7 +73,7 @@ static int	execute_command_loop(t_shell_data *data)
 
 static int	handle_single_builtin(t_shell_data *data, t_cmd *cmd)
 {
-	int	fd;
+	int			fd;
 	t_redirect	*redir;
 
 	fd = 0;
@@ -82,19 +82,22 @@ static int	handle_single_builtin(t_shell_data *data, t_cmd *cmd)
 	{
 		while (redir)
 		{
+
 			if (redir->type == APPEND)
 				fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (redir->type == REDIR_OUT)
+			else if (redir->type == REDIR_OUT)
 				fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (redir->type == REDIR_IN)
+			else if (redir->type == REDIR_IN)
 				fd = open(redir->file, O_RDONLY);
+			
 			if (fd == -1)
 			{
-				ft_cleanup_shell(&data);
-				rl_clear_history();
 				ft_putstr_fd("bash: ", 2);
-				//ft_putstr_fd(redir->file, 2);
+				ft_putstr_fd(redir->file, 2);
+				ft_putstr_fd(": ", 2);
 				perror("");
+				rl_clear_history();
+				return (1);
 			}
 			close(fd);
 			redir = redir->next;
