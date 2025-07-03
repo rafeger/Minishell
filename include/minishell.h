@@ -175,6 +175,10 @@ int		ft_pwd(void);
 
 int		ft_unset(t_cmd *cmd, t_shell_data *shell_data);
 
+void	clean_spaces_loop(const char *str, char *result, int *i, int *j);
+
+char	*clean_spaces(const char *str);
+
 /*============================== exec_zoe ====================================*/
 int		is_builtin(char *cmd);
 
