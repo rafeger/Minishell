@@ -229,106 +229,6 @@ void	ensure_stdin_tty(void);
 
 int	has_eof_been_reached(void);
 
-
-/*================================= execute ==================================*/
-
-// /* command_path.c */
-
-// char			*find_command_path(const char *cmd, t_env *env);
-
-// /* execute_and_pipe_utils.c */
-// int				is_pipeline(t_cmd *cmd);
-
-// int				is_builtin(char *cmd_name);
-
-// /* execute_utils.c */
-// int				handle_special_cases(t_cmd *cmd, t_shell_data *shell_data);
-
-// /* execute_core.c */
-// void			execute_commands(t_cmd *cmd, t_shell_data *shell_data);
-
-// /* execute_single.c */
-// int				execute_builtin(t_cmd *cmd, t_shell_data *shell_data);
-
-// void			execute_child_process(t_cmd *cmd, t_shell_data *shell_data);
-
-// /* pipe_core.c */
-// void			execute_pipeline(t_cmd *cmd, t_shell_data *shell_data);
-
-// /* pipe_setup.c */
-
-// int				handle_pipe(t_cmd *cmd, t_ta *ta, int index);
-
-// void			create_all_pipes(t_cmd *cmd_list);
-
-// /* pipe_cleanup.c */
-// void			cleanup_pipeline_fds(t_cmd *cmd);
-
-// void			cleanup_command_fds(t_cmd *cmd);
-
-// void			cleanup_pipe(t_fd_info *fd_info);
-
-// void			cleanup_all_pipes(t_cmd *cmd);
-
-// void			cleanup_heredocs(t_cmd *cmd);
-
-// /* pipe_utils.c */
-// void			backup_fds(t_fd_info *fd_info);
-
-// void			restore_fds(t_fd_info *fd_info, t_cmd *cmd);
-
-// /* redirections_core.c */
-// int				apply_heredocs_only(t_redirect *redirects, t_shell_data *sd);
-
-// int				apply_other_redirs(t_redirect *redirects, t_cmd *cmd);
-
-// /* fork_and_execute.c */
-
-// int				fork_and_execute(t_cmd *cmd, t_shell_data *sd, 
-// 					int input_fd, int *pipe_fd);
-
-// /* invalid_command_core.c */
-
-// int				handle_invalid_command(t_cmd *cmd, t_shell_data *shell_data);
-
-// /* invalid_command_expanded.c */
-// int				is_expanded_invalid_cmd(const char *name, int quoted, 
-// 					t_shell_data *sd);
-
-// void			handle_expanded_invalid_cmd(t_cmd *cmd, t_shell_data *sd);
-
-// /* execute_external.c */
-
-// void			execute_external(t_cmd *cmd, t_shell_data *shell_data);
-
-// void			handle_external_command(t_cmd *cmd, t_shell_data *shell_data);
-
-// /* execute_external_utils.c */
-// void			check_file_permissions(char *path, t_cmd *cmd, 
-// 										t_shell_data *sd);
-
-// void			handle_command_error(t_cmd *cmd, t_shell_data *sd, 
-// 										int is_permission);
-
-// int				check_redirect_arg_error(char **args, t_shell_data *shell_data);
-
-// /* heredoc_core.c */
-// int				handle_heredoc(char *delimiter, int eof_quoted, 
-// 					t_shell_data *sd);
-
-// /* heredoc_sig.c */
-// int				setup_signal_handlers(struct sigaction *sa_new, struct 
-// 					sigaction *sa_old);
-
-// int				handle_heredoc_input(t_heredoc_data *her_data, 
-// 					struct sigaction *sa_old);
-
-// /* heredoc_utils.c */
-// int				process_heredoc(t_redirect *current, t_shell_data *sd);
-
-// int				handle_single_heredoc(t_cmd *current, t_redirect *redir, 
-// 					t_shell_data *sd);
-
 /*=================================== env ====================================*/
 
 /* signal_core.c */
@@ -369,113 +269,19 @@ void			update_shlvl(t_env **env, int level);
 
 void			initialize_shlvl(t_env **env);
 
-/*================================= builtins =================================*/
-
-// /* cd_builtin.c */
-// int				builtin_cd(t_cmd *cmd, t_shell_data *shell_data);
-
-// /* echo_builtin.c */
-// int				builtin_echo(t_cmd *cmd);
-
-// /* env_builtin.c */
-// void			builtin_env(t_shell_data *shell_data);
-
-// /* exit_builtin.c */
-// int				builtin_exit(t_cmd *cmd, t_shell_data *shell_data);
-
-// /* export_builtin.c */
-// int				builtin_export(t_cmd *cmd, t_shell_data *shell_data);
-
-// /* export_builtin_utils.c */
-// void			export_error(char *identifier, char *arg, t_shell_data *sd);
-
-// int				check_exclamation_export(const char *str);
-
-// int				is_valid_first_char(char c);
-
-// int				is_valid_identifier_char(char c);
-
-// int				is_valid_identifier(const char *str);
-
-// /* export_builtin_error.c */
-// void			export_event_error(char *full_arg);
-
-// /* unset_builtin.c */
-// void			builtin_unset(t_cmd *cmd, t_shell_data *shell_data);
-
-// /* pwd_builtin.c */
-// int				builtin_pwd(t_cmd *cmd);
-
 /*================================== syntax ==================================*/
 
-/* check_pipe_core.c */
-int				check_redir_pipe(char *input, int *i);
+int				shell_syntax_check(const char *line);
 
-int				check_pipe_sequence(char *input, int *i);
-
-int				check_pipe_start(char *input);
-
-int				check_pipe_syntax(char *input);
-
-/* check_path_core.c */
-int				is_dot_command(const char *cmd);
-
-int				is_only_path_chars(char *input);
-
-void			handle_dot_command(const char *cmd, t_shell_data *shell_data);
-
-int				check_directory_path(char *input);
-
-/* check_syntax_core.c */
-int				check_multi_redir(char *input, int *i);
-
-int				check_newline_after_redir(char *input, int i);
-
-int				check_consecutive_redir(char *input, int *i);
-
-int				check_redirections(char *input, int *i);
-
-int				check_syntax(char *input);
-
-/* check_quotes_core.c */
-int				check_if_quotes(char *input, int *i);
-
-
-/* lexer_core.c */
-void			process_char(t_ta *ta, char **input);
-
-void			process_input(t_ta *ta, char *input);
-
-void			handle_token_end(t_ta *ta);
-
-int				add_token(t_ta *ta, char *token);
-
-t_ta			*lexer(char *input);
-
-/* lexer_quote.c */
-int				is_only_quotes(const char *input);
-
-t_ta			*create_special_empty_token(t_ta *ta);
-
-void			handle_empty_quotes(t_ta *ta, char **input);
-
-void			process_quotes(t_ta *ta, char **input);
-
-void			handle_quotes(t_ta *ta, char *input);
-
-/* lexer_special.c */
-void			handle_trailing_space(t_ta *ta, int was_quoted);
-
-void			handle_special_chars(t_ta *ta, char **input);
-
-void			resize_token_array(t_ta *ta);
-
-/* lexer_util.c */
-int				add_token_failed(t_ta *ta);
+//lexer
 
 t_ta			*clean_lexer(t_ta *ta);
 
-int				check_unclosed_quotes(t_ta *ta);
+t_ta			*new_lexer(char *input, t_shell_data *shell_data);
+int				is_only_quotes(const char *input);
+t_ta			*create_special_empty_token(t_ta *ta);
+int				check_unclosed_quotes(t_ta *ta, t_shell_data *shell_data);
+t_ta			*clean_lexer(t_ta *ta);
 
 /*================================== parser ==================================*/
 void			add_argument(t_cmd *cmd, char *arg, int quoted);

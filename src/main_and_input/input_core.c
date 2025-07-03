@@ -14,7 +14,7 @@ static void	clear_current_command(t_shell_data *shell_data)
 }
 
 /*
- * Validates input syntax using check_syntax().
+ * Validates input syntax using check_syntax_core().
  * If syntax errors are found:
  * - Sets error exit status.
  * - Frees input.
@@ -22,7 +22,7 @@ static void	clear_current_command(t_shell_data *shell_data)
 */
 static int	perform_syntax_validation(char *input, t_shell_data *shell_data)
 {
-	if (check_syntax(input) != 0)
+	if (shell_syntax_check(input) != 0)
 	{
 		shell_data->last_exit_status = 2;
 		free(input);
@@ -49,7 +49,7 @@ static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 	if (!expanded_input)
 		return (NULL);
 	is_empty = (expanded_input[0] == '\0');
-	ta = lexer(expanded_input);
+	ta = new_lexer(expanded_input, shell_data);
 	free(expanded_input);
 	if (!ta && is_empty)
 	{
