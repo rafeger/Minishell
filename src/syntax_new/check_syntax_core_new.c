@@ -46,16 +46,16 @@ static int	redir_overflow(const char *line, int pos)
         if (line[pos] == '>')
         {
             if (n > 3)
-                ft_putendl_fd("syntax error near unexpected token '>>'", 2);
+                ft_putendl_fd("NOOOOOOOOOOOOOOOOOOOOOOo", 2);
             else
-                ft_putendl_fd("syntax error near unexpected token '>'", 2);
+                ft_putendl_fd("NOOOOOOOOOOOOOOOOOOOOOOo", 2);
         }
         else
         {
             if (n > 3)
-                ft_putendl_fd("syntax error near unexpected token '<<'", 2);
+                ft_putendl_fd("sNOOOOOOOOOOOOOOOOOOOOOOo", 2);
             else
-                ft_putendl_fd("syntax error near unexpected token '<'", 2);
+                ft_putendl_fd("NOOOOOOOOOOOOOOOOOOOOOOo", 2);
         }
         return (1);
     }
@@ -95,6 +95,9 @@ static int	redir_invalid_combo(const char *line, int pos)
         j++;
     if (line[j] && (line[j] == '<' || line[j] == '>'))
     {
+        // Allow << and >> (heredoc and append)
+        if (line[j] == first && j == pos + 1)
+            return (0); // << or >> is valid
         second = line[j];
         ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
         if (first == second)
@@ -185,6 +188,22 @@ int	shell_syntax_check(const char *line)
         }
         if ((line[k] == '>' || line[k] == '<') && !is_it_in_q(line, k))
         {
+            // Handle double redir (<< or >>)
+            if (line[k] == line[k + 1] && !is_it_in_q(line, k + 1))
+            {
+                if (redir_pipe_error(line, k))
+                    return (1);
+                if (redir_overflow(line, k))
+                    return (1);
+                if (redir_missing_target(line, k))
+                    return (1);
+                // skip redir_invalid_combo for << or >>
+                k += 2;
+                while (line[k] && ft_isspace(line[k]))
+                    k++;
+                continue;
+            }
+            // Single redir
             if (redir_pipe_error(line, k))
                 return (1);
             if (redir_overflow(line, k))
@@ -192,8 +211,6 @@ int	shell_syntax_check(const char *line)
             if (redir_missing_target(line, k))
                 return (1);
             if (redir_invalid_combo(line, k))
-                return (1);
-            if (redir_pipe_error(line, k))
                 return (1);
         }
         k++;
