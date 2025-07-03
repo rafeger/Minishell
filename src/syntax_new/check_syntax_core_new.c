@@ -96,9 +96,8 @@ static int	redir_invalid_combo(const char *line, int pos)
         j++;
     if (line[j] && (line[j] == '<' || line[j] == '>'))
     {
-        // Allow << and >> (heredoc and append)
         if (line[j] == first && j == pos + 1)
-            return (0); // << or >> is valid
+            return (0);
         second = line[j];
         ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
         if (first == second)
