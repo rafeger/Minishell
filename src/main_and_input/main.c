@@ -43,7 +43,7 @@ static int	shell_main_loop(t_shell_data *shell)
 			break ;
 		}
 		if (g_sig == SIGINT)
-			update_exit_status(shell);
+			refresh_exit_status(shell);
 		if (ft_strlen(input) > 0)
 			process_shell_input(input, shell);
 		else
@@ -68,7 +68,7 @@ int	main(int ac, char *av[], char **envp)
 
 	(void)ac;
 	(void)av;
-	if (initialize_shell(&shell, envp))
+	if (setup_shell(&shell, envp))
 		return (1);
 	exit_status = shell_main_loop(shell);
 	ft_cleanup_shell(&shell);

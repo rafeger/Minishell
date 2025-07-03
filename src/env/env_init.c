@@ -1,119 +1,89 @@
 #include "../../include/minishell.h"
 
-/*
- * Allocates memory for environment variable array.
- * Counts total environment variables in linked list.
- * Returns allocated array or NULL on failure.
- * Used when converting env list to array format.
-*/
-char	**allocate_env_array(t_env *env, int *count)
+char	**alloc_env_strs(t_env *env_head, int *env_count)
 {
-	char	**env_array;
-	t_env	*current;
+    char	**strarr;
+    t_env	*cursor;
 
-	*count = 0;
-	current = env;
-	while (current)
-	{
-		(*count)++;
-		current = current->next;
-	}
-	env_array = malloc(sizeof(char *) * (*count + 1));
-	return (env_array);
+    *env_count = 0;
+    cursor = env_head;
+    while (cursor)
+    {
+        (*env_count)++;
+        cursor = cursor->next;
+    }
+    strarr = malloc(sizeof(char *) * (*env_count + 1));
+    return (strarr);
 }
 
-/*
- * Fills envrionment array with formatted strings.
- * Converts each env node to "key=value" format.
- * Returns 1 on success, 0 on any allocation failure.
- * Used to prepare env for external command execution.
-*/
-int	fill_env_array(char **env_array, t_env *env)
+int	populate_env_strs(char **strarr, t_env *env_head)
 {
-	int		i;
-	t_env	*current;
+    int		idx;
+    t_env	*cursor;
 
-	i = 0;
-	current = env;
-	while (current)
-	{
-		env_array[i] = create_env_string(current->key, current->value);
-		if (!env_array[i])
-			return (0);
-		i++;
-		current = current->next;
-	}
-	env_array[i] = NULL;
-	return (1);
+    idx = 0;
+    cursor = env_head;
+    while (cursor)
+    {
+        strarr[idx] = make_env_kv_string(cursor->key, cursor->value);
+        if (!strarr[idx])
+            return (0);
+        idx++;
+        cursor = cursor->next;
+    }
+    strarr[idx] = NULL;
+    return (1);
 }
 
-/*
- * Creates new environment variable node from string.
- * Parses input format "key=value".
- * Allocates and initializes node structure.
- * Returns NULL if string format invalid or allocation fails.
-*/
-t_env	*create_env_node(char *env_str)
+t_env	*parse_env_pair(char *env_str)
 {
-	t_env	*node;
-	char	*equals_sign;
+    t_env	*entry;
+    char	*eq_ptr;
 
-	node = malloc(sizeof(t_env));
-	if (!node)
-		return (NULL);
-	equals_sign = ft_strchr(env_str, '=');
-	if (!equals_sign)
-	{
-		free(node);
-		return (NULL);
-	}
-	node->key = ft_strndup(env_str, equals_sign - env_str);
-	node->value = ft_strdup(equals_sign + 1);
-	node->next = NULL;
-	return (node);
+    entry = malloc(sizeof(t_env));
+    if (!entry)
+        return (NULL);
+    eq_ptr = ft_strchr(env_str, '=');
+    if (!eq_ptr)
+    {
+        free(entry);
+        return (NULL);
+    }
+    entry->key = ft_strndup(env_str, eq_ptr - env_str);
+    entry->value = ft_strdup(eq_ptr + 1);
+    entry->next = NULL;
+    return (entry);
 }
 
-/*
- * Adds new environment node to list.
- * If list is empty, sets as first node.
- * Otherwise, adds to end of list.
- * Maintains proper linking of environment variables.
-*/
-void	add_env_node(t_env **env_list, t_env *new_node)
+void	append_env_entry(t_env **env_head, t_env *new_entry)
 {
-	t_env	*current;
+    t_env	*cursor;
 
-	if (!*env_list)
-	{
-		*env_list = new_node;
-		return ;
-	}
-	current = *env_list;
-	while (current->next)
-		current = current->next;
-	current->next = new_node;
+    if (!*env_head)
+    {
+        *env_head = new_entry;
+        return ;
+    }
+    cursor = *env_head;
+    while (cursor->next)
+        cursor = cursor->next;
+    cursor->next = new_entry;
 }
 
-/*
- * Initializes complete environment variable list.
- * Processes each string from envp array.
- * Creates and links all environment nodes.
- * Returns head of created environment list.
-*/
-t_env	*init_env(char **envp)
+t_env	*build_env_list(char **envp)
 {
-	t_env	*env_list;
-	t_env	*env_node;
-	int		i;
+    t_env	*env_head;
+    t_env	*entry;
+    int		idx;
 
-	env_list = NULL;
-	i = 0;
-	while (envp[i])
-	{
-		env_node = create_env_node(envp[i]);
-		if (env_node)
-			add_env_node(&env_list, env_node);
-		i++;
-	}
-	return (env_list);
+    env_head = NULL;
+    idx = 0;
+    while (envp[idx])
+    {
+        entry = parse_env_pair(envp[idx]);
+        if (entry)
+            append_env_entry(&env_head, entry);
+        idx++;
+    }
+    return (env_head);
 }

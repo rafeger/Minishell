@@ -1,77 +1,50 @@
 #include "../../include/minishell.h"
 
-/*
- * Updates shell level (SHLVL) environment variable.
- * Takes current level and increments it.
- * Handles conversion and environment variable update.
- * Used to track nested shell depth.
-*/
-void	update_shlvl(t_env **env, int level)
+static void	set_shell_level(t_env **env_head, int lvl)
 {
-	char	*new_level;
+    char	*lvl_str;
 
-	new_level = ft_itoa(level);
-	if (!new_level)
-		return ;
-	set_env_value(env, "SHLVL", new_level);
-	free(new_level);
+    lvl_str = ft_itoa(lvl);
+    if (!lvl_str)
+        return ;
+    set_env_variable(env_head, "SHLVL", lvl_str);
+    free(lvl_str);
 }
 
-/*
- * Initializes or updates SHLVL environment variable.
- * If SHLVL doesn't exist, creates it with value 1.
- * If exists, increments current value.
- * Essential for proper shell nesting behavior.
-*/
-void	initialize_shlvl(t_env **env)
+static void	ensure_shlvl(t_env **env_head)
 {
-	char	*shlvl;
-	int		level;
+    char	*shlvl_val;
+    int		lvl;
 
-	level = 0;
-	shlvl = get_env_value(*env, "SHLVL");
-	if (!shlvl || !*shlvl)
-		update_shlvl(env, 1);
-	else
-		level = ft_atoi(shlvl);
-	update_shlvl(env, level + 1);
+    lvl = 0;
+    shlvl_val = find_env_val(*env_head, "SHLVL");
+    if (!shlvl_val || !*shlvl_val)
+        set_shell_level(env_head, 1);
+    else
+        lvl = ft_atoi(shlvl_val);
+    set_shell_level(env_head, lvl + 1);
 }
 
-/*
- * Creates and initializes main shell data structure.
- * Sets up:
- * - Environment variables list.
- * - Command structure (initially NULL);
- * - Exit status tracking.
- * - Signal handling flags.
-*/
-t_shell_data	*init_shell_data(char **envp)
+static t_shell_data	*create_shell_data(char **envp)
 {
-	t_shell_data	*shell_data;
+    t_shell_data	*shdata;
 
-	shell_data = malloc(sizeof(t_shell_data));
-	if (!shell_data)
-		return (NULL);
-	shell_data->env = init_env(envp);
-	shell_data->cmd = NULL;
-	shell_data->last_exit_status = 0;
-	shell_data->sig_quit_flag = 0;
-	return (shell_data);
+    shdata = malloc(sizeof(t_shell_data));
+    if (!shdata)
+        return (NULL);
+    shdata->env = build_env_list(envp);
+    shdata->cmd = NULL;
+    shdata->last_exit_status = 0;
+    shdata->sig_quit_flag = 0;
+    return (shdata);
 }
 
-/*
- * Main shell initialization function that:
- * - Sets up signal handlers.
- * - Creates shell data structure.
- * - Initializes shell level.
- * Returns 0 on success, 1 on failure.
-*/
-int	initialize_shell(t_shell_data **shell, char **envp)
+int	setup_shell(t_shell_data **sh, char **envp)
 {
-	init_signals();
-	*shell = init_shell_data(envp);
-	if (!*shell)
-		return (1);
-	initialize_shlvl(&(*shell)->env);
-	return (0);
+    setup_signals();
+    *sh = create_shell_data(envp);
+    if (!*sh)
+        return (1);
+    ensure_shlvl(&(*sh)->env);
+    return (0);
 }

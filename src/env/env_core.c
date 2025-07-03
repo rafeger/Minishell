@@ -1,127 +1,97 @@
 #include "../../include/minishell.h"
 
-/*
- * Creates formatted environment string "key=value".
- * Allocates and builds combined string.
- * Returns NULL if allocation fails.
- * Used when needing string format of env variable.
-*/
-char	*create_env_string(const char *key, const char *value)
+char	*make_env_kv_string(const char *k, const char *v)
 {
-	int		len;
-	char	*env_string;
+    int		len;
+    char	*kv_str;
 
-	len = ft_strlen(key) + ft_strlen(value) + 2;
-	env_string = malloc(sizeof(char) * len);
-	if (!env_string)
-		return (NULL);
-	ft_strcpy(env_string, key);
-	ft_strcat(env_string, "=");
-	ft_strcat(env_string, value);
-	return (env_string);
+    len = ft_strlen(k) + ft_strlen(v) + 2;
+    kv_str = malloc(sizeof(char) * len);
+    if (!kv_str)
+        return (NULL);
+    ft_strcpy(kv_str, k);
+    ft_strcat(kv_str, "=");
+    ft_strcat(kv_str, v);
+    return (kv_str);
 }
 
-/*
- * Searches for environemnt variable by key.
- * Returns pointer to value if found.
- * Returns NULL if key doesn't exist.
- * Used for environment variable lookup.
-*/
-void	*get_env_value(t_env *env, const char *key)
+char	*find_env_val(t_env *env_head, const char *k)
 {
-	while (env)
-	{
-		if (ft_strcmp(env->key, key) == 0)
-			return (env->value);
-		env = env->next;
-	}
-	return (NULL);
+    while (env_head)
+    {
+        if (ft_strcmp(env_head->key, k) == 0)
+            return (env_head->value);
+        env_head = env_head->next;
+    }
+    return (NULL);
 }
 
-/*
- * Updates or adds environment variable.
- * If key exists, updates, value.
- * If key doesn't exist, creates new entry.
- * Handles memory management for value updates.
-*/
-void	set_env_value(t_env **env, const char *key, const char *value)
+void	set_env_variable(t_env **env_head, const char *k, const char *v)
 {
-	t_env	*current;
-	t_env	*new_env;
+    t_env	*cursor;
+    t_env	*new_entry;
 
-	current = *env;
-	while (current)
-	{
-		if (ft_strcmp(current->key, key) == 0)
-		{
-			free(current->value);
-			current->value = ft_strdup(value);
-			return ;
-		}
-		current = current->next;
-	}
-	new_env = malloc(sizeof(t_env));
-	if (!new_env)
-		return ;
-	new_env->key = ft_strdup(key);
-	new_env->value = ft_strdup(value);
-	new_env->next = *env;
-	*env = new_env;
+    cursor = *env_head;
+    while (cursor)
+    {
+        if (ft_strcmp(cursor->key, k) == 0)
+        {
+            free(cursor->value);
+            cursor->value = ft_strdup(v);
+            return ;
+        }
+        cursor = cursor->next;
+    }
+    new_entry = malloc(sizeof(t_env));
+    if (!new_entry)
+        return ;
+    new_entry->key = ft_strdup(k);
+    new_entry->value = ft_strdup(v);
+    new_entry->next = *env_head;
+    *env_head = new_entry;
 }
 
-/*
- * Removes environment variable by key.
- * Handles list relinking after removal.
- * Frees removed node's memory.
- * Mainteains list integrity during removal.
-*/
-void	remove_env_var(t_env **env, const char *key)
+void	delete_env_entry(t_env **env_head, const char *k)
 {
-	t_env	*current;
-	t_env	*prev;
+    t_env	*cursor;
+    t_env	*last;
 
-	current = *env;
-	prev = NULL;
-	while (current)
-	{
-		if (ft_strcmp(current->key, key) == 0)
-		{
-			if (prev)
-				prev->next = current->next;
-			else
-				*env = current->next;
-			free(current->key);
-			free(current->value);
-			free(current);
-			return ;
-		}
-		prev = current;
-		current = current->next;
-	}
+    cursor = *env_head;
+    last = NULL;
+    while (cursor)
+    {
+        if (ft_strcmp(cursor->key, k) == 0)
+        {
+            if (last)
+                last->next = cursor->next;
+            else
+                *env_head = cursor->next;
+            free(cursor->key);
+            free(cursor->value);
+            free(cursor);
+            return ;
+        }
+        last = cursor;
+        cursor = cursor->next;
+    }
 }
 
-/*
- * Converts environment list to string array.
- * Creates array of "key=value" strings.
- * Used for execve environment preparation.
- * Returns NULL if any allocation fails.
-*/
-char	**env_list_to_array(t_env *env)
+char	**envlist_to_strarr(t_env *env_head)
 {
-	int		count;
-	char	**env_array;
-	int		i;
+    int		env_count;
+    char	**strarr;
+    int		idx;
 
-	env_array = allocate_env_array(env, &count);
-	if (!env_array)
-		return (NULL);
-	if (!fill_env_array(env_array, env))
-	{
-		i = 0;
-		while (env_array[i])
-			free(env_array[i++]);
-		free(env_array);
-		return (NULL);
-	}
-	return (env_array);
+    strarr = alloc_env_strs(env_head, &env_count);
+    if (!strarr)
+        return (NULL);
+    if (!populate_env_strs(strarr, env_head))
+    {
+        idx = 0;
+        while (strarr[idx])
+            free(strarr[idx++]);
+        free(strarr);
+        return (NULL);
+    }
+    return (strarr);
 }

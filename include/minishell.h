@@ -237,43 +237,63 @@ int	has_eof_been_reached(void);
 
 /*=================================== env ====================================*/
 
-/* signal_core.c */
-void			sigint_handler(int sig);
 
-void			init_signals(void);
 
-void			update_exit_status(t_shell_data *shell_data);
+char	*find_env_val(t_env *env_head, const char *k);
+void	set_env_variable(t_env **env_head, const char *k, const char *v);
+void	delete_env_entry(t_env **env_head, const char *k);
+char	**envlist_to_strarr(t_env *env_head);
+char 	*make_env_kv_string(const char *k, const char *v);
 
-/* env_core.c */
-char			*create_env_string(const char *key, const char *value);
+t_env	*build_env_list(char **envp);
+void	append_env_entry(t_env **env_head, t_env *new_entry);
+char	**alloc_env_strs(t_env *env_head, int *env_count);
+int		populate_env_strs(char **strarr, t_env *env_head);
+t_env	*parse_env_pair(char *env_str);
 
-void			*get_env_value(t_env *env, const char *key);
+int		setup_shell(t_shell_data **sh, char **envp);
 
-void			set_env_value(t_env **env, const char *key, const char *value);
+void	refresh_exit_status(t_shell_data *shdata);
+void	setup_signals(void);
 
-void			remove_env_var(t_env **env, const char *key);
 
-char			**env_list_to_array(t_env *env);
+// /* signal_core.c */
+// void			sigint_handler(int sig);
 
-/* env_init.c */
-char			**allocate_env_array(t_env *env, int *t_tot);
+// void			init_signals(void);
 
-int				fill_env_array(char **env_array, t_env *env);
+// void			update_exit_status(t_shell_data *shell_data);
 
-t_env			*create_env_node(char *env_str);
+// /* env_core.c */
+// char			*create_env_string(const char *key, const char *value);
 
-void			add_env_node(t_env **env_list, t_env *new_node);
+// void			*get_env_value(t_env *env, const char *key);
 
-t_env			*init_env(char **envp);
+// void			set_env_value(t_env **env, const char *key, const char *value);
 
-/* shell_core.c */
-t_shell_data	*init_shell_data(char **envp);
+// void			remove_env_var(t_env **env, const char *key);
 
-int				initialize_shell(t_shell_data **shell, char **envp);
+// char			**env_list_to_array(t_env *env);
 
-void			update_shlvl(t_env **env, int level);
+// /* env_init.c */
+// char			**allocate_env_array(t_env *env, int *t_tot);
 
-void			initialize_shlvl(t_env **env);
+// int				fill_env_array(char **env_array, t_env *env);
+
+// t_env			*create_env_node(char *env_str);
+
+// void			add_env_node(t_env **env_list, t_env *new_node);
+
+// t_env			*init_env(char **envp);
+
+// /* shell_core.c */
+// t_shell_data	*init_shell_data(char **envp);
+
+// int				initialize_shell(t_shell_data **shell, char **envp);
+
+// void			update_shlvl(t_env **env, int level);
+
+// void			initialize_shlvl(t_env **env);
 
 /*================================== syntax ==================================*/
 

@@ -32,8 +32,7 @@ SRCS		=	$(addprefix $(SRC_DIR)/, \
 				lexer/new_lexer.c \
 				parser/parse_core.c parser/parse_args.c \
 				parser/parse_redirect.c parser/tokenarray_utils.c \
-				expand/expand_core.c expand/expand_size_utils.c \
-				expand/expand_var_utils.c \
+				expand/old_expand.c \
 				exec_zoe/builtin.c \
 				exec_zoe/exec.c exec_zoe/exec_pipes.c exec_zoe/exec_process.c exec_zoe/exec_utils.c \
 				exec_zoe/find_cmd.c exec_zoe/here_doc.c exec_zoe/here_doc2.c\

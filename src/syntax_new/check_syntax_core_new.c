@@ -64,7 +64,6 @@ static int	redir_overflow(const char *line, int pos)
 
 static int	redir_missing_target(const char *line, int pos)
 {
-    printf("DEBUG: redir_missing_target called at pos %d\n", pos);
     int	next;
 
     next = skip_blanks(line, pos + 1);

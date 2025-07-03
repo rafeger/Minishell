@@ -28,7 +28,7 @@ char	*get_var_value(const char *var, t_shell_data *shell_data)
 			return (NULL);
 		return (exit_status);
 	}
-	return (get_env_value(shell_data->env, var));
+	return (find_env_val(shell_data->env, var));
 }
 
 void	process_expand_char(t_exp *exp, char *input)
@@ -42,7 +42,6 @@ void	process_expand_char(t_exp *exp, char *input)
 	else
 		exp->result[exp->j++] = input[exp->i];
 }
-
 
 size_t	calculate_expanded_size(char *input, t_shell_data *shell_data)
 {
@@ -93,6 +92,58 @@ char	*expand_variables(char *input, t_shell_data *shell_data)
 	return (exp.result);
 }
 
+int	handle_quoted_len(char **result, int *j, char *input, int quote_len)
+{
+	if (quote_len == 1 && input[2] == input[1])
+		return (quote_len);
+	if (quote_len == 1 && input[3])
+	{
+		ft_memcpy(*result + *j, input + 3, ft_strlen(input + 3));
+		*j += ft_strlen(input + 3);
+		return (quote_len);
+	}
+	if (quote_len)
+	{
+		ft_memcpy(*result + *j, input + 2, quote_len - 1);
+		*j += quote_len - 1;
+		return (quote_len);
+	}
+	(*result)[(*j)++] = *input;
+	return (0);
+}
+
+
+int	process_var(char *input, int i, size_t *size, t_shell_data *sd)
+{
+	int		var_len;
+	char	var_name[256];
+	char	*var_value;
+
+	var_len = get_var_length(input + i + 1);
+	if (var_len > 0)
+	{
+		ft_strncpy(var_name, input + i + 1, var_len);
+		var_name[var_len] = '\0';
+		var_value = get_var_value(var_name, sd);
+		if (var_value)
+			*size += ft_strlen(var_value) + 2;
+		else
+			(*size)++;
+		if (var_value && ft_strcmp(var_name, "?") == 0)
+			free(var_value);
+		return (var_len);
+	}
+	(*size)++;
+	return (0);
+}
+
+
+
+/*
+ * Check if string starts with quotes.
+ * Returns 1 if yes, 0 otherwise.
+ * Used for quote-aware expansion.
+*/
 int	is_in_quotes(const char *str)
 {
 	if ((str[0] == '"' || str[0] == '\'') && str[1] != '\0')
@@ -100,7 +151,12 @@ int	is_in_quotes(const char *str)
 	return (0);
 }
 
-
+/*
+ * Copies variable value to result string.
+ * Handles proper quoting of value.
+ * Updates position in result string.
+ * Used during variable expansion process.
+*/
 void	copy_var_value(char **result, int *j, char *var_value)
 {
 	(*result)[*j] = '"';
@@ -111,6 +167,12 @@ void	copy_var_value(char **result, int *j, char *var_value)
 	(*j)++;
 }
 
+/*
+ * Gets length of quoted string.
+ * Finds matching closing quote.
+ * Returns length including quotes.
+ * Used for quote-aware string processing.
+*/
 int	get_quoted_length(const char *str)
 {
 	int		i;
@@ -127,6 +189,12 @@ int	get_quoted_length(const char *str)
 	return (0);
 }
 
+/*
+ * Handles expansion of quoted variables.
+ * Manages quote removal and content copying.
+ * Returns number of characters processed.
+ * Used for variable expansion within quotes.
+*/
 int	handle_quoted_var(char **result, int *j, char *input)
 {
 	int		quote_len;
@@ -151,6 +219,12 @@ int	handle_quoted_var(char **result, int *j, char *input)
 	return (handle_quoted_len(result, j, input, quote_len));
 }
 
+/*
+ * Processes variable during expansion.
+ * Handles variable lookup and substitution.
+ * Returns number of characters processed.
+ * Core function for variable expansion.
+*/
 int	handle_var(char **res, int *j, char *in, t_shell_data *sd)
 {
     if (in[1] == '"' && in[2] == '"')
