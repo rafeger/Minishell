@@ -71,41 +71,13 @@ static int	execute_command_loop(t_shell_data *data)
 	return (0);
 }
 
-static int	handle_single_builtin(t_shell_data *data, t_cmd *cmd)
+static int	handle_single_builtin_and_just_redir(t_shell_data *data, t_cmd *cmd)
 {
-	int			fd;
 	t_redirect	*redir;
 
-	fd = 0;
 	redir = cmd->redirects;
 	if (!cmd->args && redir)
-	{
-		while (redir)
-		{
-
-			if (redir->type == APPEND)
-				fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			else if (redir->type == REDIR_OUT)
-				fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			else if (redir->type == REDIR_IN)
-				fd = open(redir->file, O_RDONLY);
-			
-			if (fd == -1)
-			{
-				ft_putstr_fd("bash: ", 2);
-				ft_putstr_fd(redir->file, 2);
-				ft_putstr_fd(": ", 2);
-				perror("");
-				rl_clear_history();
-				return (1);
-			}
-			close(fd);
-			redir = redir->next;
-		}
-		close_heredoc_fds(data->cmd);
-		data->last_exit_status = 0;
-		return (1);
-	}
+		return (just_redir(data, redir));
 	if (!cmd->next && is_builtin_no_fork(cmd->args[0]))
 	{
 		redirections(data, cmd);

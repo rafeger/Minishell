@@ -81,3 +81,32 @@ void	execute(t_shell_data *data, t_cmd *cmd)
 		exit(EXIT_FAILURE);
 	}
 }
+
+int	just_redir(t_shell_data *data, t_redirect *redir)
+{
+	int	fd;
+
+	fd = 0;
+	while (redir)
+	{
+		if (redir->type == APPEND)
+			fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		else if (redir->type == REDIR_OUT)
+			fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		else if (redir->type == REDIR_IN)
+			fd = open(redir->file, O_RDONLY);
+		if (fd == -1)
+		{
+			ft_putstr_fd("bash: ", 2);
+			ft_putstr_fd(redir->file, 2);
+			perror(":");
+			rl_clear_history();
+			return (1);
+		}
+		close(fd);
+		redir = redir->next;
+	}
+	close_heredoc_fds(data->cmd);
+	data->last_exit_status = 0;
+	return (1);
+}

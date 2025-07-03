@@ -199,6 +199,8 @@ int		create_pipe_if_needed(t_cmd *cmd, int pipe_fd[2], int *output_fd);
 
 void	setup_pipes_and_redirections(t_cmd *cmd, int pipe_in, int pipe_out);
 
+int		just_redir(t_shell_data *data, t_redirect *redir);
+
 void	execute(t_shell_data *data, t_cmd *cmd);
 
 char	*get_pathname(char *cmd, t_env *env);
