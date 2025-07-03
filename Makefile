@@ -28,10 +28,8 @@ SRCS		=	$(addprefix $(SRC_DIR)/, \
 				init_and_free/tokenarray_init.c init_and_free/free_advanced.c \
 				env/env_core.c env/env_init.c env/signal_core.c \
 				env/shell_core.c \
-				syntax/check_pipe_core.c \
-				syntax/check_syntax_core.c syntax/check_quotes_core.c \
-				lexer/lexer_core.c lexer/lexer_quote.c lexer/lexer_special.c \
-				lexer/lexer_util.c \
+				syntax_new/check_syntax_core_new.c \
+				lexer/new_lexer.c \
 				parser/parse_core.c parser/parse_args.c \
 				parser/parse_redirect.c parser/tokenarray_utils.c \
 				expand/expand_core.c expand/expand_size_utils.c \
