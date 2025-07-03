@@ -94,7 +94,7 @@ int	execute_commands(t_shell_data *data)
 	int	result;
 
 	input_fd = STDIN_FILENO;
-	if (handle_single_builtin(data, data->cmd))
+	if (handle_single_builtin_and_just_redir(data, data->cmd))
 		return (0);
 	result = execute_command_loop(data);
 	while (wait(NULL) > 0)
