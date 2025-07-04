@@ -56,7 +56,7 @@ char	*generate_random_filename(void)
 	char			*filename;
 	unsigned int	rand;
 
-	filename = malloc(25);
+	filename = malloc(26);
 	fd = open("/dev/urandom", O_RDONLY);
 	if (!filename || fd == -1)
 		return (free(filename), NULL);
