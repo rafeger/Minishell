@@ -20,26 +20,26 @@ static int	perform_syntax_validation(char *input, t_shell_data *shell_data)
 	return (0);
 }
 
-// static void	print_token_list(t_ta *lx)
-// {
-//     int i;
+static void	print_token_list(t_ta *lx)
+{
+    int i;
 
-//     printf("---- Lexer Token List ----\n");
-//     for (i = 0; i < lx->t_tot; i++)
-//     {
-//         printf("token[%d]: [%s] (quoted: %d)\n", i, lx->tokens[i], lx->quoted[i]);
-//     }
-//     printf("--------------------------\n");
-// }
+    printf("---- Lexer Token List ----\n");
+    for (i = 0; i < lx->t_tot; i++)
+    {
+        printf("token[%d]: [%s] (quoted: %d)\n", i, lx->tokens[i], lx->quoted[i]);
+    }
+    printf("--------------------------\n");
+}
 
 
-// static void	print_expand_debug(const char *input, const char *expanded)
-// {
-//     printf("---- Expander Debug ----\n");
-//     printf("Input   : [%s]\n", input);
-//     printf("Expanded: [%s]\n", expanded);
-//     printf("------------------------\n");
-// }
+static void	print_expand_debug(const char *input, const char *expanded)
+{
+    printf("---- Expander Debug ----\n");
+    printf("Input   : [%s]\n", input);
+    printf("Expanded: [%s]\n", expanded);
+    printf("------------------------\n");
+}
 
 static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 {
@@ -49,12 +49,12 @@ static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 	int		is_empty;
 
 	expanded_input = expand_variables(input, shell_data);
-	// print_expand_debug(input, expanded_input);
+	print_expand_debug(input, expanded_input);
 	if (!expanded_input)
 		return (NULL);
 	is_empty = (expanded_input[0] == '\0');
 	t_array = lexer(expanded_input, shell_data);
-	// print_token_list(t_array);
+	print_token_list(t_array);
 	free(expanded_input);
 	if (!t_array && is_empty)
 	{
@@ -108,41 +108,41 @@ static void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd)
 		execute_commands(sd);
 	}
 }
-// static void print_cmd_args(t_cmd *cmd)
-// {
-//     int i;
-//     t_cmd *cur = cmd;
-//     int cmd_num = 1;
-//     t_redirect *redir;
+static void print_cmd_args(t_cmd *cmd)
+{
+    int i;
+    t_cmd *cur = cmd;
+    int cmd_num = 1;
+    t_redirect *redir;
 
-//     while (cur)
-//     {
-//         printf("---- Command %d ----\n", cmd_num++);
-//         if (cur->c_name)
-//             printf("c_name: [%s] (quoted: %d)\n", cur->c_name, cur->quoted);
-//         else
-//             printf("c_name: [NULL]\n");
-//         for (i = 0; i < cur->arg_count; i++)
-//             printf("arg[%d]: [%s] (quoted: %d)\n", i, cur->args[i], cur->arg_quoted[i]);
-//         redir = cur->redirects;
-//         while (redir)
-//         {
-//             const char *type_str = "UNKNOWN";
-//             if (redir->type == REDIR_IN)
-//                 type_str = "<";
-//             else if (redir->type == REDIR_OUT)
-//                 type_str = ">";
-//             else if (redir->type == APPEND)
-//                 type_str = ">>";
-//             else if (redir->type == HERE_DOC)
-//                 type_str = "<<";
-//             printf("redir: [%s] file: [%s]\n", type_str, redir->file);
-//             redir = redir->next;
-//         }
-//         printf("-------------------\n");
-//         cur = cur->next;
-//     }
-// }
+    while (cur)
+    {
+        printf("---- Command %d ----\n", cmd_num++);
+        if (cur->c_name)
+            printf("c_name: [%s] (quoted: %d)\n", cur->c_name, cur->quoted);
+        else
+            printf("c_name: [NULL]\n");
+        for (i = 0; i < cur->arg_count; i++)
+            printf("arg[%d]: [%s] (quoted: %d)\n", i, cur->args[i], cur->arg_quoted[i]);
+        redir = cur->redirects;
+        while (redir)
+        {
+            const char *type_str = "UNKNOWN";
+            if (redir->type == REDIR_IN)
+                type_str = "<";
+            else if (redir->type == REDIR_OUT)
+                type_str = ">";
+            else if (redir->type == APPEND)
+                type_str = ">>";
+            else if (redir->type == HERE_DOC)
+                type_str = "<<";
+            printf("redir: [%s] file: [%s]\n", type_str, redir->file);
+            redir = redir->next;
+        }
+        printf("-------------------\n");
+        cur = cur->next;
+    }
+}
 
 void	process_shell_input(char *input, t_shell_data *shell_data)
 {
@@ -154,7 +154,7 @@ void	process_shell_input(char *input, t_shell_data *shell_data)
 		return ;
 	clear_current_command(shell_data);
 	cmd = prepare_and_execute_input(input, shell_data);
-    // print_cmd_args(cmd);
+    print_cmd_args(cmd);
 	free(input);
 	run_command_if_valid(cmd, shell_data);
 }

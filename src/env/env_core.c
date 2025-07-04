@@ -1,6 +1,6 @@
 #include "../../include/minishell.h"
 
-char	*make_env_kv_string(const char *k, const char *v)
+char	*key_value_string(const char *k, const char *v)
 {
     int		len;
     char	*kv_str;
@@ -82,10 +82,10 @@ char	**envlist_to_strarr(t_env *env_head)
     char	**strarr;
     int		idx;
 
-    strarr = alloc_env_strs(env_head, &env_count);
+    strarr = env_alloc(env_head, &env_count);
     if (!strarr)
         return (NULL);
-    if (!populate_env_strs(strarr, env_head))
+    if (!fill_env_string(strarr, env_head))
     {
         idx = 0;
         while (strarr[idx])

@@ -1,6 +1,6 @@
 #include "../../include/minishell.h"
 
-// Process string expansion
+
 void process_expansion(t_expand_dollar *ed)
 {
     while (ed->input[ed->pos[0]])
@@ -16,7 +16,7 @@ void process_expansion(t_expand_dollar *ed)
     }
 }
 
-// Main expansion function
+
 char *expand_variables(char *input, t_shell_data *shell_data)
 {
     t_expand_dollar ed;

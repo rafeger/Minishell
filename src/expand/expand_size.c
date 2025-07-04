@@ -1,6 +1,6 @@
 #include "../../include/minishell.h"
 
-// Size calculation for special variables
+
 int calc_special_size(t_expand_dollar *ed)
 {
     int     size;
@@ -20,7 +20,7 @@ int calc_special_size(t_expand_dollar *ed)
     return (size);
 }
 
-// Size calculation for dollar expansion
+
 int calc_dollar_size(t_expand_dollar *ed)
 {
     int     size;
@@ -55,7 +55,7 @@ int calc_dollar_size(t_expand_dollar *ed)
     return (size);
 }
 
-// Total size calculation
+
 int calc_total_size(t_expand_dollar *ed)
 {
     int size = 0;
@@ -63,8 +63,8 @@ int calc_total_size(t_expand_dollar *ed)
     if (ed->input == NULL || ed->env == NULL)
         return (0);
     ed->pos[0] = 0;
-    ed->pos[2] = -1;  // Outside single quotes
-    ed->pos[3] = -1;  // Outside double quotes
+    ed->pos[2] = -1;  
+    ed->pos[3] = -1;  
     
     while (ed->input[ed->pos[0]])
     {

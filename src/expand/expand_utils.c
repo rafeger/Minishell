@@ -1,6 +1,6 @@
 #include "../../include/minishell.h"
 
-// Helper function to create substring
+
 char *substr_range(char *str, int start, int end)
 {
     char    *new;
@@ -27,7 +27,7 @@ char *substr_range(char *str, int start, int end)
     return (new);
 }
 
-// Quote handling
+
 void update_quotes(t_expand_dollar *ed)
 {
     if (ed->input[ed->pos[0]] == '\'' && ed->pos[3] == -1)
@@ -36,14 +36,14 @@ void update_quotes(t_expand_dollar *ed)
         ed->pos[3] *= -1;
 }
 
-// Helper function to append and update
+
 void append_str(t_expand_dollar *ed, char *src)
 {
     ft_strcat(ed->result, src);
     ed->pos[1] += ft_strlen(src);
 }
 
-// Check if we have empty quotes after $ for special $"" or $'' case
+
 int is_empty_quotes(t_expand_dollar *ed)
 {
     if (ed->input[ed->pos[0]] == '"' && ed->input[ed->pos[0] + 1] == '"')

@@ -1,6 +1,6 @@
 #include "../../include/minishell.h"
 
-// Variable name extraction
+
 char *get_var_name(t_expand_dollar *ed)
 {
     int start = ed->pos[0];
@@ -11,14 +11,14 @@ char *get_var_name(t_expand_dollar *ed)
     return (substr_range(ed->input, start, ed->pos[0]));
 }
 
-// Handle special variables ($?, $$)
+
 void expand_special(t_expand_dollar *ed)
 {
     char *tmp;
     
     if (ed->input[ed->pos[0]] == '$')
         tmp = ft_itoa(getpid());
-    else // $?
+    else 
         tmp = ft_itoa(ed->shell->last_exit_status);
     
     if (tmp)
@@ -29,7 +29,7 @@ void expand_special(t_expand_dollar *ed)
     ed->pos[0]++;
 }
 
-// Handle regular variables ($VAR)
+
 void expand_var(t_expand_dollar *ed)
 {
     char *name = get_var_name(ed);

@@ -1,6 +1,6 @@
 #include "../../include/minishell.h"
 
-char	**alloc_env_strs(t_env *env_head, int *env_count)
+char	**env_alloc(t_env *env_head, int *env_count)
 {
     char	**strarr;
     t_env	*cursor;
@@ -16,7 +16,7 @@ char	**alloc_env_strs(t_env *env_head, int *env_count)
     return (strarr);
 }
 
-int	populate_env_strs(char **strarr, t_env *env_head)
+int	fill_env_string(char **strarr, t_env *env_head)
 {
     int		idx;
     t_env	*cursor;
@@ -25,7 +25,7 @@ int	populate_env_strs(char **strarr, t_env *env_head)
     cursor = env_head;
     while (cursor)
     {
-        strarr[idx] = make_env_kv_string(cursor->key, cursor->value);
+        strarr[idx] = key_value_string(cursor->key, cursor->value);
         if (!strarr[idx])
             return (0);
         idx++;

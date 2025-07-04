@@ -31,13 +31,6 @@
 extern volatile sig_atomic_t	g_sig;
 
 
-typedef struct s_fd_info
-{
-	int					stdin_backup;
-	int					stdout_backup;
-	int					pipe_fd[2];
-}	t_fd_info;
-
 typedef struct s_env
 {
 	char				*key;
@@ -61,14 +54,6 @@ typedef struct s_ta
 	size_t				tokensize;
 }	t_ta;
 
-// typedef enum e_redir
-// {
-// 	REDIR_IN,
-// 	REDIR_OUT,
-// 	HERE_DOC,
-// 	APPEND
-// }	e_t_redir;
-
 typedef struct s_redirect
 {
 	int					type;
@@ -85,7 +70,6 @@ typedef struct s_cmd
 	t_redirect			*redirects;
 	struct s_cmd		*next;
 	struct s_cmd		*prev;
-	t_fd_info			*fd_info;
 	pid_t				pid;
 	int					tty_backup;
 	int					heredoc_fd;
@@ -101,17 +85,6 @@ typedef struct s_shell_data
 	int					last_exit_status;
 	int					sig_quit_flag;
 }	t_shell_data;
-   
-
-// typedef struct s_exp
-// {
-// 	char				*result;
-// 	int					i;
-// 	int					j;
-// 	int					squote;
-// 	int					dquote;
-// 	t_shell_data		*shell;
-// }	t_exp;
 
 typedef struct s_expand_dollar
 {
@@ -122,15 +95,6 @@ typedef struct s_expand_dollar
     t_shell_data 	*shell;
     char    		*input;
 } t_expand_dollar;
-
-typedef struct s_heredoc_data
-{
-	int					fd;
-	char				*temp;
-	char				*delimiter;
-	int					expand;
-	t_shell_data		*sd;
-}	t_heredoc_data;
 
  typedef enum e_quote_state
 {
@@ -229,12 +193,12 @@ char	*find_env_val(t_env *env_head, const char *k);
 void	set_env_variable(t_env **env_head, const char *k, const char *v);
 void	delete_env_entry(t_env **env_head, const char *k);
 char	**envlist_to_strarr(t_env *env_head);
-char 	*make_env_kv_string(const char *k, const char *v);
+char 	*key_value_string(const char *k, const char *v);
 
 t_env	*build_env_list(char **envp);
 void	append_env_entry(t_env **env_head, t_env *new_entry);
-char	**alloc_env_strs(t_env *env_head, int *env_count);
-int		populate_env_strs(char **strarr, t_env *env_head);
+char	**env_alloc(t_env *env_head, int *env_count);
+int		fill_env_string(char **strarr, t_env *env_head);
 t_env	*parse_env_pair(char *env_str);
 
 int		setup_shell(t_shell_data **sh, char **envp);
@@ -291,7 +255,6 @@ void process_expansion(t_expand_dollar *ed);
 /*=============================== init_and_free ==============================*/
 
 /* free_core.c */
-void			free_ptr(void *ptr);
 void			free_env_array(char **env_array);
 void			free_tokenarray(t_ta *t_array);
 void			free_redirects(t_redirect *redirect);
@@ -302,7 +265,7 @@ t_ta			*tokenarray_init(void);
 
 /* struct_init_core.c */
 t_cmd			*cmd_initialisation(void);
-void			fd_info_init(t_cmd *cmd);
+// int				fd_info_init(t_cmd *cmd);
 
 /* free_advanced.c */
 void			free_command_args(t_cmd *cmd);

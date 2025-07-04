@@ -40,8 +40,8 @@ void	free_command(t_cmd *cmd)
 			free_redirects(current->redirects);
 		if (current->arg_quoted)
 			free(current->arg_quoted);
-		if (current->fd_info)
-			free(current->fd_info);
+		// if (current->fd_info)
+		// 	free(current->fd_info);
 		if (current->tty_backup != -1)
 			close(current->tty_backup);
 		free(current);
