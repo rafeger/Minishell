@@ -11,6 +11,8 @@ void	lex_step_new(t_ta *lx, char **input)
         handle_special_chars_new(lx, input);
     else
         lx->token[lx->tokenindex++] = **input;
+    if (!lx->in_q && *(*input + 1) && is_special_char(*(*input + 1)))
+        finalize_token_new(lx);
 }
 
 void	lex_input_new(t_ta *lx, char *input)
