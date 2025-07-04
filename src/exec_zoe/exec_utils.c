@@ -89,20 +89,31 @@ int	just_redir(t_shell_data *data, t_redirect *redir)
 	fd = 0;
 	while (redir)
 	{
-		if (redir->type == APPEND)
-			fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		else if (redir->type == REDIR_OUT)
-			fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		else if (redir->type == REDIR_IN)
-			fd = open(redir->file, O_RDONLY);
-		if (fd == -1)
+		if (redir->type == HERE_DOC)
 		{
-			ft_putstr_fd("bash: ", 2);
-			ft_putstr_fd(redir->file, 2);
-			perror("");
-			return (1);
+			if (data->cmd->heredoc_fd != -1)
+			{
+				close(data->cmd->heredoc_fd);
+				data->cmd->heredoc_fd = -1;
+			}
 		}
-		close(fd);
+		else 
+		{
+			if (redir->type == APPEND)
+				fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			else if (redir->type == REDIR_OUT)
+				fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			else if (redir->type == REDIR_IN)
+				fd = open(redir->file, O_RDONLY);
+			if (fd == -1)
+			{
+				ft_putstr_fd("bash: ", 2);
+				ft_putstr_fd(redir->file, 2);
+				perror("");
+				return (1);
+			}
+			close(fd);
+		}
 		redir = redir->next;
 	}
 	close_heredoc_fds(data->cmd);
