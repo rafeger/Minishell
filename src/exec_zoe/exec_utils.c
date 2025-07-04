@@ -99,7 +99,7 @@ int	just_redir(t_shell_data *data, t_redirect *redir)
 		{
 			ft_putstr_fd("bash: ", 2);
 			ft_putstr_fd(redir->file, 2);
-			perror(":");
+			perror("");
 			return (1);
 		}
 		close(fd);
