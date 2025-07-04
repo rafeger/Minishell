@@ -28,7 +28,6 @@
 # define APPEND      3
 
 
-
 extern volatile sig_atomic_t	g_sig;
 
 
@@ -235,6 +234,7 @@ void	setup_signals(void);
 
 int				shell_syntax_check(const char *line);
 t_ta			*clean_lexer(t_ta *t_array);
+t_ta			*lexer(char *input, t_shell_data *shell_data);
 int				is_only_quotes(const char *input);
 t_ta			*create_special_empty_token(t_ta *t_array);
 int				check_unclosed_quotes(t_ta *t_array, t_shell_data *shell_data);
@@ -322,8 +322,6 @@ int		is_only_quotes(const char *input);
 t_ta	*create_special_empty_token(t_ta *t_array);
 int		check_unclosed_quotes(t_ta *t_array, t_shell_data *shell_data);
 t_ta	*clean_lexer(t_ta *t_array);
-
-
 #endif
 
 
