@@ -32,6 +32,14 @@ static int	perform_syntax_validation(char *input, t_shell_data *shell_data)
 // }
 
 
+// static void	print_expand_debug(const char *input, const char *expanded)
+// {
+//     printf("---- Expander Debug ----\n");
+//     printf("Input   : [%s]\n", input);
+//     printf("Expanded: [%s]\n", expanded);
+//     printf("------------------------\n");
+// }
+
 static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 {
 	char	*expanded_input;
@@ -40,6 +48,7 @@ static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 	int		is_empty;
 
 	expanded_input = expand_variables(input, shell_data);
+	// print_expand_debug(input, expanded_input);
 	if (!expanded_input)
 		return (NULL);
 	is_empty = (expanded_input[0] == '\0');
