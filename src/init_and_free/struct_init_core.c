@@ -9,7 +9,6 @@ t_cmd	*cmd_initialisation(void)
 		return (NULL);
 	cmd->c_name = NULL;
 	cmd->args = NULL;
-	cmd->has_next = 0;
 	cmd->quoted = 0;
 	cmd->arg_quoted = NULL;
 	cmd->next = NULL;
@@ -17,10 +16,8 @@ t_cmd	*cmd_initialisation(void)
 	cmd->fd_info = NULL;
 	cmd->tty_backup = -1;
 	cmd->heredoc_fd = -1;
-	cmd->n_quoted = 0;
 	cmd->redirects = NULL;
 	cmd->arg_count = 0;
-	cmd->has_heredoc = 0;
 	return (cmd);
 }
 
