@@ -1,21 +1,13 @@
 #include "../../include/minishell.h"
 
-/*
- * Initializes a new command structure with all fields set to NULL/0.
- * Allocates memory for the structure and sets default values for all member
- * variables.
- * Includes initialization of file descriptors, heredoc settings, and quote
- * tracking.
- * Returns NULL if allocation fails, otherwise returns initialized structure.
-*/
-t_cmd	*cmd_init(void)
+t_cmd	*cmd_initialisation(void)
 {
 	t_cmd	*cmd;
 
 	cmd = malloc(sizeof(t_cmd));
 	if (!cmd)
 		return (NULL);
-	cmd->name = NULL;
+	cmd->c_name = NULL;
 	cmd->args = NULL;
 	cmd->has_next = 0;
 	cmd->quoted = 0;
@@ -32,12 +24,6 @@ t_cmd	*cmd_init(void)
 	return (cmd);
 }
 
-/*
- * Initializes file descriptor information for a command.
- * Only allocates if fd_info doesn't already exist.
- * Sets all file descriptors to -1 as default invalid value.
- * Essential for proper pipe and redirection handling.
-*/
 void	fd_info_init(t_cmd *cmd)
 {
 	if (!cmd->fd_info)

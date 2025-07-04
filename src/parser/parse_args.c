@@ -54,9 +54,9 @@ void	add_argument(t_cmd *cmd, char *arg, int quoted)
 	}
 	cmd->args[cmd->arg_count + 1] = NULL;
 	cmd->arg_count++;
-	if (!cmd->name)
+	if (!cmd->c_name)
 	{
-		cmd->name = ft_strdup(arg);
+		cmd->c_name = ft_strdup(arg);
 		cmd->quoted = quoted;
 	}
 }

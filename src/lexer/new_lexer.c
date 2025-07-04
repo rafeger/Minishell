@@ -1,7 +1,5 @@
 #include "../../include/minishell.h"
 
-// --- Helpers ---
-
 static int	is_quote_char(char c)
 {
     return (c == '\'' || c == '"');
@@ -93,9 +91,10 @@ static void	append_trailing_space_new(t_ta *lx, int was_quoted)
 
     if (lx->tokenindex == 0)
     {
-        lx->token[0] = ' ';
-        lx->token[1] = '\0';
-        add_token_new(lx, lx->token);
+        // lx->token[0] = ' ';
+        // lx->token[1] = '\0';
+        // add_token_new(lx, lx->token);
+        return;
     }
     else
     {
@@ -219,7 +218,6 @@ static void	handle_special_chars_new(t_ta *lx, char **input)
     }
 }
 
-// --- Main lexing step ---
 static void	lex_step_new(t_ta *lx, char **input)
 {
     ensure_token_capacity(lx);
@@ -233,7 +231,6 @@ static void	lex_step_new(t_ta *lx, char **input)
         lx->token[lx->tokenindex++] = **input;
 }
 
-// --- Main lexing loop ---
 static void	lex_input_new(t_ta *lx, char *input)
 {
     while (*input)
@@ -244,8 +241,7 @@ static void	lex_input_new(t_ta *lx, char *input)
     finalize_token_new(lx);
 }
 
-// --- Entry point ---
-t_ta	*new_lexer(char *input, t_shell_data *shell_data)
+t_ta	*lexer(char *input, t_shell_data *shell_data)
 {
     t_ta	*lx;
 
@@ -284,17 +280,17 @@ int	is_only_quotes(const char *input)
     return (quotes > 0);
 }
 
-t_ta	*create_special_empty_token(t_ta *ta)
+t_ta	*create_special_empty_token(t_ta *t_array)
 {
-    ta->tokens[0] = ft_strdup("");
-    ta->quoted[0] = 1;
-    ta->t_tot = 1;
-    return (ta);
+    t_array->tokens[0] = ft_strdup("");
+    t_array->quoted[0] = 1;
+    t_array->t_tot = 1;
+    return (t_array);
 }
 
-int	check_unclosed_quotes(t_ta *ta, t_shell_data *shell_data)
+int	check_unclosed_quotes(t_ta *t_array, t_shell_data *shell_data)
 {
-    if (ta->in_q)
+    if (t_array->in_q)
     {
         write(2, "minishell: syntax error: unclosed quote\n", 40);
         if (shell_data)
@@ -304,8 +300,8 @@ int	check_unclosed_quotes(t_ta *ta, t_shell_data *shell_data)
     return (0);
 }
 
-t_ta	*clean_lexer(t_ta *ta)
+t_ta	*clean_lexer(t_ta *t_array)
 {
-    free_tokenarray(ta);
+    free_tokenarray(t_array);
     return (NULL);
 }

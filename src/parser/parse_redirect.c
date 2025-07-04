@@ -31,28 +31,28 @@ int	get_redirect_type(char *token)
 
 void	add_redirect(t_cmd *cmd, int type, char *file, int eof_quoted)
 {
-	t_redirect	*new_redir_node;
+	t_redirect	*n_redir_node;
 	t_redirect	*current_node;
 
-	new_redir_node = malloc(sizeof(t_redirect));
-	if (!new_redir_node)
+	n_redir_node = malloc(sizeof(t_redirect));
+	if (!n_redir_node)
 		return ;
-	new_redir_node->type = type;
-	new_redir_node->file = ft_strdup(file);
-	new_redir_node->eof_quoted = eof_quoted;
-	if (!new_redir_node->file)
+	n_redir_node->type = type;
+	n_redir_node->file = ft_strdup(file);
+	n_redir_node->eof_quoted = eof_quoted;
+	if (!n_redir_node->file)
 	{
-		free(new_redir_node);
+		free(n_redir_node);
 		return ;
 	}
-	new_redir_node->next = NULL;
+	n_redir_node->next = NULL;
 	if (!cmd->redirects)
-		cmd->redirects = new_redir_node;
+		cmd->redirects = n_redir_node;
 	else
 	{
 		current_node = cmd->redirects;
 		while (current_node->next)
 			current_node = current_node->next;
-		current_node->next = new_redir_node;
+		current_node->next = n_redir_node;
 	}
 }

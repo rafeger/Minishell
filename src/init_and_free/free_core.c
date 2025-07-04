@@ -1,9 +1,5 @@
 #include "../../include/minishell.h"
 
-/*
- * Safely frees a single pointer and sets it to NULL.
- * Basic memory management utility function.
-*/
 void	free_ptr(void *ptr)
 {
 	if (ptr != NULL)
@@ -13,10 +9,6 @@ void	free_ptr(void *ptr)
 	}
 }
 
-/*
- * Frees an array of environment strings.
- * Handles each string in array and the array itself.
-*/
 void	free_env_array(char **env_array)
 {
 	int	i;
@@ -32,43 +24,30 @@ void	free_env_array(char **env_array)
 	free(env_array);
 }
 
-/*
- * Comprehensive cleanup of tken array structure.
- * Frees all allocated components:
- * - Individual tokens
- * - Token array
- * - Quote tracking array
- * - Temporary token buffer
- * - Main structure
-*/
-void	free_tokenarray(t_ta *ta)
+void	free_tokenarray(t_ta *t_array)
 {
 	int	i;
 
-	if (!ta)
+	if (!t_array)
 		return ;
-	if (ta->tokens)
+	if (t_array->tokens)
 	{
 		i = 0;
-		while (i < ta->t_tot)
+		while (i < t_array->t_tot)
 		{
-			if (ta->tokens[i])
-				free(ta->tokens[i]);
+			if (t_array->tokens[i])
+				free(t_array->tokens[i]);
 			i++;
 		}
-		free(ta->tokens);
+		free(t_array->tokens);
 	}
-	if (ta->quoted)
-		free(ta->quoted);
-	if (ta->token)
-		free(ta->token);
-	free(ta);
+	if (t_array->quoted)
+		free(t_array->quoted);
+	if (t_array->token)
+		free(t_array->token);
+	free(t_array);
 }
 
-/*
- * Frees a linked list of redirections.
- * Clens up file names and redirect structures.
-*/
 void	free_redirects(t_redirect *redirect)
 {
 	t_redirect	*temp;

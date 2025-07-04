@@ -1,13 +1,6 @@
 
 #include "../../include/minishell.h"
 
-
-
-/*
- * Verifies if stdin is properly configured as a terminal.
- * If not, attempts to reopen /dev/tty and configures it as stdin.
- * Essential for proper readline functionality.
-*/
 void	ensure_stdin_tty(void)
 {
 	int	fd;
@@ -23,11 +16,6 @@ void	ensure_stdin_tty(void)
 	}
 }
 
-/*
- * Tests if end-of-file has been reached on stdin.
- * Performs a zero-length read to check strem status.
- * Returns 1 if EOF is detected, 0 otherwise.
-*/
 int	has_eof_been_reached(void)
 {
 	char	buffer[1];

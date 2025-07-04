@@ -1,9 +1,4 @@
 #include "../../include/minishell.h"
-/*
- * Returns input from readline, adds valid input to history.
- * Handles EOF (Ctrl-D) by returning NULL.
- * Before getting input, ensures stdin is properly configured.
-*/
 static char	*read_user_input(void)
 {
 	char	*line;
@@ -21,14 +16,6 @@ static char	*read_user_input(void)
 	return (line);
 }
 
-/*
- * Main program loop that continuously:
- * - Get user input.
- * - Handles signals (particularly SIGINT).
- * - Processes valid commands.
- * - Maintains shell state.
- * Exits on EOF, returning final exit status to main.
-*/
 static int	shell_main_loop(t_shell_data *shell)
 {
 	char	*input;
@@ -54,13 +41,6 @@ static int	shell_main_loop(t_shell_data *shell)
 	return (shell->last_exit_status);
 }
 
-/*
- * Program entry point that:
- * - Initializes shell data structure with environment variables.
- * - Launches main program loop.
- * - Handles cleanup on exit.
- * Returns final program exit status.
-*/
 int	main(int ac, char *av[], char **envp)
 {
 	t_shell_data	*shell;

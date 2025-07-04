@@ -1,9 +1,5 @@
 #include "../../include/minishell.h"
 
-/*
- * Safely frees and nullifies the current command structure in shell_data.
- * Essential for preventing memory leaks between command executions.
-*/
 static void	clear_current_command(t_shell_data *shell_data)
 {
 	if (shell_data->cmd)
@@ -13,13 +9,6 @@ static void	clear_current_command(t_shell_data *shell_data)
 	}
 }
 
-/*
- * Validates input syntax using check_syntax_core().
- * If syntax errors are found:
- * - Sets error exit status.
- * - Frees input.
- * Returns 1 on syntax error, 0 if syntax is valid.
-*/
 static int	perform_syntax_validation(char *input, t_shell_data *shell_data)
 {
 	if (shell_syntax_check(input) != 0)
@@ -31,17 +20,10 @@ static int	perform_syntax_validation(char *input, t_shell_data *shell_data)
 	return (0);
 }
 
-/*
- * Processes raw input into executable command:
- * - Expands variables.
- * - Performs lexical analysis.
- * - Parses tokens into command structure.
- * Returns NULL if any step fails, otherwise returns prepared command.
-*/
 static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 {
 	char	*expanded_input;
-	t_ta	*ta;
+	t_ta	*t_array;
 	t_cmd	*cmd;
 	int		is_empty;
 
@@ -49,17 +31,17 @@ static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 	if (!expanded_input)
 		return (NULL);
 	is_empty = (expanded_input[0] == '\0');
-	ta = new_lexer(expanded_input, shell_data);
+	t_array = lexer(expanded_input, shell_data);
 	free(expanded_input);
-	if (!ta && is_empty)
+	if (!t_array && is_empty)
 	{
 		shell_data->last_exit_status = 0;
 		return (NULL);
 	}
-	if (!ta)
+	if (!t_array)
 		return (NULL);
-	cmd = parse_tokens(ta);
-	free_tokenarray(ta);
+	cmd = parse_tokens(t_array);
+	free_tokenarray(t_array);
 	return (cmd);
 }
 
@@ -77,7 +59,6 @@ static int setup_heredocs(t_shell_data *data)
                 cmd->heredoc_fd = heredoc(redir->file, data);
                 if (cmd->heredoc_fd == -1)
                 {
-                    // Si le heredoc a été interrompu, on nettoie et on retourne
                     if (data->last_exit_status == 130)
                         return (-1);
                     return (-1);
@@ -90,18 +71,11 @@ static int setup_heredocs(t_shell_data *data)
     return (0);
 }
 
-/*
- * Executes command if valid:
- * - Stores command in shell data.
- * - Triggers command execution.
- * No return value as execution status is stored in t_shell_data.
-*/
 static void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd)
 {
 	if (cmd)
 	{
 		sd->cmd = cmd;
-		// Si setup_heredocs retourne -1, on n'exécute pas la commande
 		if (setup_heredocs(sd) == -1)
 		{
 			free_command(cmd);
@@ -121,10 +95,10 @@ static void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd)
 //     while (cur)
 //     {
 //         printf("---- Command %d ----\n", cmd_num++);
-//         if (cur->name)
-//             printf("name: [%s] (quoted: %d)\n", cur->name, cur->quoted);
+//         if (cur->c_name)
+//             printf("c_name: [%s] (quoted: %d)\n", cur->c_name, cur->quoted);
 //         else
-//             printf("name: [NULL]\n");
+//             printf("c_name: [NULL]\n");
 //         for (i = 0; i < cur->arg_count; i++)
 //             printf("arg[%d]: [%s] (quoted: %d)\n", i, cur->args[i], cur->arg_quoted[i]);
 //         redir = cur->redirects;
@@ -147,15 +121,6 @@ static void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd)
 //     }
 // }
 
-
-/*
- * Main input handling function that orchestrates:
- * - Syntax validation.
- * - Command cleanup.
- * - Input processing.
- * - Command execution.
- * Manages complete lifecycle of a single command input.
-*/
 void	process_shell_input(char *input, t_shell_data *shell_data)
 {
 	t_cmd	*cmd;

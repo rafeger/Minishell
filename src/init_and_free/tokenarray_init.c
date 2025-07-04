@@ -1,10 +1,5 @@
 #include "../../include/minishell.h"
 
-/*
- * Allocates and initializes quoted array for token tracking.
- * Sets initial memory to zero using ft_memset.
- * Used internally by tokenarray initialization.
-*/
 static int	*alloc_quoted(int cap)
 {
 	int	*quoted;
@@ -16,55 +11,40 @@ static int	*alloc_quoted(int cap)
 	return (quoted);
 }
 
-/*
- * Initializes secondary token array parameters.
- * Sets counters, flags, and state variables to their initial values.
- * Part of the two-step initialization process for token arrays.
-*/
-void	tokenarray_init_second(t_ta *ta)
+void	tokenarray_init_second(t_ta *t_array)
 {	
-	ta->tokenindex = 0;
-	ta->in_q = 0;
-	ta->quotechar = '\0';
-	ta->token = NULL;
-	ta->tokensize = 0;
-	ta->trailing_space = 0;
-	ta->second_quote = 0;
-	ta->t_tot = 0;
-	ta->cap = 10;
+	t_array->tokenindex = 0;
+	t_array->in_q = 0;
+	t_array->quotechar = '\0';
+	t_array->token = NULL;
+	t_array->tokensize = 0;
+	t_array->trailing_space = 0;
+	t_array->second_quote = 0;
+	t_array->t_tot = 0;
+	t_array->cap = 10;
 }
 
-/*
- * Main token array initialization function.
- * Allocates and sets up all necessary memory for tokenization:
- * - Main token array structure
- * - Token storage array
- * - Quote tracking array
- * Includes error handleing for allocation failures.
- * Returns NULL if any allocation fails, otherwise returns
- * initialized structure.
-*/
 t_ta	*tokenarray_init(void)
 {
-	t_ta	*ta;
+	t_ta	*t_array;
 
-	ta = (t_ta *)malloc(sizeof(t_ta));
-	if (!ta)
+	t_array = (t_ta *)malloc(sizeof(t_ta));
+	if (!t_array)
 		return (NULL);
-	ft_memset(ta, 0, sizeof(t_ta));
-	ta->tokens = malloc(sizeof(char *) * 10);
-	if (!ta->tokens)
+	ft_memset(t_array, 0, sizeof(t_ta));
+	t_array->tokens = malloc(sizeof(char *) * 10);
+	if (!t_array->tokens)
 	{
-		free(ta);
+		free(t_array);
 		return (NULL);
 	}
-	ta->quoted = alloc_quoted(10);
-	if (!ta->quoted)
+	t_array->quoted = alloc_quoted(10);
+	if (!t_array->quoted)
 	{
-		free(ta->tokens);
-		free(ta);
+		free(t_array->tokens);
+		free(t_array);
 		return (NULL);
 	}
-	tokenarray_init_second(ta);
-	return (ta);
+	tokenarray_init_second(t_array);
+	return (t_array);
 }

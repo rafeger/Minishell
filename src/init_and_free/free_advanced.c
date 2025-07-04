@@ -1,10 +1,5 @@
 #include "../../include/minishell.h"
 
-/*
- * Frees command argument array.
- * Handles both individual argument strings and the array itself.
- * Properly manages the arg_count for accurate cleanup.
-*/
 void	free_command_args(t_cmd *cmd)
 {
 	int	i;
@@ -21,16 +16,6 @@ void	free_command_args(t_cmd *cmd)
 	free(cmd->args);
 }
 
-/*
- * Comprehensive command structure cleanup.
- * Frees all components recursively through command pipeline:
- * - Command name and arguments
- * - Redirections
- * - Quote tracking arrays
- * - File descriptors
- * - Pipeline connections
- * Handles cleanup of entire command chain.
-*/
 void	free_command(t_cmd *cmd)
 {
 	t_cmd	*current;
@@ -42,8 +27,8 @@ void	free_command(t_cmd *cmd)
 	while (current)
 	{
 		next = current->next;
-		if (current->name)
-			free(current->name);
+		if (current->c_name)
+			free(current->c_name);
 		if (current->args)
 			free_command_args(current);
 		if (current->redirects)
@@ -59,14 +44,6 @@ void	free_command(t_cmd *cmd)
 	}
 }
 
-/*
- * Complete shell cleanup function.
- * Frees all shell components:
- * - Environment variables
- * - Command structures
- * - Shell data structure itself
- * Ensures proper cleanup of all allocated shell resources.
-*/
 void	ft_cleanup_shell(t_shell_data **shell)
 {
 	t_env	*current;
@@ -91,14 +68,6 @@ void	ft_cleanup_shell(t_shell_data **shell)
 	*shell = NULL;
 }
 
-/*
- * Cleans up environment variable linked list.
- * Frees each node including:
- * - Key strings
- * - Value strings
- * - Node structures
- * Handles the entire environment chain.
-*/
 void	ft_cleanup_env(t_env **env)
 {
 	t_env	*current;
