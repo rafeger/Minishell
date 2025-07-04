@@ -103,27 +103,25 @@ typedef struct s_shell_data
 }	t_shell_data;
    
 
-typedef struct s_exp
+// typedef struct s_exp
+// {
+// 	char				*result;
+// 	int					i;
+// 	int					j;
+// 	int					squote;
+// 	int					dquote;
+// 	t_shell_data		*shell;
+// }	t_exp;
+
+typedef struct s_expand_dollar
 {
-	char				*result;
-	int					i;
-	int					j;
-	int					squote;
-	int					dquote;
-	t_shell_data		*shell;
-}	t_exp;
-
-// typedef struct s_expand_var {
-//     char    		*input;
-//     char    		*result;
-//     int     		input_pos;
-//     int     		result_pos;
-//     int     		in_single_quote;    // -1 = inside, 1 = outside
-//     int     		in_double_quote;    // -1 = inside, 1 = outside
-//     size_t  		total_size;
-//     t_shell_data 	*shell;
-// } t_expand_var;
-
+    int     		pos[4];         // [0]=input_pos, [1]=output_pos, [2]=single_quote, [3]=double_quote
+    int     		total_size;
+    char    		*result;
+    t_env   		*env;
+    t_shell_data 	*shell;
+    char    		*input;
+} t_expand_dollar;
 
 typedef struct s_heredoc_data
 {
@@ -265,25 +263,22 @@ int				init_quoted_array(t_ta *new_ta, t_ta *t_array, int index);
 
 /*================================== expand ==================================*/
 
-// ===================== expand_core.c =====================
-int		get_var_length(const char *str);
-char	*get_var_value(const char *var, t_shell_data *shell_data);
-void	process_expand_char(t_exp *exp, char *input);
-size_t	calculate_expanded_size(char *input, t_shell_data *shell_data);
-char	*expand_variables(char *input, t_shell_data *shell_data);
 
-// ===================== expand_utils.c =====================
-int		handle_quoted_len(char **result, int *j, char *input, int quote_len);
-int		process_var(char *input, int i, size_t *size, t_shell_data *sd);
-int		is_in_quotes(const char *str);
-void	copy_var_value(char **result, int *j, char *var_value);
-int		get_quoted_length(const char *str);
+// Main expansion function
+char *expand_variables(char *input, t_shell_data *shell_data);
 
-// ===================== expand_quoted.c =====================
-int		handle_quoted_var(char **result, int *j, char *input);
-
-// ===================== expand_handle_var.c =====================
-int		handle_var(char **res, int *j, char *in, t_shell_data *sd);
+// Helper functions
+char *substr_range(char *str, int start, int end);
+void update_quotes(t_expand_dollar *ed);
+char *get_var_name(t_expand_dollar *ed);
+void append_str(t_expand_dollar *ed, char *src);
+void expand_special(t_expand_dollar *ed);
+void expand_var(t_expand_dollar *ed);
+void expand_dollar(t_expand_dollar *ed);
+int calc_special_size(t_expand_dollar *ed);
+int calc_dollar_size(t_expand_dollar *ed);
+int calc_total_size(t_expand_dollar *ed);
+void process_expansion(t_expand_dollar *ed);
 
 /*=============================== init_and_free ==============================*/
 
