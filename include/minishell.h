@@ -113,6 +113,18 @@ typedef struct s_exp
 	t_shell_data		*shell;
 }	t_exp;
 
+// typedef struct s_expand_var {
+//     char    		*input;
+//     char    		*result;
+//     int     		input_pos;
+//     int     		result_pos;
+//     int     		in_single_quote;    // -1 = inside, 1 = outside
+//     int     		in_double_quote;    // -1 = inside, 1 = outside
+//     size_t  		total_size;
+//     t_shell_data 	*shell;
+// } t_expand_var;
+
+
 typedef struct s_heredoc_data
 {
 	int					fd;
