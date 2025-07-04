@@ -78,12 +78,9 @@ typedef struct s_cmd
 	struct s_cmd		*next;
 	struct s_cmd		*prev;
 	t_fd_info			*fd_info;
-	int					n_quoted;
 	pid_t				pid;
 	int					tty_backup;
-	int					has_heredoc;
 	int					heredoc_fd;
-	int					has_next;
 	int					quoted;
 	int					*arg_quoted;
 	bool				heredoc_quotes;
@@ -289,7 +286,34 @@ void			ft_cleanup_shell(t_shell_data **shell);
 void			ft_cleanup_env(t_env **env);
 
 /*============================================================================*/
+// lexer_core.c
+int		is_quote_char(char c);
+int		is_special_char(char c);
+void	ensure_token_capacity(t_ta *lx);
+void	expand_token_array(t_ta *lx);
 
+// lexer_token.c
+int		add_token_failed_new(t_ta *lx);
+int		add_token_new(t_ta *lx, char *token);
+void	append_trailing_space_new(t_ta *lx, int was_quoted);
+void	finalize_token_new(t_ta *lx);
+
+// lexer_quotes.c
+void	quote_state_machine_new(t_ta *lx, char c);
+void	handle_quotes_new(t_ta *lx, char **input);
+
+// lexer_special.c
+void	handle_special_token_new(t_ta *lx, char **input);
+void	handle_special_chars_new(t_ta *lx, char **input);
+
+// lexer_driver.c
+void	lex_step_new(t_ta *lx, char **input);
+void	lex_input_new(t_ta *lx, char *input);
+t_ta	*lexer(char *input, t_shell_data *shell_data);
+int		is_only_quotes(const char *input);
+t_ta	*create_special_empty_token(t_ta *t_array);
+int		check_unclosed_quotes(t_ta *t_array, t_shell_data *shell_data);
+t_ta	*clean_lexer(t_ta *t_array);
 #endif
 
 
