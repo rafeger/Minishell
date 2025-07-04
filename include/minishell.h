@@ -62,11 +62,13 @@ typedef struct s_ta
 	size_t				tokensize;
 }	t_ta;
 
-typedef enum e_redir
-{
-	
-
-}	e_t_redir;
+// typedef enum e_redir
+// {
+// 	REDIR_IN,
+// 	REDIR_OUT,
+// 	HERE_DOC,
+// 	APPEND
+// }	e_t_redir;
 
 typedef struct s_redirect
 {
