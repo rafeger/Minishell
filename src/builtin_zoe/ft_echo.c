@@ -27,6 +27,37 @@ static bool	check_new_line(char *str)
 	return (false);
 }
 
+static int	safe_write_str(const char *str, size_t len)
+{
+	if (write(1, str, len) == -1)
+	{
+		perror("echo: write error");
+		return (1);
+	}
+	return (0);
+}
+
+static int	print_args(t_cmd *cmd, int start_idx, int nbr_arg)
+{
+	int		i;
+	size_t	len;
+
+	i = start_idx;
+	while (cmd->args[i])
+	{
+		len = ft_strlen(cmd->args[i]);
+		if (safe_write_str(cmd->args[i], len))
+			return (1);
+		if (i != nbr_arg)
+		{
+			if (safe_write_str(" ", 1))
+				return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
 int	ft_echo(t_cmd *cmd)
 {
 	int		i;
@@ -39,22 +70,13 @@ int	ft_echo(t_cmd *cmd)
 		nbr_arg++;
 	i = 0;
 	while (cmd->args[++i] && check_new_line(cmd->args[i]))
-			new_line = true;
-	while (cmd->args[i])
-	{
-		write(1, cmd->args[i], ft_strlen(cmd->args[i]));
-		if (i != nbr_arg)
-			write(1, " ", 1);
-		i++;
-	}
+		new_line = true;
+	if (print_args(cmd, i, nbr_arg))
+		return (1);
 	if (!new_line)
-		write(1, "\n", 1);
+	{
+		if (safe_write_str("\n", 1))
+			return (1);
+	}
 	return (0);
 }
-// int	main(int argc, char **argv)
-// {
-
-// 	(void)argc;
-// 	ft_echo(argv);
-// 	return (0);
-// }
