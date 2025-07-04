@@ -33,7 +33,7 @@ SRCS		=	$(addprefix $(SRC_DIR)/, \
 				tok/append_token.c tok/lex_core.c tok/lexer_utils2.c \
 				tok/quote_handle.c tok/spe_char_handle.c \
 				parser/parse_core.c parser/parse_args.c \
-				parser/parse_redirect.c parser/tokenarray_utils.c \
+				parser/parse_redirect.c tok/tokenarray_utils.c \
 				exp/expand_dollar.c exp/expand_main.c exp/expand_size.c \
 				exp/expand_utils.c exp/expand_variables.c \
 				exec_zoe/builtin.c \

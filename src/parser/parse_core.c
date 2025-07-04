@@ -126,30 +126,30 @@ static int	process_token(t_cmd *cmd, t_ta *t_array, int *i)
 
 t_cmd	*parse_tokens(t_ta *t_array)
 {
-	t_cmd	*command_structure;
+	t_cmd	*cmd;
 	int		token_pos;
 
 	if (!t_array || !t_array->tokens)
 		return (NULL);
-	command_structure = cmd_initialisation(); 
-	if (!command_structure)
+	cmd = cmd_initialisation(); 
+	if (!cmd)
 		return (NULL);
 	token_pos = 0;
 	while (token_pos < t_array->t_tot && ft_strcmp(t_array->tokens[token_pos], "") == 0)
 		token_pos++;
 	while (token_pos < t_array->t_tot)
 	{
-		if (!process_token(command_structure, t_array, &token_pos))
+		if (!process_token(cmd, t_array, &token_pos))
 		{
-			free_command(command_structure); 
+			free_command(cmd); 
 			return (NULL);
 		}
 	}
-	if (!command_structure->c_name && command_structure->arg_count == 0
-		&& command_structure->redirects == NULL)
+	if (!cmd->c_name && cmd->arg_count == 0
+		&& cmd->redirects == NULL)
 	{
-		free_command(command_structure);
+		free_command(cmd);
 		return (NULL);
 	}
-	return (command_structure);
+	return (cmd);
 }
