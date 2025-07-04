@@ -31,6 +31,8 @@ static int	safe_write_str(const char *str, size_t len)
 {
 	if (write(1, str, len) == -1)
 	{
+		if (errno == EPIPE)
+			return (1);
 		perror("echo: write error");
 		return (1);
 	}
