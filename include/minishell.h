@@ -165,8 +165,6 @@ int		do_builtin(t_shell_data *data, t_cmd *cmd);
 
 int		execute_commands(t_shell_data *data);
 
-int		is_builtin_no_fork(char *cmd);
-
 void	handle_builtin_child(t_shell_data *data, t_cmd *cmd);
 
 int		handle_fork_error(t_cmd *cmd, int pipe_fd[2], t_shell_data *data);

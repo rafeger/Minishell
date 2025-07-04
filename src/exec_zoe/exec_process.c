@@ -11,14 +11,6 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
-int	is_builtin_no_fork(char *cmd)
-{
-	if (!ft_strcmp(cmd, "cd") || !ft_strcmp(cmd, "export")
-		|| !ft_strcmp(cmd, "unset") || !ft_strcmp(cmd, "exit"))
-		return (1);
-	return (0);
-}
-
 void	handle_builtin_child(t_shell_data *data, t_cmd *cmd)
 {
 	int	exit_status;
