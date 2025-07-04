@@ -1,28 +1,28 @@
 #include "../../include/minishell.h"
 
-void	lex_step_new(t_ta *lx, char **input)
+void	lex_step(t_ta *lx, char **input)
 {
     ensure_token_capacity(lx);
     if (is_quote_char(**input) || lx->in_q)
-        handle_quotes_new(lx, input);
+        handle_quotes(lx, input);
     else if (**input == ' ' || **input == '\t')
-        finalize_token_new(lx);
+        finalize_token(lx);
     else if (!lx->in_q && is_special_char(**input))
-        handle_special_chars_new(lx, input);
+        handle_spe_char(lx, input);
     else
         lx->token[lx->tokenindex++] = **input;
     if (!lx->in_q && *(*input + 1) && is_special_char(*(*input + 1)))
-        finalize_token_new(lx);
+        finalize_token(lx);
 }
 
-void	lex_input_new(t_ta *lx, char *input)
+void	lex_input(t_ta *lx, char *input)
 {
     while (*input)
     {
-        lex_step_new(lx, &input);
+        lex_step(lx, &input);
         input++;
     }
-    finalize_token_new(lx);
+    finalize_token(lx);
 }
 
 t_ta	*lexer(char *input, t_shell_data *shell_data)
@@ -34,7 +34,7 @@ t_ta	*lexer(char *input, t_shell_data *shell_data)
         return (NULL);
     if (is_only_quotes(input))
         return (create_special_empty_token(lx));
-    lex_input_new(lx, input);
+    lex_input(lx, input);
     if (check_unclosed_quotes(lx, shell_data))
         return (clean_lexer(lx));
     if (lx->tokenindex > 0)

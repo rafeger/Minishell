@@ -1,6 +1,6 @@
 #include "../../include/minishell.h"
 
-void	handle_special_token_new(t_ta *lx, char **input)
+void	handle_spe_tok(t_ta *lx, char **input)
 {
     if (lx->tokensize < 2)
     {
@@ -23,7 +23,7 @@ void	handle_special_token_new(t_ta *lx, char **input)
     add_token_new(lx, lx->token);
 }
 
-void	handle_special_chars_new(t_ta *lx, char **input)
+void	handle_spe_char(t_ta *lx, char **input)
 {
     char	*spe;
 
@@ -42,6 +42,6 @@ void	handle_special_chars_new(t_ta *lx, char **input)
             lx->tokenindex = 0;
         }
         lx->token[0] = **input;
-        handle_special_token_new(lx, input);
+        handle_spe_tok(lx, input);
     }
 }

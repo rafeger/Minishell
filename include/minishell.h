@@ -281,22 +281,22 @@ void	ensure_token_capacity(t_ta *lx);
 void	expand_token_array(t_ta *lx);
 
 // lexer_token.c
-int		add_token_failed_new(t_ta *lx);
+int		add_tok_failure(t_ta *lx);
 int		add_token_new(t_ta *lx, char *token);
-void	append_trailing_space_new(t_ta *lx, int was_quoted);
-void	finalize_token_new(t_ta *lx);
+void	apnd_trailing_spc(t_ta *lx, int was_quoted);
+void	finalize_token(t_ta *lx);
 
 // lexer_quotes.c
-void	quote_state_machine_new(t_ta *lx, char c);
-void	handle_quotes_new(t_ta *lx, char **input);
+void	quote_state(t_ta *lx, char c);
+void	handle_quotes(t_ta *lx, char **input);
 
 // lexer_special.c
-void	handle_special_token_new(t_ta *lx, char **input);
-void	handle_special_chars_new(t_ta *lx, char **input);
+void	handle_spe_tok(t_ta *lx, char **input);
+void	handle_spe_char(t_ta *lx, char **input);
 
 // lexer_driver.c
-void	lex_step_new(t_ta *lx, char **input);
-void	lex_input_new(t_ta *lx, char *input);
+void	lex_step(t_ta *lx, char **input);
+void	lex_input(t_ta *lx, char *input);
 t_ta	*lexer(char *input, t_shell_data *shell_data);
 int		is_only_quotes(const char *input);
 t_ta	*create_special_empty_token(t_ta *t_array);

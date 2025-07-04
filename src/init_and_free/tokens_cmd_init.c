@@ -80,3 +80,16 @@ int	tokenarray_resize(t_ta *t_array, int new_capacity)
     t_array->cap = new_capacity;
     return (1);
 }
+t_cmd	*cmd_initialisation(void)
+{
+    t_cmd	*cmd;
+
+    cmd = malloc(sizeof(t_cmd));
+    if (!cmd)
+        return (NULL);
+    ft_memset(cmd, 0, sizeof(t_cmd));
+    cmd->tty_backup = -1;
+    cmd->heredoc_fd = -1;
+    
+    return (cmd);
+}

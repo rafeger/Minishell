@@ -1,11 +1,5 @@
 #include "../../include/minishell.h"
 
-/*
- * Sets up command structure for pipe segment.
- * Creates new token array and command structure.
- * Manages quote status and token copying.
- * Returns initialized command structure or NULL on failure.
-*/
 static t_cmd	*setup_pipe_cmd(t_ta *new_ta, t_ta *t_array, int idx, char **stok)
 {
 	t_cmd	*next_cmd;

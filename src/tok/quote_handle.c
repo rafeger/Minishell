@@ -1,6 +1,6 @@
 #include "../../include/minishell.h"
 
-void	quote_state_machine_new(t_ta *lx, char c)
+void	quote_state(t_ta *lx, char c)
 {
     int	was_quoted;
 
@@ -26,7 +26,7 @@ void	quote_state_machine_new(t_ta *lx, char c)
         lx->token[lx->tokenindex++] = c;
 }
 
-void	handle_quotes_new(t_ta *lx, char **input)
+void	handle_quotes(t_ta *lx, char **input)
 {
     int was_in_q;
 
@@ -39,9 +39,9 @@ void	handle_quotes_new(t_ta *lx, char **input)
         return ;
     }
     was_in_q = lx->in_q;
-    quote_state_machine_new(lx, **input);
+    quote_state(lx, **input);
     if (was_in_q && !lx->in_q && *(*input + 1) && is_special_char(*(*input + 1)))
-        finalize_token_new(lx);
+        finalize_token(lx);
     if (!lx->in_q && *(*input + 1) && ft_isspace(*(*input + 1)))
         lx->trailing_space = 1;
 }

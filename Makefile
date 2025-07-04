@@ -24,19 +24,18 @@ OBJ_DIR		=	obj
 LIBFT_DIR	=	libft
 
 SRCS		=	$(addprefix $(SRC_DIR)/, \
-				main_and_input/main.c main_and_input/main_utils.c \
-				main_and_input/input_core.c \
-				init_and_free/struct_init_core.c init_and_free/free_core.c \
-				init_and_free/tokenarray_init.c init_and_free/free_advanced.c \
-				env/env_core.c env/env_init.c env/signal_core.c \
-				env/shell_core.c \
-				syntax_new/check_syntax_core_new.c \
-				lexer/lexer_core.c lexer/lexer_quote.c lexer/lexer_special.c \
-				lexer/lexer_token.c lexer/lexer_utils.c \
+				main/main.c main/readline_core.c \
+				init_and_free/free_all.c init_and_free/free_all2.c \
+				init_and_free/tokens_cmd_init.c \
+				env_vars/env_core.c env_vars/env_init.c env_vars/shell_core.c \
+				env_vars/signal_core.c \
+				check_syntax/check_syntax_core_new.c \
+				tok/append_token.c tok/lex_core.c tok/lexer_utils2.c \
+				tok/quote_handle.c tok/spe_char_handle.c \
 				parser/parse_core.c parser/parse_args.c \
 				parser/parse_redirect.c parser/tokenarray_utils.c \
-				expand/expand_dollar.c expand/expand_main.c expand/expand_utils.c \
-				expand/expand_variables.c expand/expand_size.c \
+				exp/expand_dollar.c exp/expand_main.c exp/expand_size.c \
+				exp/expand_utils.c exp/expand_variables.c \
 				exec_zoe/builtin.c \
 				exec_zoe/redir_no_pipe.c \
 				exec_zoe/exec.c exec_zoe/exec_pipes.c exec_zoe/exec_process.c exec_zoe/exec_utils.c \

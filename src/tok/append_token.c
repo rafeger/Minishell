@@ -1,6 +1,6 @@
 #include "../../include/minishell.h"
 
-int	add_token_failed_new(t_ta *lx)
+int	add_tok_failure(t_ta *lx)
 {
     free(lx->tokens);
     free(lx->quoted);
@@ -24,7 +24,7 @@ int	add_token_new(t_ta *lx, char *token)
         new_quoted = ft_realloc(lx->quoted, oldsize * sizeof(int),
                 sizeof(int) * lx->cap);
         if (!new_tokens || !new_quoted)
-            return (add_token_failed_new(lx));
+            return (add_tok_failure(lx));
         lx->tokens = new_tokens;
         lx->quoted = new_quoted;
     }
@@ -36,7 +36,7 @@ int	add_token_new(t_ta *lx, char *token)
     return (0);
 }
 
-void	append_trailing_space_new(t_ta *lx, int was_quoted)
+void	apnd_trailing_spc(t_ta *lx, int was_quoted)
 {
     char	*tmp;
 
@@ -52,7 +52,7 @@ void	append_trailing_space_new(t_ta *lx, int was_quoted)
     lx->trailing_space = 0;
 }
 
-void	finalize_token_new(t_ta *lx)
+void	finalize_token(t_ta *lx)
 {
     int	was_quoted;
 
@@ -63,7 +63,7 @@ void	finalize_token_new(t_ta *lx)
             expand_token_array(lx);
         lx->token[lx->tokenindex] = '\0';
         if (lx->trailing_space && lx->tokenindex == 0)
-            append_trailing_space_new(lx, was_quoted);
+            apnd_trailing_spc(lx, was_quoted);
         else
         {
             lx->quoted[lx->t_tot] = was_quoted;
