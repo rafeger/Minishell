@@ -78,7 +78,7 @@ static int	handle_single_builtin_and_just_redir(t_shell_data *data, t_cmd *cmd)
 	redir = cmd->redirects;
 	if (!cmd->args && redir)
 		return (just_redir(data, redir));
-	if (!cmd->next && is_builtin_no_fork(cmd->args[0]))
+	if (!cmd->next && is_builtin(cmd->args[0]))
 	{
 		redirections(data, cmd);
 		do_builtin(data, cmd);

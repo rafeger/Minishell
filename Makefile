@@ -15,6 +15,8 @@ CC			=	cc
 
 CFLAGS		=	-g3 -Wall -Werror -Wextra -I./include -I./libft
 
+HEADER		=	include/minishell.h
+
 SRC_DIR		=	src
 
 OBJ_DIR		=	obj
@@ -52,7 +54,7 @@ LIBFT		=	$(LIBFT_DIR)/libft.a
 
 all:			$(NAME)
 
-$(NAME):		$(LIBFT) $(OBJS)
+$(NAME):		$(LIBFT) $(OBJS) $(HEADER)
 	$(CC) $(CFLAGS) $(OBJS) -L$(LIBFT_DIR) -lft -lreadline -o $(NAME)
 
 $(OBJ_DIR)/%.o:	$(SRC_DIR)/%.c
