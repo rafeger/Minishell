@@ -41,16 +41,32 @@ static int	shell_main_loop(t_shell_data *shell)
 	return (shell->last_exit_status);
 }
 
-int	main(int ac, char *av[], char **envp)
+// Add this function to your main.c or shell setup
+static void setup_signal_handlers(void)
 {
-	t_shell_data	*shell;
-	int				exit_status;
+    struct sigaction sa;
+    
+    // Ignore SIGPIPE to handle broken pipes gracefully
+    sa.sa_handler = SIG_IGN;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sigaction(SIGPIPE, &sa, NULL);
+}
 
-	(void)ac;
-	(void)av;
-	if (setup_shell(&shell, envp))
-		return (1);
-	exit_status = shell_main_loop(shell);
-	ft_cleanup_shell(&shell);
-	return (exit_status);
+// Modify your main function to call this
+int main(int ac, char *av[], char **envp)
+{
+    t_shell_data    *shell;
+    int             exit_status;
+
+    (void)ac;
+    (void)av;
+    
+    setup_signal_handlers(); // Add this line
+    
+    if (setup_shell(&shell, envp))
+        return (1);
+    exit_status = shell_main_loop(shell);
+    ft_cleanup_shell(&shell);
+    return (exit_status);
 }
