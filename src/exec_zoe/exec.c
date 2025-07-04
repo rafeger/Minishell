@@ -74,16 +74,25 @@ static int	execute_command_loop(t_shell_data *data)
 static int	handle_single_builtin_and_just_redir(t_shell_data *data, t_cmd *cmd)
 {
 	t_redirect	*redir;
+	int			stdout_backup;
+    int			stdin_backup;
 
 	redir = cmd->redirects;
 	if (!cmd->args && redir)
 		return (just_redir(data, redir));
 	if (!cmd->next && is_builtin(cmd->args[0]))
 	{
-		redirections(data, cmd);
-		do_builtin(data, cmd);
-		close_heredoc_fds(data->cmd);
-		return (1);
+        stdout_backup = dup(STDOUT_FILENO);
+        stdin_backup = dup(STDIN_FILENO);
+        redirections(data, cmd);
+        do_builtin(data, cmd);
+        dup2(stdout_backup, STDOUT_FILENO);
+        dup2(stdin_backup, STDIN_FILENO);
+        close(stdout_backup);
+        close(stdin_backup);
+
+        close_heredoc_fds(data->cmd);
+        return (1);
 	}
 	return (0);
 }

@@ -19,6 +19,7 @@ static int	perform_syntax_validation(char *input, t_shell_data *shell_data)
 	}
 	return (0);
 }
+
 // static void	print_token_list(t_ta *lx)
 // {
 //     int i;
