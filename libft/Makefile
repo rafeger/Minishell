@@ -30,7 +30,7 @@ $(NAME) : $(OBJ)
 
 #Compilation des fichiers .c en .o
 %.o: %.c
-	gcc $(CFLAGS) -c $< -o $@
+	cc $(CFLAGS) -c $< -o $@
 
 # Nettoyage des fichiers objets
 clean:
