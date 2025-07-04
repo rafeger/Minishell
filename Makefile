@@ -29,7 +29,9 @@ SRCS		=	$(addprefix $(SRC_DIR)/, \
 				init_and_free/tokens_cmd_init.c \
 				env_vars/env_core.c env_vars/env_init.c env_vars/shell_core.c \
 				env_vars/signal_core.c \
-				check_syntax/check_syntax_core_new.c \
+				check_syntax/check_syntax_main.c check_syntax/pipe_errors.c \
+				check_syntax/redir_double.c check_syntax/redir_errors.c \
+				check_syntax/syntax_utils.c \
 				tok/append_token.c tok/lex_core.c tok/lexer_utils2.c \
 				tok/quote_handle.c tok/spe_char_handle.c \
 				parser/parse_core.c parser/parse_args.c \

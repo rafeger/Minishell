@@ -206,16 +206,28 @@ int		setup_shell(t_shell_data **sh, char **envp);
 void	refresh_exit_status(t_shell_data *shdata);
 void	setup_signals(void);
 
-/*================================== syntax ==================================*/
+/*============================== check_syntax =============================*/
 
-int				shell_syntax_check(const char *line);
-t_ta			*clean_lexer(t_ta *t_array);
-t_ta			*lexer(char *input, t_shell_data *shell_data);
-int				is_only_quotes(const char *input);
-t_ta			*create_special_empty_token(t_ta *t_array);
-int				check_unclosed_quotes(t_ta *t_array, t_shell_data *shell_data);
-t_ta			*clean_lexer(t_ta *t_array);
+int		skip_blanks(const char *str, int idx);
+int		is_it_in_q(const char *str, int idx);
+void	print_syntax_error(char *token);
+void	print_syntax_error_char(char c);
+void	print_newline_error(void);
 
+int		redir_overflow(const char *line, int pos);
+int		redir_missing_target(const char *line, int pos);
+int		redir_invalid_combo(const char *line, int pos);
+int		redir_pipe_error(const char *line, int pos);
+
+int		pipe_at_begin(const char *line);
+int		pipe_sequence_error(const char *line, int *idx);
+int		check_pipe_syntax(const char *line, int k);
+
+
+int		handle_double_redirection(const char *line, int *k);
+int		check_single_redirection(const char *line, int k);
+
+int		shell_syntax_check(const char *line);
 /*================================== parser ==================================*/
 void			add_argument(t_cmd *cmd, char *arg, int quoted);
 int				get_redirect_type(char *token);
@@ -227,74 +239,59 @@ int				init_quoted_array(t_ta *new_ta, t_ta *t_array, int index);
 
 /*================================== expand ==================================*/
 
-// Main expansion function
 char *expand_variables(char *input, t_shell_data *shell_data);
 
-// expand_utils.c
 char *substr_range(char *str, int start, int end);
 void update_quotes(t_expand_dollar *ed);
 void append_str(t_expand_dollar *ed, char *src);
 int is_empty_quotes(t_expand_dollar *ed);
 
-// expand_variables.c
 char *get_var_name(t_expand_dollar *ed);
 void expand_special(t_expand_dollar *ed);
 void expand_var(t_expand_dollar *ed);
 
-// expand_dollar.c
 void expand_dollar(t_expand_dollar *ed);
 
-// expand_size.c
 int calc_special_size(t_expand_dollar *ed);
 int calc_dollar_size(t_expand_dollar *ed);
 int calc_total_size(t_expand_dollar *ed);
 
-// expand_main.c
 void process_expansion(t_expand_dollar *ed);
 
 /*=============================== init_and_free ==============================*/
-
-/* free_core.c */
 void			free_env_array(char **env_array);
 void			free_tokenarray(t_ta *t_array);
 void			free_redirects(t_redirect *redirect);
 
-/* tokenarray_init.c */
 void			tokenarray_init_second(t_ta *t_array);
 t_ta			*tokenarray_init(void);
 
-/* struct_init_core.c */
 t_cmd			*cmd_initialisation(void);
-// int				fd_info_init(t_cmd *cmd);
 
-/* free_advanced.c */
 void			free_command_args(t_cmd *cmd);
 void			free_command(t_cmd *cmd);
 void			ft_cleanup_shell(t_shell_data **shell);
 void			ft_cleanup_env(t_env **env);
 
 /*============================================================================*/
-// lexer_core.c
+
 int		is_quote_char(char c);
 int		is_special_char(char c);
 void	ensure_token_capacity(t_ta *lx);
 void	expand_token_array(t_ta *lx);
 
-// lexer_token.c
+
 int		add_tok_failure(t_ta *lx);
 int		add_token_new(t_ta *lx, char *token);
 void	apnd_trailing_spc(t_ta *lx, int was_quoted);
 void	finalize_token(t_ta *lx);
 
-// lexer_quotes.c
 void	quote_state(t_ta *lx, char c);
 void	handle_quotes(t_ta *lx, char **input);
 
-// lexer_special.c
 void	handle_spe_tok(t_ta *lx, char **input);
 void	handle_spe_char(t_ta *lx, char **input);
 
-// lexer_driver.c
 void	lex_step(t_ta *lx, char **input);
 void	lex_input(t_ta *lx, char *input);
 t_ta	*lexer(char *input, t_shell_data *shell_data);
