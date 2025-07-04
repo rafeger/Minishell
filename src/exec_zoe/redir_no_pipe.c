@@ -49,10 +49,10 @@ int	just_redir(t_shell_data *data, t_redirect *redir)
 		else
 		{
 			if (handle_file_redirection(redir) != 0)
-            {
-                data->last_exit_status = 1;
-                return (1);
-            }
+			{
+				data->last_exit_status = 1;
+				return (1);
+			}
 		}
 		redir = redir->next;
 	}
