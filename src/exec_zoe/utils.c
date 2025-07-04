@@ -53,7 +53,6 @@ char	**convert_list_to_tab_str(t_env *env)
 char	*generate_random_filename(void)
 {
 	int				fd;
-	int				i;
 	char			*filename;
 	unsigned int	rand;
 
