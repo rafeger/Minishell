@@ -36,6 +36,7 @@ SRCS		=	$(addprefix $(SRC_DIR)/, \
 				expand/expand_core.c expand/expand_handle_var.c \
 				expand/expand_quoted.c expand/expand_utils.c \
 				exec_zoe/builtin.c \
+				exec_zoe/redir_no_pipe.c \
 				exec_zoe/exec.c exec_zoe/exec_pipes.c exec_zoe/exec_process.c exec_zoe/exec_utils.c \
 				exec_zoe/find_cmd.c exec_zoe/here_doc.c exec_zoe/here_doc2.c \
 				exec_zoe/redirections.c exec_zoe/utils.c \

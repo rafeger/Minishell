@@ -202,6 +202,8 @@ int		ft_envsize(t_env *lst);
 
 char    *shell_quote_removal(char *str);
 
+int		print_error_opening_file(char *name_file);
+
 /*============================== main_and_input ==============================*/
 
 void	process_shell_input(char *input, t_shell_data *shell_data);
