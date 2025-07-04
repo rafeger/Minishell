@@ -88,7 +88,7 @@ typedef struct s_shell_data
 
 typedef struct s_expand_dollar
 {
-    int     		pos[4];         // [0]=input_pos, [1]=output_pos, [2]=single_quote, [3]=double_quote
+    int     		pos[4];
     int     		total_size;
     char    		*result;
     t_env   		*env;
