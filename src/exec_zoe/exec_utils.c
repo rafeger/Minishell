@@ -26,14 +26,17 @@ static int	handle_directory_error(char **commande, t_shell_data *data)
 {
 	struct stat	file_stat;
 
-	if (!stat(commande[0], &file_stat))
+	if (ft_strchr(commande[0], '/') && !stat(commande[0], &file_stat))
 	{
-		ft_putstr_fd("bash: ", 2);
-		ft_putstr_fd(commande[0], 2);
-		ft_putstr_fd(": Is a directory\n", 2);
-		ft_cleanup_shell(&data);
-		rl_clear_history();
-		exit(126);
+		if (S_ISDIR(file_stat.st_mode))
+		{
+			ft_putstr_fd("bash: ", 2);
+			ft_putstr_fd(commande[0], 2);
+			perror(" ");
+			ft_cleanup_shell(&data);
+			rl_clear_history();
+			exit(126);
+		}
 	}
 	return (0);
 }
@@ -42,7 +45,7 @@ static char	*get_command_path(char **commande, t_env *env, int *need_free)
 {
 	char	*pathname;
 
-	if (access(commande[0], F_OK) == 0)
+	if ((ft_strchr(commande[0], '/') && access(commande[0], F_OK) == 0))
 	{
 		pathname = commande[0];
 		*need_free = 0;
@@ -75,9 +78,11 @@ void	execute(t_shell_data *data, t_cmd *cmd)
 	tab_env = convert_list_to_tab_str(data->env);
 	if (execve(pathname, commande, tab_env) == -1)
 	{
-		perror("execve");
+		ft_putstr_fd("bash: ", 2);
+		ft_putstr_fd(pathname, 2);
+		perror(" ");
 		cleanup(data, pathname, tab_env,
 			need_free_pathname);
-		exit(EXIT_FAILURE);
+		exit(126);
 	}
 }
