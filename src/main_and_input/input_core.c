@@ -19,6 +19,18 @@ static int	perform_syntax_validation(char *input, t_shell_data *shell_data)
 	}
 	return (0);
 }
+// static void	print_token_list(t_ta *lx)
+// {
+//     int i;
+
+//     printf("---- Lexer Token List ----\n");
+//     for (i = 0; i < lx->t_tot; i++)
+//     {
+//         printf("token[%d]: [%s] (quoted: %d)\n", i, lx->tokens[i], lx->quoted[i]);
+//     }
+//     printf("--------------------------\n");
+// }
+
 
 static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 {
@@ -32,6 +44,7 @@ static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 		return (NULL);
 	is_empty = (expanded_input[0] == '\0');
 	t_array = lexer(expanded_input, shell_data);
+	// print_token_list(t_array);
 	free(expanded_input);
 	if (!t_array && is_empty)
 	{
