@@ -15,7 +15,7 @@ int	print_error_opening_file(char *name_file)
 {
 	ft_putstr_fd("bash: ", 2);
 	ft_putstr_fd(name_file, 2);
-	perror("");
+	perror(" ");
 	return (1);
 }
 
