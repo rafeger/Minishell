@@ -44,7 +44,10 @@ static int	handle_heredoc_input(const char *delim, int fd, t_shell_data *data)
 		buf = readline("> ");
 		if (!buf)
 		{
-			ft_putstr_fd("bash: warning: here-document delimited by EOF\n", 2);
+			ft_putstr_fd("bash: warning: here-document delimited by", 2);
+			ft_putstr_fd("end-of-file, wanted : ", 2);
+			write(2, delim, ft_strlen(delim));
+			ft_putstr_fd("\n", 2);
 			break ;
 		}
 		status = process_heredoc_line(buf, delim, fd, data);
