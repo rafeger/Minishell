@@ -49,3 +49,20 @@ char	**convert_list_to_tab_str(t_env *env)
 	tab_str[i] = NULL;
 	return (tab_str);
 }
+
+char	*generate_random_filename(void)
+{
+	int				fd;
+	char			*filename;
+	unsigned int	rand;
+
+	filename = malloc(26);
+	fd = open("/dev/urandom", O_RDONLY);
+	if (!filename || fd == -1)
+		return (free(filename), NULL);
+	if (read(fd, &rand, 4) != 4)
+		return (close(fd), free(filename), NULL);
+	close(fd);
+	sprintf(filename, "/tmp/heredoc_%08x.tmp", rand);
+	return (filename);
+}
