@@ -14,9 +14,6 @@
 static int	process_heredoc_line(char *buf, const char *delim, int fd,
 	t_shell_data *data)
 {
-	char	*expanded_buf;
-	char	*processed_buf;
-
 	if (g_sig == SIGINT)
 	{
 		free(buf);
@@ -28,18 +25,10 @@ static int	process_heredoc_line(char *buf, const char *delim, int fd,
 		free(buf);
 		return (2);
 	}
-	expanded_buf = expand_variables(buf, data);
-	free(buf);
-	if (!expanded_buf)
-		return (1);
-	processed_buf = shell_quote_removal(expanded_buf);
-	if (processed_buf != expanded_buf)
-		free(expanded_buf);
-	if (!processed_buf)
-		return (1);
-	ft_putstr_fd(processed_buf, fd);
+	buf = expand_variables(buf, data);
+	ft_putstr_fd(buf, fd);
 	ft_putstr_fd("\n", fd);
-	free(processed_buf);
+	free(buf);
 	return (0);
 }
 
