@@ -28,6 +28,8 @@ void	quote_state_machine_new(t_ta *lx, char c)
 
 void	handle_quotes_new(t_ta *lx, char **input)
 {
+    int was_in_q;
+
     if ((!lx->in_q) && ((**input == '"' && *(*input + 1) == '"') ||
             (**input == '\'' && *(*input + 1) == '\'')))
     {
@@ -36,7 +38,10 @@ void	handle_quotes_new(t_ta *lx, char **input)
         *input += 1;
         return ;
     }
+    was_in_q = lx->in_q;
     quote_state_machine_new(lx, **input);
+    if (was_in_q && !lx->in_q && *(*input + 1) && is_special_char(*(*input + 1)))
+        finalize_token_new(lx);
     if (!lx->in_q && *(*input + 1) && ft_isspace(*(*input + 1)))
         lx->trailing_space = 1;
 }
