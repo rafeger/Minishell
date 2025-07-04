@@ -76,24 +76,6 @@ static void	write_in_heredoc(int fd, char *delim, t_shell_data *data)
 		unlink("heredoc.tmp");
 }
 
-char	*generate_random_filename(void)
-{
-	int				fd;
-	int				i;
-	char			*filename;
-	unsigned int	rand;
-
-	filename = malloc(25);
-	fd = open("/dev/urandom", O_RDONLY);
-	if (!filename || fd == -1)
-		return (free(filename), NULL);
-	if (read(fd, &rand, 4) != 4)
-		return (close(fd), free(filename), NULL);
-	close(fd);
-	sprintf(filename, "/tmp/heredoc_%08x.tmp", rand);
-	return (filename);
-}
-
 int	heredoc(char *delim, t_shell_data *data)
 {
 	int		fd;
