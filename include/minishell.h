@@ -263,21 +263,29 @@ int				init_quoted_array(t_ta *new_ta, t_ta *t_array, int index);
 
 /*================================== expand ==================================*/
 
-
 // Main expansion function
 char *expand_variables(char *input, t_shell_data *shell_data);
 
-// Helper functions
+// expand_utils.c
 char *substr_range(char *str, int start, int end);
 void update_quotes(t_expand_dollar *ed);
-char *get_var_name(t_expand_dollar *ed);
 void append_str(t_expand_dollar *ed, char *src);
+int is_empty_quotes(t_expand_dollar *ed);
+
+// expand_variables.c
+char *get_var_name(t_expand_dollar *ed);
 void expand_special(t_expand_dollar *ed);
 void expand_var(t_expand_dollar *ed);
+
+// expand_dollar.c
 void expand_dollar(t_expand_dollar *ed);
+
+// expand_size.c
 int calc_special_size(t_expand_dollar *ed);
 int calc_dollar_size(t_expand_dollar *ed);
 int calc_total_size(t_expand_dollar *ed);
+
+// expand_main.c
 void process_expansion(t_expand_dollar *ed);
 
 /*=============================== init_and_free ==============================*/
