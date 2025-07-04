@@ -1,6 +1,6 @@
 #include "../../include/minishell.h"
 
-t_ta	*init_new_ta(t_ta *t_array, int index)
+t_ta	*init_new_ta(t_ta *ta, int index)
 {
 	t_ta	*new_ta;
 
@@ -9,11 +9,11 @@ t_ta	*init_new_ta(t_ta *t_array, int index)
 		return (NULL);
 	free(new_ta->tokens);
 	free(new_ta->quoted);
-	new_ta->t_tot = t_array->t_tot - index - 1;
+	new_ta->t_tot = ta->t_tot - index - 1;
 	return (new_ta);
 }
 
-char	**create_sub_tokens(t_ta *t_array, int index, t_ta *new_ta)
+char	**create_sub_tokens(t_ta *ta, int index, t_ta *new_ta)
 {
 	char	**sub_tokens;
 	int		i;
@@ -24,7 +24,7 @@ char	**create_sub_tokens(t_ta *t_array, int index, t_ta *new_ta)
 	i = 0;
 	while (i < new_ta->t_tot)
 	{
-		sub_tokens[i] = ft_strdup(t_array->tokens[index + 1 + i]);
+		sub_tokens[i] = ft_strdup(ta->tokens[index + 1 + i]);
 		if (!sub_tokens[i])
 			return (NULL);
 		i++;
@@ -33,7 +33,7 @@ char	**create_sub_tokens(t_ta *t_array, int index, t_ta *new_ta)
 	return (sub_tokens);
 }
 
-int	init_quoted_array(t_ta *new_ta, t_ta *t_array, int index)
+int	init_quoted_array(t_ta *new_ta, t_ta *ta, int index)
 {
 	int	i;
 
@@ -43,7 +43,7 @@ int	init_quoted_array(t_ta *new_ta, t_ta *t_array, int index)
 	i = 0;
 	while (i < new_ta->t_tot)
 	{
-		new_ta->quoted[i] = t_array->quoted[index + 1 + i];
+		new_ta->quoted[i] = ta->quoted[index + 1 + i];
 		i++;
 	}
 	return (1);
