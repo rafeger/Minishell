@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-static void	input_redirection(t_shell_data *data, t_redirect *redir)
+static void	input_redirection(t_shell_data *data, t_redr *redir)
 {
 	int	fd;
 
@@ -35,7 +35,7 @@ static void	input_redirection(t_shell_data *data, t_redirect *redir)
 	close(fd);
 }
 
-static void	output_redirection(t_shell_data *data, t_redirect *redir)
+static void	output_redirection(t_shell_data *data, t_redr *redir)
 {
 	int	fd;
 
@@ -58,7 +58,7 @@ static void	output_redirection(t_shell_data *data, t_redirect *redir)
 	close(fd);
 }
 
-static void	append_redirection(t_shell_data *data, t_redirect *redir)
+static void	append_redirection(t_shell_data *data, t_redr *redir)
 {
 	int	fd;
 
@@ -99,7 +99,7 @@ static void	here_document(t_cmd *cmd, t_shell_data *data)
 
 void	redirections(t_shell_data *data, t_cmd *cmd)
 {
-	t_redirect	*redir;
+	t_redr	*redir;
 
 	redir = cmd->redirects;
 	while (redir)

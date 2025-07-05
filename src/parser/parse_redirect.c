@@ -64,11 +64,11 @@ int	get_redirect_type(char *token)
 	return (-1);
 }
 
-t_redirect	*create_redirect_node(int type, char *file, int quoted)
+t_redr	*create_redirect_node(int type, char *file, int quoted)
 {
-	t_redirect	*new_node;
+	t_redr	*new_node;
 
-	new_node = malloc(sizeof(t_redirect));
+	new_node = malloc(sizeof(t_redr));
 	if (!new_node)
 		return (NULL);
 	new_node->type = type;

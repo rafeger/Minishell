@@ -11,9 +11,9 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"	
 
-void	attach_to_redirect_list(t_cmd *cmd, t_redirect *new_redirect)
+void	attach_to_redirect_list(t_cmd *cmd, t_redr *new_redirect)
 {
-	t_redirect	*tail;
+	t_redr	*tail;
 
 	if (!cmd->redirects)
 		cmd->redirects = new_redirect;
@@ -26,7 +26,7 @@ void	attach_to_redirect_list(t_cmd *cmd, t_redirect *new_redirect)
 
 void	cmd_add_redirect(t_cmd *cmd, int type, char *file, int quoted)
 {
-	t_redirect	*new_redirect;
+	t_redr	*new_redirect;
 
 	new_redirect = create_redirect_node(type, file, quoted);
 	if (!new_redirect)
@@ -34,9 +34,9 @@ void	cmd_add_redirect(t_cmd *cmd, int type, char *file, int quoted)
 	attach_to_redirect_list(cmd, new_redirect);
 }
 
-t_redirect	*find_list_tail(t_redirect *head)
+t_redr	*find_list_tail(t_redr *head)
 {
-	t_redirect	*current;
+	t_redr	*current;
 
 	current = head;
 	while (current->next)

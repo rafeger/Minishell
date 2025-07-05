@@ -36,7 +36,7 @@
 //     int i;
 //     t_cmd *cur = cmd;
 //     int cmd_num = 1;
-//     t_redirect *redir;
+//     t_redr *redir;
 
 //     while (cur)
 //     {

@@ -74,14 +74,14 @@ typedef struct s_redirect
 	int					eof_quoted;
 	char				*file;
 	struct s_redirect	*next;
-}	t_redirect;
+}	t_redr;
 
 typedef struct s_cmd
 {
 	int				arg_count;
 	char			**args;
 	char			*c_name;
-	t_redirect		*redirects;
+	t_redr			*redirects;
 	struct s_cmd	*next;
 	struct s_cmd	*prev;
 	pid_t			pid;
@@ -146,7 +146,7 @@ int		close_heredoc_fds(t_cmd *cmd_list);
 void	handle_parent_cleanup(t_cmd *cmd, int pipe_fd[2], int *input_fd);
 int		create_pipe_if_needed(t_cmd *cmd, int pipe_fd[2], int *output_fd);
 void	setup_pipes_and_redirections(t_cmd *cmd, int pipe_in, int pipe_out);
-int		just_redir(t_shell_data *data, t_redirect *redir);
+int		just_redir(t_shell_data *data, t_redr *redir);
 void	execute(t_shell_data *data, t_cmd *cmd);
 char	*get_pathname(char *cmd, t_env *env);
 int		heredoc(char *delim, t_shell_data *data);
@@ -204,7 +204,7 @@ int		shell_syntax_check(const char *line);
 
 void	add_arg(t_cmd *cmd, char *arg, int quoted);
 int		get_redirect_type(char *token);
-void	attach_to_redirect_list(t_cmd *cmd, t_redirect *new_redirect);
+void	attach_to_redirect_list(t_cmd *cmd, t_redr *new_redirect);
 int		skip_leading_empty_tokens(t_ta *t_a);
 t_cmd	*finalize_command_or_cleanup(t_cmd *cmd);
 int		process_all_tokens(t_cmd *cmd, t_ta *t_a);
@@ -256,7 +256,7 @@ void	process_expansion(t_expand_dollar *ed);
 /* Init and free */
 void	free_env_array(char **env_array);
 void	free_tokenarray(t_ta *t_a);
-void	free_redirects(t_redirect *redirect);
+void	free_redirects(t_redr *redirect);
 void	tokenarray_init_second(t_ta *t_a);
 t_ta	*tokenarray_init(void);
 t_cmd	*cmd_initialisation(void);
@@ -286,6 +286,6 @@ t_ta	*create_special_empty_token(t_ta *t_a);
 int		check_unclosed_quotes(t_ta *t_a, t_shell_data *shell_data);
 t_ta	*clean_lexer(t_ta *t_a);
 
-t_redirect	*find_list_tail(t_redirect *head);
-t_redirect	*create_redirect_node(int type, char *file, int quoted);
+t_redr	*find_list_tail(t_redr *head);
+t_redr	*create_redirect_node(int type, char *file, int quoted);
 #endif

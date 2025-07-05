@@ -19,7 +19,7 @@ int	print_error_opening_file(char *name_file)
 	return (1);
 }
 
-static int	handle_file_redirection(t_redirect *redir)
+static int	handle_file_redirection(t_redr *redir)
 {
 	int	fd;
 
@@ -37,7 +37,7 @@ static int	handle_file_redirection(t_redirect *redir)
 	return (0);
 }
 
-int	just_redir(t_shell_data *data, t_redirect *redir)
+int	just_redir(t_shell_data *data, t_redr *redir)
 {
 	while (redir)
 	{

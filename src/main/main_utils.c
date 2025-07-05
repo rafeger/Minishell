@@ -14,7 +14,7 @@
 int	setup_heredocs(t_shell_data *data)
 {
 	t_cmd		*cmd;
-	t_redirect	*redir;
+	t_redr		*redir;
 	int			new_fd;
 
 	cmd = data->cmd;

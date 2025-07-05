@@ -73,7 +73,7 @@ static int	execute_command_loop(t_shell_data *data)
 
 static int	handle_single_builtin_and_just_redir(t_shell_data *data, t_cmd *cmd)
 {
-	t_redirect	*redir;
+	t_redr	*redir;
 
 	redir = cmd->redirects;
 	if (!cmd->args && redir)

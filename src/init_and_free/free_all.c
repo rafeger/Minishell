@@ -51,9 +51,9 @@ void	free_tokenarray(t_ta *t_a)
 	free(t_a);
 }
 
-void	free_redirects(t_redirect *redirect)
+void	free_redirects(t_redr *redirect)
 {
-	t_redirect	*temp;
+	t_redr	*temp;
 
 	while (redirect)
 	{
