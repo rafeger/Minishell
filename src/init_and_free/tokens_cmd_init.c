@@ -26,7 +26,7 @@ static int	*alloc_quoted(int cap)
 void	tokenarray_init_second(t_ta *t_a)
 {	
 	if (!t_a)
-		return;
+		return ;
 	t_a->tokenindex = 0;
 	t_a->in_q = 0;
 	t_a->quotechar = '\0';
@@ -62,36 +62,7 @@ t_ta	*tokenarray_init(void)
 	tokenarray_init_second(t_a);
 	return (t_a);
 }
-int	tokenarray_resize(t_ta *t_a, int new_capacity)
-{
-	char	**new_tokens;
-	int		*new_quoted;
-	int		i;
 
-	if (!t_a || new_capacity <= t_a->cap)
-		return (0);
-	new_tokens = malloc(sizeof(char *) * new_capacity);
-	new_quoted = alloc_quoted(new_capacity);
-	if (!new_tokens || !new_quoted)
-	{
-		free(new_tokens);
-		free(new_quoted);
-		return (0);
-	}
-	i = 0;
-	while (i < t_a->t_tot)
-	{
-		new_tokens[i] = t_a->tokens[i];
-		new_quoted[i] = t_a->quoted[i];
-		i++;
-	}
-	free(t_a->tokens);
-	free(t_a->quoted);
-	t_a->tokens = new_tokens;
-	t_a->quoted = new_quoted;
-	t_a->cap = new_capacity;
-	return (1);
-}
 t_cmd	*cmd_initialisation(void)
 {
 	t_cmd	*cmd;
@@ -102,6 +73,5 @@ t_cmd	*cmd_initialisation(void)
 	ft_memset(cmd, 0, sizeof(t_cmd));
 	cmd->tty_backup = -1;
 	cmd->heredoc_fd = -1;
-	
 	return (cmd);
 }

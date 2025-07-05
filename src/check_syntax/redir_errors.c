@@ -51,8 +51,8 @@ int	redir_missing_target(const char *line, int pos)
 		print_newline_error();
 		return (1);
 	}
-	if ((line[next] == '<' || line[next] == '>') && 
-		!(line[next] == line[pos] && next == pos + 1))
+	if ((line[next] == '<' || line[next] == '>')
+		&& !(line[next] == line[pos] && next == pos + 1))
 	{
 		print_syntax_error_char(line[next]);
 		return (1);
