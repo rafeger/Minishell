@@ -182,7 +182,7 @@ char	*generate_random_filename(void);
 
 void	process_shell_input(char *input, t_shell_data *shell_data);
 int	main(int ac, char **av, char **envp);
-t_cmd	*parse_tokens(t_ta *t_array);
+t_cmd	*parse_tokens(t_ta *t_a);
 void	ensure_stdin_tty(void);
 int	has_eof_been_reached(void);
 
@@ -233,9 +233,9 @@ void			add_argument(t_cmd *cmd, char *arg, int quoted);
 int				get_redirect_type(char *token);
 void			add_redirect(t_cmd *cmd, int type, char *file, int eof_quoted);
 void			cleanup_pipe_data(t_ta *new_ta, char **sub_tokens, int last_alloc);
-t_ta			*init_new_ta(t_ta *t_array, int index);
-char			**create_sub_tokens(t_ta *t_array, int index, t_ta *new_ta);
-int				init_quoted_array(t_ta *new_ta, t_ta *t_array, int index);
+t_ta			*init_new_ta(t_ta *t_a, int index);
+char			**create_sub_tokens(t_ta *t_a, int index, t_ta *new_ta);
+int				init_quoted_array(t_ta *new_ta, t_ta *t_a, int index);
 
 /*================================== expand ==================================*/
 
@@ -260,10 +260,10 @@ void process_expansion(t_expand_dollar *ed);
 
 /*=============================== init_and_free ==============================*/
 void			free_env_array(char **env_array);
-void			free_tokenarray(t_ta *t_array);
+void			free_tokenarray(t_ta *t_a);
 void			free_redirects(t_redirect *redirect);
 
-void			tokenarray_init_second(t_ta *t_array);
+void			tokenarray_init_second(t_ta *t_a);
 t_ta			*tokenarray_init(void);
 
 t_cmd			*cmd_initialisation(void);
@@ -296,9 +296,9 @@ void	lex_step(t_ta *lx, char **input);
 void	lex_input(t_ta *lx, char *input);
 t_ta	*lexer(char *input, t_shell_data *shell_data);
 int		is_only_quotes(const char *input);
-t_ta	*create_special_empty_token(t_ta *t_array);
-int		check_unclosed_quotes(t_ta *t_array, t_shell_data *shell_data);
-t_ta	*clean_lexer(t_ta *t_array);
+t_ta	*create_special_empty_token(t_ta *t_a);
+int		check_unclosed_quotes(t_ta *t_a, t_shell_data *shell_data);
+t_ta	*clean_lexer(t_ta *t_a);
 #endif
 
 
