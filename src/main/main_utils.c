@@ -40,11 +40,7 @@ int	setup_heredocs(t_shell_data *data)
 			{
 				new_fd = heredoc(redir->file, data);
 				if (new_fd == -1)
-				{
-					if (data->last_exit_status == 130)
-						return (-1);
 					return (-1);
-				}
 				if (cmd->heredoc_fd != -1)
 					close(cmd->heredoc_fd);
 				cmd->heredoc_fd = new_fd;
