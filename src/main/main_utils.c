@@ -9,16 +9,17 @@
 /*   Updated: 2025/07/05 10:59:45 by rafeger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include "../../include/minishell.h"
 
-int setup_heredocs(t_shell_data *data)
+int	setup_heredocs(t_shell_data *data)
 {
-	t_cmd *cmd = data->cmd;
-	
+	t_cmd		*cmd;
+	t_redirect	*redir;
+
+	cmd = data->cmd;
 	while (cmd)
 	{
-		t_redirect *redir = cmd->redirects;
+		redir = cmd->redirects;
 		while (redir)
 		{
 			if (redir->type == HERE_DOC)

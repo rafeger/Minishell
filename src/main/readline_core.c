@@ -20,7 +20,7 @@ static void	clear_current_command(t_shell_data *shell_data)
 	}
 }
 
-static int	perform_syntax_validation(char *input, t_shell_data *shell_data)
+static int	syntax_checker(char *input, t_shell_data *shell_data)
 {
 	if (shell_syntax_check(input) != 0)
 	{
@@ -31,7 +31,9 @@ static int	perform_syntax_validation(char *input, t_shell_data *shell_data)
 	return (0);
 }
 
-static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
+// print_expand_debug(input, expanded_input);
+// print_token_list(t_a);
+static t_cmd	*cmd_prep(char *input, t_shell_data *shell_data)
 {
 	char	*expanded_input;
 	t_ta	*t_a;
@@ -39,12 +41,10 @@ static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 	int		is_empty;
 
 	expanded_input = expand_variables(input, shell_data);
-	// print_expand_debug(input, expanded_input);
 	if (!expanded_input)
 		return (NULL);
 	is_empty = (expanded_input[0] == '\0');
 	t_a = lexer(expanded_input, shell_data);
-	// print_token_list(t_a);
 	free(expanded_input);
 	if (!t_a && is_empty)
 	{
@@ -58,7 +58,7 @@ static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 	return (cmd);
 }
 
-static void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd)
+static void	exec_cmd(t_cmd *cmd, t_shell_data *sd)
 {
 	if (cmd)
 	{
@@ -67,23 +67,23 @@ static void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd)
 		{
 			free_command(cmd);
 			sd->cmd = NULL;
-			return;
+			return ;
 		}
 		execute_commands(sd);
 	}
 }
 
+	// print_cmd_args(cmd);
 void	process_shell_input(char *input, t_shell_data *shell_data)
 {
 	t_cmd	*cmd;
 
 	if (!input)
 		exit(0);
-	if (perform_syntax_validation(input, shell_data))
+	if (syntax_checker(input, shell_data))
 		return ;
 	clear_current_command(shell_data);
-	cmd = prepare_and_execute_input(input, shell_data);
-	// print_cmd_args(cmd);
+	cmd = cmd_prep(input, shell_data);
 	free(input);
-	run_command_if_valid(cmd, shell_data);
+	exec_cmd(cmd, shell_data);
 }

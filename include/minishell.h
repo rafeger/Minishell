@@ -186,7 +186,6 @@ t_cmd	*parse_tokens(t_ta *t_a);
 void	ensure_stdin_tty(void);
 int	has_eof_been_reached(void);
 int setup_heredocs(t_shell_data *data);
-
 /*=================================== env ====================================*/
 
 
