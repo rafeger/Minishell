@@ -161,11 +161,30 @@ char	*generate_random_filename(void);
 
 /* Main and input */
 void	process_shell_input(char *input, t_shell_data *shell_data);
-int		main(int ac, char **av, char **envp);
 t_cmd	*parse_tokens(t_ta *t_a);
 void	ensure_stdin_tty(void);
 int		has_eof_been_reached(void);
 int		setup_heredocs(t_shell_data *data);
+
+int		main(int ac, char *av[], char **envp);
+
+/* Main - main_input_utils.c */
+void	ensure_stdin_tty(void);
+int		has_eof_been_reached(void);
+char	*read_user_input(void);
+
+int		process_input_line(char *input, t_shell_data *shell);
+
+void	process_shell_input(char *input, t_shell_data *shell_data);
+
+void	clear_current_command(t_shell_data *shell_data);
+int		syntax_checker(char *input, t_shell_data *shell_data);
+
+t_ta	*tokenize_expanded_input(char *expanded_input, t_shell_data *shell_data);
+t_cmd	*cmd_prep(char *input, t_shell_data *shell_data);
+
+int		setup_command_heredocs(t_shell_data *sd, t_cmd *cmd);
+void	exec_cmd(t_cmd *cmd, t_shell_data *sd);
 
 /* Env */
 char	*find_env_val(t_env *env_head, const char *k);
