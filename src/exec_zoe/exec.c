@@ -24,33 +24,35 @@ static void	child_process(t_shell_data *data, t_cmd *cmd,
 		execute(data, cmd);
 }
 
-static int	execute_single_command(t_cmd *cmd, int *input_fd,
-	t_shell_data *data, int *status)
+static int    execute_single_command(t_cmd *cmd, int *input_fd,
+    t_shell_data *data, int *status)
 {
-	int		pipe_fd[2];
-	int		output_fd;
-	pid_t	pid;
+    int        pipe_fd[2];
+    int        output_fd;
+    pid_t    pid;
 
-	if (create_pipe_if_needed(cmd, pipe_fd, &output_fd))
-	{
-		close_heredoc_fds(data->cmd);
-		return (1);
-	}
-	pid = fork();
-	if (pid == -1)
-		return (handle_fork_error(cmd, pipe_fd, data));
-	if (pid == 0)
-	{
-		if (cmd->next)
-			close(pipe_fd[0]);
-		child_process(data, cmd, *input_fd, output_fd);
-	}
-	else
-	{
-		handle_parent_cleanup(cmd, pipe_fd, input_fd);
-		wait_for_last_command(cmd, pid, status, data);
-	}
-	return (0);
+    if (create_pipe_if_needed(cmd, pipe_fd, &output_fd))
+    {
+        close_heredoc_fds(data->cmd);
+        return (1);
+    }
+    signal(SIGINT, SIG_IGN);
+    pid = fork();
+    if (pid == -1)
+        return (handle_fork_error(cmd, pipe_fd, data));
+    if (pid == 0)
+    {
+        if (cmd->next)
+            close(pipe_fd[0]);
+        child_process(data, cmd, *input_fd, output_fd);
+    }
+    else
+    {
+        handle_parent_cleanup(cmd, pipe_fd, input_fd);
+        wait_for_last_command(cmd, pid, status, data);
+        signal(SIGINT, handle_sigint);
+    }
+    return (0);
 }
 
 static int	execute_command_loop(t_shell_data *data)

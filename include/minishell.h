@@ -205,6 +205,7 @@ int		setup_shell(t_shell_data **sh, char **envp);
 
 void	refresh_exit_status(t_shell_data *shdata);
 void	setup_signals(void);
+void	handle_sigint(int sig);
 
 /*============================== check_syntax =============================*/
 
