@@ -135,7 +135,7 @@ void	handle_builtin_child(t_shell_data *data, t_cmd *cmd);
 int		handle_fork_error(t_cmd *cmd, int pipe_fd[2], t_shell_data *data);
 void	wait_for_last_command(t_cmd *cmd, pid_t pid, int *status,
 			t_shell_data *data);
-void	close_heredoc_fds(t_cmd *cmd_list);
+int		close_heredoc_fds(t_cmd *cmd_list);
 void	handle_parent_cleanup(t_cmd *cmd, int pipe_fd[2], int *input_fd);
 int		create_pipe_if_needed(t_cmd *cmd, int pipe_fd[2], int *output_fd);
 void	setup_pipes_and_redirections(t_cmd *cmd, int pipe_in, int pipe_out);
@@ -150,6 +150,7 @@ char	**convert_list_to_tab_str(t_env *env);
 int		ft_envsize(t_env *lst);
 char	*shell_quote_removal(char *str);
 int		print_error_opening_file(char *name_file);
+char	*generate_random_filename(void);
 char	*generate_random_filename(void);
 
 /* Main and input */
@@ -174,6 +175,7 @@ t_env	*parse_env_pair(char *env_str);
 int		setup_shell(t_shell_data **sh, char **envp);
 void	refresh_exit_status(t_shell_data *shdata);
 void	setup_signals(void);
+void	handle_sigint(int sig);
 
 /* Check syntax */
 int		skip_blanks(const char *str, int idx);

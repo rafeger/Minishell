@@ -32,10 +32,8 @@ static int	execute_single_command(t_cmd *cmd, int *input_fd,
 	pid_t	pid;
 
 	if (create_pipe_if_needed(cmd, pipe_fd, &output_fd))
-	{
-		close_heredoc_fds(data->cmd);
-		return (1);
-	}
+		return (close_heredoc_fds(data->cmd));
+	signal(SIGINT, SIG_IGN);
 	pid = fork();
 	if (pid == -1)
 		return (handle_fork_error(cmd, pipe_fd, data));
@@ -49,6 +47,7 @@ static int	execute_single_command(t_cmd *cmd, int *input_fd,
 	{
 		handle_parent_cleanup(cmd, pipe_fd, input_fd);
 		wait_for_last_command(cmd, pid, status, data);
+		signal(SIGINT, handle_sigint);
 	}
 	return (0);
 }

@@ -44,6 +44,7 @@ SRCS		=	$(addprefix $(SRC_DIR)/, \
 				exec_zoe/exec.c exec_zoe/exec_pipes.c exec_zoe/exec_process.c exec_zoe/exec_utils.c \
 				exec_zoe/find_cmd.c exec_zoe/here_doc.c exec_zoe/here_doc2.c \
 				exec_zoe/redirections.c exec_zoe/utils.c \
+				exec_zoe/random_name_file.c \
 				builtin_zoe/ft_cd.c builtin_zoe/ft_echo.c \
 				builtin_zoe/ft_env.c builtin_zoe/ft_exit.c \
 				builtin_zoe/ft_export.c builtin_zoe/ft_export2.c \

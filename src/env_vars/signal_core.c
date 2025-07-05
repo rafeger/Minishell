@@ -21,7 +21,7 @@ void	refresh_exit_status(t_shell_data *shdata)
 	g_sig = 0;
 }
 
-static void	handle_sigint(int sig)
+void	handle_sigint(int sig)
 {
 	g_sig = sig;
 	if (waitpid(-1, NULL, WNOHANG) == -1)
