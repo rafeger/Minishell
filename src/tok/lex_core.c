@@ -76,10 +76,10 @@ int	is_only_quotes(const char *input)
 	return (quotes > 0);
 }
 
-t_ta	*create_special_empty_token(t_ta *t_array)
+t_ta	*create_special_empty_token(t_ta *t_a)
 {
-	t_array->tokens[0] = ft_strdup("");
-	t_array->quoted[0] = 1;
-	t_array->t_tot = 1;
-	return (t_array);
+	t_a->tokens[0] = ft_strdup("");
+	t_a->quoted[0] = 1;
+	t_a->t_tot = 1;
+	return (t_a);
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free_all.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rafeger <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/05 11:07:58 by rafeger           #+#    #+#             */
+/*   Updated: 2025/07/05 11:08:00 by rafeger          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
 void	free_env_array(char **env_array)
@@ -15,28 +27,28 @@ void	free_env_array(char **env_array)
 	free(env_array);
 }
 
-void	free_tokenarray(t_ta *t_array)
+void	free_tokenarray(t_ta *t_a)
 {
 	int	i;
 
-	if (!t_array)
+	if (!t_a)
 		return ;
-	if (t_array->tokens)
+	if (t_a->tokens)
 	{
 		i = 0;
-		while (i < t_array->t_tot)
+		while (i < t_a->t_tot)
 		{
-			if (t_array->tokens[i])
-				free(t_array->tokens[i]);
+			if (t_a->tokens[i])
+				free(t_a->tokens[i]);
 			i++;
 		}
-		free(t_array->tokens);
+		free(t_a->tokens);
 	}
-	if (t_array->quoted)
-		free(t_array->quoted);
-	if (t_array->token)
-		free(t_array->token);
-	free(t_array);
+	if (t_a->quoted)
+		free(t_a->quoted);
+	if (t_a->token)
+		free(t_a->token);
+	free(t_a);
 }
 
 void	free_redirects(t_redirect *redirect)

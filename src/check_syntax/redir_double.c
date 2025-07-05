@@ -40,7 +40,6 @@ int	handle_double_redirection(const char *line, int *k)
 			return (1);
 		if (check_double_redir_target(line, *k))
 			return (1);
-		
 		*k += 2;
 		while (line[*k] && ft_isspace(line[*k]))
 			(*k)++;

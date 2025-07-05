@@ -1,11 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_utils.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rafeger <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/05 11:26:53 by rafeger           #+#    #+#             */
+/*   Updated: 2025/07/05 11:26:54 by rafeger          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../include/minishell.h"
 
-
-char *substr_range(char *str, int start, int end)
+char	*substr_range(char *str, int start, int end)
 {
-	char    *new;
-	int     i;
-	size_t  len;
+	char	*new;
+	int		i;
+	size_t	len;
 
 	if (str == NULL)
 		return (NULL);
@@ -27,8 +37,7 @@ char *substr_range(char *str, int start, int end)
 	return (new);
 }
 
-
-void update_quotes(t_expand_dollar *ed)
+void	update_quotes(t_expand_dollar *ed)
 {
 	if (ed->input[ed->pos[0]] == '\'' && ed->pos[3] == -1)
 		ed->pos[2] *= -1;
@@ -36,15 +45,13 @@ void update_quotes(t_expand_dollar *ed)
 		ed->pos[3] *= -1;
 }
 
-
-void append_str(t_expand_dollar *ed, char *src)
+void	append_str(t_expand_dollar *ed, char *src)
 {
 	ft_strcat(ed->result, src);
 	ed->pos[1] += ft_strlen(src);
 }
 
-
-int is_empty_quotes(t_expand_dollar *ed)
+int	is_empty_quotes(t_expand_dollar *ed)
 {
 	if (ed->input[ed->pos[0]] == '"' && ed->input[ed->pos[0] + 1] == '"')
 		return (2);

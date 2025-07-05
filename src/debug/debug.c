@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   debug.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rafeger <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/05 11:33:59 by rafeger           #+#    #+#             */
+/*   Updated: 2025/07/05 11:34:00 by rafeger          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 // static void	print_token_list(t_ta *lx)
 // {
 //     int i;
@@ -5,11 +17,11 @@
 //     printf("---- Lexer Token List ----\n");
 //     for (i = 0; i < lx->t_tot; i++)
 //     {
-//         printf("token[%d]: [%s] (quoted: %d)\n", i, lx->tokens[i], lx->quoted[i]);
+//         printf("token[%d]: [%s] (quoted: %d)\n", i,
+//  lx->tokens[i], lx->quoted[i]);
 //     }
 //     printf("--------------------------\n");
 // }
-
 
 // static void	print_expand_debug(const char *input, const char *expanded)
 // {
@@ -34,7 +46,8 @@
 //         else
 //             printf("c_name: [NULL]\n");
 //         for (i = 0; i < cur->arg_count; i++)
-//             printf("arg[%d]: [%s] (quoted: %d)\n", i, cur->args[i], cur->arg_quoted[i]);
+//             printf("arg[%d]: [%s] (quoted: %d)\n", i,
+//  cur->args[i], cur->arg_quoted[i]);
 //         redir = cur->redirects;
 //         while (redir)
 //         {
@@ -47,7 +60,8 @@
 //                 type_str = ">>";
 //             else if (redir->type == HERE_DOC)
 //                 type_str = "<<";
-//             printf("redir: [%s] file: [%s]\n", type_str, redir->file);
+// //             printf("redir: [%s] file: [%s]\n",
+//  type_str, redir->file);
 //             redir = redir->next;
 //         }
 //         printf("-------------------\n");

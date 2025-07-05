@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../../include/minishell.h"
 
 void	cleanup_pipe_data(t_ta *new_ta, char **sub_tokens, int last_alloc)

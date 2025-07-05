@@ -1,6 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_main.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rafeger <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/05 11:26:45 by rafeger           #+#    #+#             */
+/*   Updated: 2025/07/05 11:26:47 by rafeger          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../include/minishell.h"
 
-void process_expansion(t_expand_dollar *ed)
+void	process_expansion(t_expand_dollar *ed)
 {
 	while (ed->input[ed->pos[0]])
 	{
@@ -15,10 +26,10 @@ void process_expansion(t_expand_dollar *ed)
 	}
 }
 
-char *expand_variables(char *input, t_shell_data *shell_data)
+char	*expand_variables(char *input, t_shell_data *shell_data)
 {
-	t_expand_dollar ed;
-	
+	t_expand_dollar	ed;
+
 	if (!input)
 		return (NULL);
 	ed.env = shell_data->env;

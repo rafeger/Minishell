@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free_all2.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rafeger <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/05 11:07:55 by rafeger           #+#    #+#             */
+/*   Updated: 2025/07/05 11:07:56 by rafeger          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
 void	free_command_args(t_cmd *cmd)
@@ -14,37 +26,6 @@ void	free_command_args(t_cmd *cmd)
 		i++;
 	}
 	free(cmd->args);
-}
-
-void	free_command(t_cmd *cmd)
-{
-	t_cmd	*current;
-	t_cmd	*next;
-
-	if (!cmd)
-		return ;
-	current = cmd;
-	while (current)
-	{
-		next = current->next;
-		if (current->heredoc_fd != -1)
-		{
-			close(current->heredoc_fd);
-			current->heredoc_fd = -1;
-		}
-		if (current->c_name)
-			free(current->c_name);
-		if (current->args)
-			free_command_args(current);
-		if (current->redirects)
-			free_redirects(current->redirects);
-		if (current->arg_quoted)
-			free(current->arg_quoted);
-		if (current->tty_backup != -1)
-			close(current->tty_backup);
-		free(current);
-		current = next;
-	}
 }
 
 void	ft_cleanup_shell(t_shell_data **shell)

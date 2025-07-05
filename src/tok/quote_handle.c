@@ -59,9 +59,9 @@ void	handle_quotes(t_ta *lx, char **input)
 		lx->trailing_space = 1;
 }
 
-int	check_unclosed_quotes(t_ta *t_array, t_shell_data *shell_data)
+int	check_unclosed_quotes(t_ta *t_a, t_shell_data *shell_data)
 {
-	if (t_array->in_q)
+	if (t_a->in_q)
 	{
 		write(2, "minishell: syntax error: unclosed quote\n", 40);
 		if (shell_data)
@@ -71,8 +71,8 @@ int	check_unclosed_quotes(t_ta *t_array, t_shell_data *shell_data)
 	return (0);
 }
 
-t_ta	*clean_lexer(t_ta *t_array)
+t_ta	*clean_lexer(t_ta *t_a)
 {
-	free_tokenarray(t_array);
+	free_tokenarray(t_a);
 	return (NULL);
 }

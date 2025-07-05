@@ -1,36 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand_dollar.c                                    :+:      :+:    :+:   */
+/*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rafeger <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/05 11:26:42 by rafeger           #+#    #+#             */
-/*   Updated: 2025/07/05 11:26:43 by rafeger          ###   ########.fr       */
+/*   Created: 2025/07/05 10:59:44 by rafeger           #+#    #+#             */
+/*   Updated: 2025/07/05 10:59:45 by rafeger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
-void	expand_dollar(t_expand_dollar *ed)
+int	setup_heredocs(t_shell_data *data)
 {
-	int	empty_quote_len;
+	t_cmd		*cmd;
+	t_redirect	*redir;
 
-	ed->pos[0]++;
-	empty_quote_len = is_empty_quotes(ed);
-	if (empty_quote_len > 0)
+	cmd = data->cmd;
+	while (cmd)
 	{
-		ed->pos[0] += empty_quote_len;
-		return ;
+		redir = cmd->redirects;
+		while (redir)
+		{
+			if (redir->type == HERE_DOC)
+			{
+				cmd->heredoc_fd = heredoc(redir->file, data);
+				if (cmd->heredoc_fd == -1)
+				{
+					if (data->last_exit_status == 130)
+						return (-1);
+					return (-1);
+				}
+			}
+			redir = redir->next;
+		}
+		cmd = cmd->next;
 	}
-	if (ft_isalnum(ed->input[ed->pos[0]])
-		|| ed->input[ed->pos[0]] == '_')
-		expand_var(ed);
-	else if (ed->input[ed->pos[0]] == '$'
-		|| ed->input[ed->pos[0]] == '?')
-		expand_special(ed);
-	else
-	{
-		ed->result[ed->pos[1]++] = '$';
-		ed->result[ed->pos[1]] = '\0';
-	}
+	return (0);
 }
