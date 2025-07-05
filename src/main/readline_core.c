@@ -23,7 +23,7 @@ static int	perform_syntax_validation(char *input, t_shell_data *shell_data)
 static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 {
 	char	*expanded_input;
-	t_ta	*t_array;
+	t_ta	*t_a;
 	t_cmd	*cmd;
 	int		is_empty;
 
@@ -32,45 +32,45 @@ static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 	if (!expanded_input)
 		return (NULL);
 	is_empty = (expanded_input[0] == '\0');
-	t_array = lexer(expanded_input, shell_data);
-	// print_token_list(t_array);
+	t_a = lexer(expanded_input, shell_data);
+	// print_token_list(t_a);
 	free(expanded_input);
-	if (!t_array && is_empty)
+	if (!t_a && is_empty)
 	{
 		shell_data->last_exit_status = 0;
 		return (NULL);
 	}
-	if (!t_array)
+	if (!t_a)
 		return (NULL);
-	cmd = parse_tokens(t_array);
-	free_tokenarray(t_array);
+	cmd = parse_tokens(t_a);
+	free_tokenarray(t_a);
 	return (cmd);
 }
 
 static int setup_heredocs(t_shell_data *data)
 {
-    t_cmd *cmd = data->cmd;
-    
-    while (cmd)
-    {
-        t_redirect *redir = cmd->redirects;
-        while (redir)
-        {
-            if (redir->type == HERE_DOC)
-            {
-                cmd->heredoc_fd = heredoc(redir->file, data);
-                if (cmd->heredoc_fd == -1)
-                {
-                    if (data->last_exit_status == 130)
-                        return (-1);
-                    return (-1);
-                }
-            }
-            redir = redir->next;
-        }
-        cmd = cmd->next;
-    }
-    return (0);
+	t_cmd *cmd = data->cmd;
+	
+	while (cmd)
+	{
+		t_redirect *redir = cmd->redirects;
+		while (redir)
+		{
+			if (redir->type == HERE_DOC)
+			{
+				cmd->heredoc_fd = heredoc(redir->file, data);
+				if (cmd->heredoc_fd == -1)
+				{
+					if (data->last_exit_status == 130)
+						return (-1);
+					return (-1);
+				}
+			}
+			redir = redir->next;
+		}
+		cmd = cmd->next;
+	}
+	return (0);
 }
 
 static void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd)
@@ -98,7 +98,7 @@ void	process_shell_input(char *input, t_shell_data *shell_data)
 		return ;
 	clear_current_command(shell_data);
 	cmd = prepare_and_execute_input(input, shell_data);
-    // print_cmd_args(cmd);
+	// print_cmd_args(cmd);
 	free(input);
 	run_command_if_valid(cmd, shell_data);
 }
