@@ -28,10 +28,10 @@ void	free_command(t_cmd *cmd)
 	{
 		next = current->next;
 		if (current->heredoc_fd != -1)
-        {
-            close(current->heredoc_fd);
-            current->heredoc_fd = -1;
-        }
+		{
+			close(current->heredoc_fd);
+			current->heredoc_fd = -1;
+		}
 		if (current->c_name)
 			free(current->c_name);
 		if (current->args)

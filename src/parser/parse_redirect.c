@@ -3,12 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parse_redirect.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmurie <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: rafeger <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/05 10:06:30 by zmurie            #+#    #+#             */
-/*   Updated: 2025/07/05 10:06:34 by zmurie           ###   ########.fr       */
+/*   Created: 2025/07/05 10:06:44 by rafeger           #+#    #+#             */
+/*   Updated: 2025/07/05 10:06:45 by rafeger          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
 #include "../../include/minishell.h"
 
 void	cleanup_pipe_data(t_ta *new_ta, char **sub_tokens, int last_alloc)
