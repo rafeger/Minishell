@@ -11,14 +11,6 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
-static const t_redirect_map	g_redirect_types[] = {
-    {"<", REDIR_IN},
-    {">", REDIR_OUT},
-    {"<<", HERE_DOC},
-    {">>", APPEND},
-    {NULL, -1}
-};
-
 void	cleanup_pipe_data(t_ta *new_ta, char **sub_tokens, int last_alloc)
 {
     int	i;
@@ -36,13 +28,20 @@ void	cleanup_pipe_data(t_ta *new_ta, char **sub_tokens, int last_alloc)
 
 int	get_redirect_type(char *token)
 {
+    static const t_redirect_map	redirect_types[] = {
+        {"<", REDIR_IN},
+        {">", REDIR_OUT},
+        {"<<", HERE_DOC},
+        {">>", APPEND},
+        {NULL, -1}
+    };
     int	i;
 
     i = 0;
-    while (g_redirect_types[i].symbol)
+    while (redirect_types[i].symbol)
     {
-        if (ft_strcmp(token, g_redirect_types[i].symbol) == 0)
-            return (g_redirect_types[i].type);
+        if (ft_strcmp(token, redirect_types[i].symbol) == 0)
+            return (redirect_types[i].type);
         i++;
     }
     return (-1);
