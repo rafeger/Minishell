@@ -201,7 +201,7 @@ int		check_single_redirection(const char *line, int k);
 int		shell_syntax_check(const char *line);
 
 /* Parser */
-void	add_argument(t_cmd *cmd, char *arg, int quoted);
+void	add_arg(t_cmd *cmd, char *arg, int quoted);
 
 int		get_redirect_type(char *token);
 void	cmd_add_redirect(t_cmd *cmd, int type, char *file, int eof_quoted);
