@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_args_utils2.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rafeger <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/05 13:11:24 by rafeger           #+#    #+#             */
+/*   Updated: 2025/07/05 13:11:26 by rafeger          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
 void	merge_with_last_argument(t_cmd *cmd, char *arg)
@@ -17,8 +29,8 @@ int	expand_argument_storage(t_cmd *cmd)
 {
 	cmd->args = ft_realloc(cmd->args, sizeof(char *) * (cmd->arg_count + 1),
 			sizeof(char *) * (cmd->arg_count + 2));
-	cmd->arg_quoted = ft_realloc(cmd->arg_quoted, sizeof(int) *
-			(cmd->arg_count + 1), sizeof(int) * (cmd->arg_count + 2));
+	cmd->arg_quoted = ft_realloc(cmd->arg_quoted, sizeof(int)
+			*(cmd->arg_count + 1), sizeof(int) * (cmd->arg_count + 2));
 	return (cmd->args && cmd->arg_quoted);
 }
 
