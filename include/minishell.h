@@ -31,11 +31,11 @@
 # include <readline/history.h>
 # include <errno.h>
 
-# define PROMPT       "minishell> "
-# define REDIR_IN     0
-# define REDIR_OUT    1
-# define HERE_DOC     2
-# define APPEND       3
+# define PROMPT "minishell> "
+# define REDIR_IN 0
+# define REDIR_OUT 1
+# define HERE_DOC 2
+# define APPEND 3
 
 extern volatile sig_atomic_t	g_sig;
 
@@ -64,8 +64,8 @@ typedef struct s_ta
 
 typedef struct s_redirect_map
 {
-    char	*symbol;
-    int		type;
+	char	*symbol;
+	int		type;
 }	t_redirect_map;
 
 typedef struct s_redirect
@@ -118,6 +118,7 @@ typedef enum e_quote_state
 }	t_quote_state;
 
 /* Builtins */
+
 int		ft_cd(t_cmd *cmd, t_shell_data *shell_data);
 int		ft_echo(t_cmd *cmd);
 int		ft_env(t_shell_data *shell_data);
@@ -156,7 +157,6 @@ char	**convert_list_to_tab_str(t_env *env);
 int		ft_envsize(t_env *lst);
 char	*shell_quote_removal(char *str);
 int		print_error_opening_file(char *name_file);
-char	*generate_random_filename(void);
 char	*generate_random_filename(void);
 
 /* Main and input */
@@ -201,49 +201,38 @@ int		check_single_redirection(const char *line, int k);
 int		shell_syntax_check(const char *line);
 
 /* Parser */
+
 void	add_arg(t_cmd *cmd, char *arg, int quoted);
-
 int		get_redirect_type(char *token);
-t_redirect	*find_list_tail(t_redirect *head);
 void	attach_to_redirect_list(t_cmd *cmd, t_redirect *new_redirect);
-t_redirect	*create_redirect_node(int type, char *file, int quoted);
-
-
-
 int		skip_leading_empty_tokens(t_ta *t_a);
 t_cmd	*finalize_command_or_cleanup(t_cmd *cmd);
 int		process_all_tokens(t_cmd *cmd, t_ta *t_a);
 int		should_skip_space_token(t_cmd *cmd, t_ta *t_a, int i);
 int		is_redirection_token(t_ta *t_a, int i);
-
 int		is_empty_string_token(t_ta *t_a, int i);
 int		find_file_token_position(t_ta *t_a, int start_pos);
 void	process_redirection_token(t_cmd *cmd, t_ta *t_a, int *i);
 void	process_empty_string_token(t_cmd *cmd, t_ta *t_a, int *i);
 int		handle_next_token(t_cmd *cmd, t_ta *t_a, int *i);
-int	is_empty_command(t_cmd *cmd);
+int		is_empty_command(t_cmd *cmd);
 t_cmd	*cleanup_and_return_null(t_cmd *cmd);
 t_cmd	*initialize_command_structure(void);
-int	validate_token_array(t_ta *t_a);
-
+int		validate_token_array(t_ta *t_a);
 void	cmd_add_redirect(t_cmd *cmd, int type, char *file, int eof_quoted);
 void	cleanup_pipe_data(t_ta *new_ta, char **sub_tokens, int last_alloc);
-
-
 t_cmd	*parse_tokens(t_ta *t_a);
-
 t_ta	*init_new_ta(t_ta *t_a, int index);
 char	**create_sub_tokens(t_ta *t_a, int index, t_ta *new_ta);
 int		init_quoted_array(t_ta *new_ta, t_ta *t_a, int index);
 t_cmd	*setup_pipe(t_ta *new_ta, t_ta *t_a, int idx, char **stok);
 int		handle_pipe_token(t_cmd *cmd, t_ta *t_a, int *i);
 int		handle_pipe(t_cmd *cmd, t_ta *t_a, int index);
-
-int	check_dollar_concatenation(char *prev, char *curr);
-int	check_colon_concatenation(char *prev, char *curr);
-int	check_trailing_dollar(char *prev, char *curr);
-int	check_digit_concatenation(char *prev, char *curr);
-int	should_merge_arguments(char *prev_arg, char *curr_arg);
+int		check_dollar_concatenation(char *prev, char *curr);
+int		check_colon_concatenation(char *prev, char *curr);
+int		check_trailing_dollar(char *prev, char *curr);
+int		check_digit_concatenation(char *prev, char *curr);
+int		should_merge_arguments(char *prev_arg, char *curr_arg);
 void	update_command_name_if_needed(t_cmd *cmd, char *arg, int quoted);
 void	store_new_argument(t_cmd *cmd, char *arg, int quoted);
 int		expand_argument_storage(t_cmd *cmd);
@@ -297,4 +286,6 @@ t_ta	*create_special_empty_token(t_ta *t_a);
 int		check_unclosed_quotes(t_ta *t_a, t_shell_data *shell_data);
 t_ta	*clean_lexer(t_ta *t_a);
 
+t_redirect	*find_list_tail(t_redirect *head);
+t_redirect	*create_redirect_node(int type, char *file, int quoted);
 #endif
