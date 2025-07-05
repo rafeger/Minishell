@@ -88,7 +88,6 @@ static void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd)
 	}
 }
 
-
 void	process_shell_input(char *input, t_shell_data *shell_data)
 {
 	t_cmd	*cmd;

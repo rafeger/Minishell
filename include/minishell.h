@@ -273,7 +273,7 @@ void			free_command(t_cmd *cmd);
 void			ft_cleanup_shell(t_shell_data **shell);
 void			ft_cleanup_env(t_env **env);
 
-/*============================================================================*/
+/*================================== Tokenizer ====================================*/
 
 int		is_quote_char(char c);
 int		is_special_char(char c);
