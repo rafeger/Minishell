@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include "../../include/minishell.h"
 
-void	add_argument(t_cmd *cmd, char *arg, int quoted)
+void	add_arg(t_cmd *cmd, char *arg, int quoted)
 {
     if (cmd->arg_count > 0 && should_merge_arguments(cmd->args[cmd->arg_count - 1], arg))
     {
