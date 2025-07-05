@@ -180,7 +180,8 @@ void	process_shell_input(char *input, t_shell_data *shell_data);
 void	clear_current_command(t_shell_data *shell_data);
 int		syntax_checker(char *input, t_shell_data *shell_data);
 
-t_ta	*tokenize_expanded_input(char *expanded_input, t_shell_data *shell_data);
+t_ta	*tokenize_expanded_input(char *expanded_input,
+			t_shell_data *shell_data);
 t_cmd	*cmd_prep(char *input, t_shell_data *shell_data);
 
 int		setup_command_heredocs(t_shell_data *sd, t_cmd *cmd);

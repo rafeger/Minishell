@@ -1,51 +1,63 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_input_utils.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rafeger <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/05 14:52:42 by rafeger           #+#    #+#             */
+/*   Updated: 2025/07/05 14:52:43 by rafeger          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
 static int	setup_terminal_fd(void)
 {
-    int	fd;
+	int	fd;
 
-    fd = open("/dev/tty", O_RDONLY);
-    if (fd == -1)
-        exit(1);
-    if (dup2(fd, STDIN_FILENO) == -1)
-        exit(1);
-    close(fd);
-    return (1);
+	fd = open("/dev/tty", O_RDONLY);
+	if (fd == -1)
+		exit(1);
+	if (dup2(fd, STDIN_FILENO) == -1)
+		exit(1);
+	close(fd);
+	return (1);
 }
 
 void	ensure_stdin_tty(void)
 {
-    if (isatty(STDIN_FILENO) == 0)
-        setup_terminal_fd();
+	if (isatty(STDIN_FILENO) == 0)
+		setup_terminal_fd();
 }
 
 int	has_eof_been_reached(void)
 {
-    char	buffer[1];
-    int		bytes_read;
+	char	buffer[1];
+	int		bytes_read;
 
-    bytes_read = read(STDIN_FILENO, buffer, 0);
-    return (bytes_read == 0);
+	bytes_read = read(STDIN_FILENO, buffer, 0);
+	return (bytes_read == 0);
 }
 
 static int	should_add_to_history(char *line)
 {
-    return (line && *line);
+	return (line && *line);
 }
 
 char	*read_user_input(void)
 {
-    char	*line;
+	char	*line;
 
-    ensure_stdin_tty();
-    line = readline(PROMPT);
-    if (!line)
-    {
-        if (read(STDIN_FILENO, NULL, 0) == 0)
-            printf("exit\n");
-        return (NULL);
-    }
-    if (should_add_to_history(line))
-        add_history(line);
-    return (line);
+	ensure_stdin_tty();
+	line = readline(PROMPT);
+	if (!line)
+	{
+		if (read(STDIN_FILENO, NULL, 0) == 0)
+			printf("exit\n");
+		return (NULL);
+	}
+	if (should_add_to_history(line))
+		add_history(line);
+	return (line);
 }
