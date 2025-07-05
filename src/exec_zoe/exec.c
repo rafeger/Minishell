@@ -38,11 +38,12 @@ static int	execute_single_command(t_cmd *cmd, int *input_fd,
 	if (pid == -1)
 		return (handle_fork_error(cmd, pipe_fd, data));
 	if (pid == 0)
-	{
-		if (cmd->next)
-			close(pipe_fd[0]);
-		child_process(data, cmd, *input_fd, output_fd);
-	}
+    {
+        if (cmd->next)
+            close(pipe_fd[0]);
+        signal(SIGINT, SIG_DFL);
+        child_process(data, cmd, *input_fd, output_fd);
+    }
 	else
 	{
 		handle_parent_cleanup(cmd, pipe_fd, input_fd);
