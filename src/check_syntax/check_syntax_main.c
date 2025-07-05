@@ -38,15 +38,12 @@ int	shell_syntax_check(const char *line)
 		return (1);
 	if (pipe_at_begin(line))
 		return (1);
-	
 	while (line[k])
 	{
 		if (check_pipe_syntax(line, k))
 			return (1);
-		
 		if (check_redirection_syntax(line, &k))
 			return (1);
-		
 		k++;
 	}
 	return (0);

@@ -236,6 +236,9 @@ void			cleanup_pipe_data(t_ta *new_ta, char **sub_tokens, int last_alloc);
 t_ta			*init_new_ta(t_ta *t_a, int index);
 char			**create_sub_tokens(t_ta *t_a, int index, t_ta *new_ta);
 int				init_quoted_array(t_ta *new_ta, t_ta *t_a, int index);
+t_cmd			*setup_pipe(t_ta *new_ta, t_ta *t_a, int idx, char **stok);
+int				handle_pipe_token(t_cmd *cmd, t_ta *t_a, int *i);
+int				handle_pipe(t_cmd *cmd, t_ta *t_a, int index);
 
 /*================================== expand ==================================*/
 

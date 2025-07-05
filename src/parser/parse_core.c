@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-static t_cmd	*setup_pipe(t_ta *new_ta, t_ta *t_a, int idx, char **stok)
+t_cmd	*setup_pipe(t_ta *new_ta, t_ta *t_a, int idx, char **stok)
 {
 	t_cmd	*next_cmd;
 
@@ -52,7 +52,7 @@ int	handle_pipe(t_cmd *cmd, t_ta *t_a, int index)
 	return (1);
 }
 
-static int	handle_pipe_token(t_cmd *cmd, t_ta *t_a, int *i)
+int	handle_pipe_token(t_cmd *cmd, t_ta *t_a, int *i)
 {
 	if (ft_strcmp(t_a->tokens[*i], "|") == 0 && !t_a->quoted[*i])
 	{
