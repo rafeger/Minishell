@@ -23,7 +23,7 @@ static int	perform_syntax_validation(char *input, t_shell_data *shell_data)
 static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 {
 	char	*expanded_input;
-	t_ta	*t_array;
+	t_ta	*t_a;
 	t_cmd	*cmd;
 	int		is_empty;
 
@@ -32,18 +32,18 @@ static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 	if (!expanded_input)
 		return (NULL);
 	is_empty = (expanded_input[0] == '\0');
-	t_array = lexer(expanded_input, shell_data);
-	// print_token_list(t_array);
+	t_a = lexer(expanded_input, shell_data);
+	// print_token_list(t_a);
 	free(expanded_input);
-	if (!t_array && is_empty)
+	if (!t_a && is_empty)
 	{
 		shell_data->last_exit_status = 0;
 		return (NULL);
 	}
-	if (!t_array)
+	if (!t_a)
 		return (NULL);
-	cmd = parse_tokens(t_array);
-	free_tokenarray(t_array);
+	cmd = parse_tokens(t_a);
+	free_tokenarray(t_a);
 	return (cmd);
 }
 
