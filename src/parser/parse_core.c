@@ -60,9 +60,10 @@ static int	process_token(t_cmd *cmd, t_ta *t_a, int *i)
 		return (0);
 	if (*i >= t_a->t_tot)
 		return (1);
-	if (ft_strcmp(t_a->tokens[*i], " ") == 0 && !t_a->quoted[*i] && !cmd->c_name)
+	if (ft_strcmp(t_a->tokens[*i], " ") == 0
+		&& !t_a->quoted[*i] && !cmd->c_name)
 	{
-		(*i)++; 
+		(*i)++;
 		return (1);
 	}
 	if (get_redirect_type(t_a->tokens[*i]) >= 0 && !t_a->quoted[*i])
@@ -72,12 +73,12 @@ static int	process_token(t_cmd *cmd, t_ta *t_a, int *i)
 	else if (ft_strcmp(t_a->tokens[*i], "") == 0)
 	{
 		handle_empty_token(cmd, t_a, i);
-		(*i)++; 
+		(*i)++;
 	}
 	else
 	{
 		add_argument(cmd, t_a->tokens[*i], t_a->quoted[*i]);
-		(*i)++; 
+		(*i)++;
 	}
 	return (1);
 }
@@ -89,7 +90,7 @@ t_cmd	*parse_tokens(t_ta *t_a)
 
 	if (!t_a || !t_a->tokens)
 		return (NULL);
-	cmd = cmd_initialisation(); 
+	cmd = cmd_initialisation();
 	if (!cmd)
 		return (NULL);
 	token_pos = 0;
@@ -99,7 +100,7 @@ t_cmd	*parse_tokens(t_ta *t_a)
 	{
 		if (!process_token(cmd, t_a, &token_pos))
 		{
-			free_command(cmd); 
+			free_command(cmd);
 			return (NULL);
 		}
 	}

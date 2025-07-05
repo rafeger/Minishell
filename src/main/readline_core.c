@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   readline_core.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rafeger <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/05 10:59:47 by rafeger           #+#    #+#             */
+/*   Updated: 2025/07/05 10:59:53 by rafeger          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../include/minishell.h"
 
 static void	clear_current_command(t_shell_data *shell_data)
@@ -45,32 +56,6 @@ static t_cmd	*prepare_and_execute_input(char *input, t_shell_data *shell_data)
 	cmd = parse_tokens(t_a);
 	free_tokenarray(t_a);
 	return (cmd);
-}
-
-static int setup_heredocs(t_shell_data *data)
-{
-	t_cmd *cmd = data->cmd;
-	
-	while (cmd)
-	{
-		t_redirect *redir = cmd->redirects;
-		while (redir)
-		{
-			if (redir->type == HERE_DOC)
-			{
-				cmd->heredoc_fd = heredoc(redir->file, data);
-				if (cmd->heredoc_fd == -1)
-				{
-					if (data->last_exit_status == 130)
-						return (-1);
-					return (-1);
-				}
-			}
-			redir = redir->next;
-		}
-		cmd = cmd->next;
-	}
-	return (0);
 }
 
 static void	run_command_if_valid(t_cmd *cmd, t_shell_data *sd)
