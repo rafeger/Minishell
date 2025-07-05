@@ -67,7 +67,8 @@ static void	reset_heredoc_signals(struct sigaction *old_sa, int fd)
 	close(fd);
 }
 
-static void	write_in_heredoc(int fd, char *delim, t_shell_data *data)
+static void	write_in_heredoc(int fd, char *delim, t_shell_data *data,
+	char *filename)
 {
 	struct sigaction	old_sa;
 	int					interrupted;
@@ -76,7 +77,7 @@ static void	write_in_heredoc(int fd, char *delim, t_shell_data *data)
 	interrupted = handle_heredoc_input(delim, fd, data);
 	reset_heredoc_signals(&old_sa, fd);
 	if (interrupted)
-		unlink("heredoc.tmp");
+		unlink(filename);
 }
 
 int	heredoc(char *delim, t_shell_data *data)
@@ -93,7 +94,7 @@ int	heredoc(char *delim, t_shell_data *data)
 		free(filename);
 		return (-1);
 	}
-	write_in_heredoc(fd, delim, data);
+	write_in_heredoc(fd, delim, data, filename);
 	close(fd);
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
