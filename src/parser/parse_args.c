@@ -1,15 +1,29 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_args.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rafeger <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/05 10:06:32 by rafeger           #+#    #+#             */
+/*   Updated: 2025/07/05 10:06:33 by rafeger          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
 static int	should_concat(char *prev_arg, char *curr_arg)
 {
 	if (!prev_arg || !curr_arg || !*prev_arg || !*curr_arg)
 		return (0);
-	if (prev_arg[0] == '$' && (curr_arg[0] == ':' || curr_arg[0] == '$' || \
-				curr_arg[0] == '='))
+	if (prev_arg[0] == '$' && (curr_arg[0] == ':' || curr_arg[0] == '$'
+			|| curr_arg[0] == '='))
 		return (1);
-	if (ft_strlen(prev_arg) > 0 && prev_arg[ft_strlen(prev_arg) - 1] == ':' && curr_arg[0] == '$')
+	if (ft_strlen(prev_arg) > 0 && prev_arg[ft_strlen(prev_arg) - 1]
+		== ':' && curr_arg[0] == '$')
 		return (1);
-	if (ft_strlen(prev_arg) > 0 && prev_arg[ft_strlen(prev_arg) - 1] == '$' && curr_arg[0] == '=')
+	if (ft_strlen(prev_arg) > 0 && prev_arg[ft_strlen(prev_arg) - 1]
+		== '$' && curr_arg[0] == '=')
 		return (1);
 	if (ft_isdigit(prev_arg[0]) && curr_arg[0] == '$')
 		return (1);
@@ -27,7 +41,6 @@ static void	concat_argument(t_cmd *cmd, char *arg)
 	combined_arg = ft_strjoin(cmd->args[last_index], arg);
 	if (!combined_arg)
 		return ;
-
 	free(cmd->args[last_index]);
 	cmd->args[last_index] = combined_arg;
 }

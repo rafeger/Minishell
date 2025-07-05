@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_core.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rafeger <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/05 10:06:38 by rafeger           #+#    #+#             */
+/*   Updated: 2025/07/05 10:06:39 by rafeger          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
 static t_cmd	*setup_pipe_cmd(t_ta *new_ta, t_ta *t_array, int idx, char **stok)
@@ -75,26 +87,24 @@ static void	handle_redirect(t_cmd *cmd, t_ta *t_array, int *i)
 	}
 }
 
-
 static void	handle_empty_token(t_cmd *cmd, t_ta *t_array, int *i)
 {
 	char	*space_content;
 
-    if ((*i + 1) < t_array->t_tot && ft_strcmp(t_array->tokens[*i + 1], " ") == 0 && !t_array->quoted[*i + 1])
-    {
-        space_content = ft_strdup(t_array->tokens[*i + 1]);
-        if (space_content)
-        {
-            add_argument(cmd, space_content, t_array->quoted[*i + 1]); 
-            free(space_content);
-        }
-    }
-    else
-    {
-        add_argument(cmd, "", t_array->quoted[*i]);
+	if ((*i + 1) < t_array->t_tot && ft_strcmp(t_array->tokens[*i + 1], " ") == 0 && !t_array->quoted[*i + 1])
+	{
+		space_content = ft_strdup(t_array->tokens[*i + 1]);
+		if (space_content)
+		{
+			add_argument(cmd, space_content, t_array->quoted[*i + 1]); 
+			free(space_content);
+		}
+	}
+	else
+	{
+		add_argument(cmd, "", t_array->quoted[*i]);
 	}
 }
-
 
 static int	process_token(t_cmd *cmd, t_ta *t_array, int *i)
 {
@@ -114,7 +124,7 @@ static int	process_token(t_cmd *cmd, t_ta *t_array, int *i)
 	else if (ft_strcmp(t_array->tokens[*i], "") == 0)
 	{
 		handle_empty_token(cmd, t_array, i);
-        (*i)++; 
+		(*i)++; 
 	}
 	else
 	{
@@ -145,8 +155,7 @@ t_cmd	*parse_tokens(t_ta *t_array)
 			return (NULL);
 		}
 	}
-	if (!cmd->c_name && cmd->arg_count == 0
-		&& cmd->redirects == NULL)
+	if (!cmd->c_name && cmd->arg_count == 0 && cmd->redirects == NULL)
 	{
 		free_command(cmd);
 		return (NULL);
