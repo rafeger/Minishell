@@ -204,8 +204,15 @@ int		shell_syntax_check(const char *line);
 void	add_arg(t_cmd *cmd, char *arg, int quoted);
 
 int		get_redirect_type(char *token);
+t_redirect	*find_list_tail(t_redirect *head);
+void	attach_to_redirect_list(t_cmd *cmd, t_redirect *new_redirect);
+t_redirect	*create_redirect_node(int type, char *file, int quoted);
+
+
+
 void	cmd_add_redirect(t_cmd *cmd, int type, char *file, int eof_quoted);
 void	cleanup_pipe_data(t_ta *new_ta, char **sub_tokens, int last_alloc);
+
 
 t_cmd	*parse_tokens(t_ta *t_a);
 

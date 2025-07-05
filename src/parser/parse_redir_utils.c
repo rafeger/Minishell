@@ -33,3 +33,13 @@ void	cmd_add_redirect(t_cmd *cmd, int type, char *file, int quoted)
 		return ;
 	attach_to_redirect_list(cmd, new_redirect);
 }
+
+t_redirect	*find_list_tail(t_redirect *head)
+{
+	t_redirect	*current;
+
+	current = head;
+	while (current->next)
+		current = current->next;
+	return (current);
+}

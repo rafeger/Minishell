@@ -29,25 +29,39 @@ void	cleanup_pipe_data(t_ta *new_ta, char **sub_tokens, int last_alloc)
 		free_tokenarray(new_ta);
 }
 
+static int	is_single_char_redirect(char *token, char c, int expected_type)
+{
+    if (ft_strlen(token) == 1 && token[0] == c)
+        return (expected_type);
+    return (-1);
+}
+
+static int	is_double_char_redirect(char *token, char c, int expected_type)
+{
+    if (ft_strlen(token) == 2 && token[0] == c && token[1] == c)
+        return (expected_type);
+    return (-1);
+}
+
 int	get_redirect_type(char *token)
 {
-	int			i;
-	static const t_redirect_map	redirect_types[] = {
-	{"<", REDIR_IN},
-	{">", REDIR_OUT},
-	{"<<", HERE_DOC},
-	{">>", APPEND},
-	{NULL, -1}
-	};
+    int	result;
 
-	i = 0;
-	while (redirect_types[i].symbol)
-	{
-		if (ft_strcmp(token, redirect_types[i].symbol) == 0)
-			return (redirect_types[i].type);
-		i++;
-	}
-	return (-1);
+    if (!token)
+        return (-1);
+    result = is_single_char_redirect(token, '<', REDIR_IN);
+    if (result != -1)
+        return (result);
+    result = is_single_char_redirect(token, '>', REDIR_OUT);
+    if (result != -1)
+        return (result);
+    result = is_double_char_redirect(token, '<', HERE_DOC);
+    if (result != -1)
+        return (result);
+    result = is_double_char_redirect(token, '>', APPEND);
+    if (result != -1)
+        return (result);
+    return (-1);
 }
 
 t_redirect	*create_redirect_node(int type, char *file, int quoted)
@@ -69,12 +83,3 @@ t_redirect	*create_redirect_node(int type, char *file, int quoted)
 	return (new_node);
 }
 
-t_redirect	*find_list_tail(t_redirect *head)
-{
-	t_redirect	*current;
-
-	current = head;
-	while (current->next)
-		current = current->next;
-	return (current);
-}
