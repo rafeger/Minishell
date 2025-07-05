@@ -210,6 +210,22 @@ t_redirect	*create_redirect_node(int type, char *file, int quoted);
 
 
 
+int		skip_leading_empty_tokens(t_ta *t_a);
+t_cmd	*finalize_command_or_cleanup(t_cmd *cmd);
+int		process_all_tokens(t_cmd *cmd, t_ta *t_a);
+int		should_skip_space_token(t_cmd *cmd, t_ta *t_a, int i);
+int		is_redirection_token(t_ta *t_a, int i);
+
+int		is_empty_string_token(t_ta *t_a, int i);
+int		find_file_token_position(t_ta *t_a, int start_pos);
+void	process_redirection_token(t_cmd *cmd, t_ta *t_a, int *i);
+void	process_empty_string_token(t_cmd *cmd, t_ta *t_a, int *i);
+int		handle_next_token(t_cmd *cmd, t_ta *t_a, int *i);
+int	is_empty_command(t_cmd *cmd);
+t_cmd	*cleanup_and_return_null(t_cmd *cmd);
+t_cmd	*initialize_command_structure(void);
+int	validate_token_array(t_ta *t_a);
+
 void	cmd_add_redirect(t_cmd *cmd, int type, char *file, int eof_quoted);
 void	cleanup_pipe_data(t_ta *new_ta, char **sub_tokens, int last_alloc);
 

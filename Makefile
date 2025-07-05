@@ -34,7 +34,8 @@ SRCS		=	$(addprefix $(SRC_DIR)/, \
 				check_syntax/syntax_utils.c \
 				tok/append_token.c tok/lex_core.c tok/lexer_utils2.c \
 				tok/quote_handle.c tok/spe_char_handle.c \
-				parser/parse_core.c parser/parse_args.c \
+				parser/parse_core_re.c parser/parse_args.c \
+				parser/parse_core_utils.c parser/parse_core_handlers.c \
 				parser/parser_utils.c parser/parse_args_utils1.c \
 				parser/parse_args_utils2.c parser/parse_redir_utils.c \
 				parser/parse_redirect.c tok/tokenarray_utils.c \
