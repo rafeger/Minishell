@@ -49,20 +49,40 @@ char	**convert_list_to_tab_str(t_env *env)
 	tab_str[i] = NULL;
 	return (tab_str);
 }
-
-char	*generate_random_filename(void)
+char *generate_random_filename(void)
 {
 	int				fd;
 	char			*filename;
 	unsigned int	rand;
+	const char		*prefix = "/tmp/heredoc_";
+	char			hex[9];
+	int				i;
 
 	filename = malloc(26);
+	if (!filename)
+		return (NULL);
 	fd = open("/dev/urandom", O_RDONLY);
-	if (!filename || fd == -1)
+	if (fd == -1)
 		return (free(filename), NULL);
-	if (read(fd, &rand, 4) != 4)
+	if (read(fd, &rand, sizeof(rand)) != sizeof(rand))
 		return (close(fd), free(filename), NULL);
 	close(fd);
-	sprintf(filename, "/tmp/heredoc_%08x.tmp", rand);
+	for (i = 7; i >= 0; --i)
+	{
+		int val = rand & 0xF;
+		hex[i] = (val < 10) ? ('0' + val) : ('a' + val - 10);
+		rand >>= 4;
+	}
+	hex[8] = '\0';
+	for (i = 0; prefix[i]; i++)
+		filename[i] = prefix[i];
+	for (int j = 0; j < 8; j++)
+		filename[i++] = hex[j];
+	filename[i++] = '.';
+	filename[i++] = 't';
+	filename[i++] = 'm';
+	filename[i++] = 'p';
+	filename[i] = '\0';
+
 	return (filename);
 }
