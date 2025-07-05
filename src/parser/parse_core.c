@@ -44,13 +44,13 @@ static void	handle_empty_token(t_cmd *cmd, t_ta *t_a, int *i)
 		space_content = ft_strdup(t_a->tokens[*i + 1]);
 		if (space_content)
 		{
-			add_argument(cmd, space_content, t_a->quoted[*i + 1]);
+			add_arg(cmd, space_content, t_a->quoted[*i + 1]);
 			free(space_content);
 		}
 	}
 	else
 	{
-		add_argument(cmd, "", t_a->quoted[*i]);
+		add_arg(cmd, "", t_a->quoted[*i]);
 	}
 }
 
@@ -77,7 +77,7 @@ static int	process_token(t_cmd *cmd, t_ta *t_a, int *i)
 	}
 	else
 	{
-		add_argument(cmd, t_a->tokens[*i], t_a->quoted[*i]);
+		add_arg(cmd, t_a->tokens[*i], t_a->quoted[*i]);
 		(*i)++;
 	}
 	return (1);

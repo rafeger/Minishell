@@ -73,7 +73,7 @@ static void	exec_cmd(t_cmd *cmd, t_shell_data *sd)
 	}
 }
 
-	// print_cmd_args(cmd);
+// print_cmd_args(cmd);
 void	process_shell_input(char *input, t_shell_data *shell_data)
 {
 	t_cmd	*cmd;

@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-static int	should_concat(char *prev_arg, char *curr_arg)
+static int	check_concat(char *prev_arg, char *curr_arg)
 {
 	if (!prev_arg || !curr_arg || !*prev_arg || !*curr_arg)
 		return (0);
@@ -45,9 +45,9 @@ static void	concat_argument(t_cmd *cmd, char *arg)
 	cmd->args[last_index] = combined_arg;
 }
 
-void	add_argument(t_cmd *cmd, char *arg, int quoted)
+void	add_arg(t_cmd *cmd, char *arg, int quoted)
 {
-	if (cmd->arg_count > 0 && should_concat(cmd->args[cmd->arg_count - 1], arg))
+	if (cmd->arg_count > 0 && check_concat(cmd->args[cmd->arg_count - 1], arg))
 	{
 		concat_argument(cmd, arg);
 		return ;
