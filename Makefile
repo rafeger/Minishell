@@ -24,7 +24,7 @@ OBJ_DIR		=	obj
 LIBFT_DIR	=	libft
 
 SRCS		=	$(addprefix $(SRC_DIR)/, \
-				main/main.c main/readline_core.c \
+				main/main.c main/readline_core.c main/main_utils.c \
 				init_and_free/free_all.c init_and_free/free_all2.c \
 				init_and_free/tokens_cmd_init.c init_and_free/free_all3.c \
 				env_vars/env_core.c env_vars/env_init.c env_vars/shell_core.c \
