@@ -21,5 +21,3 @@ char	*ft_strndup(const char *s, size_t n)
 	ft_strlcpy(dup, s, n + 1);
 	return (dup);
 }
-
-

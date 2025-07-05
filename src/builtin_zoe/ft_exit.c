@@ -79,8 +79,8 @@ void	ft_exit(t_cmd *cmd, t_shell_data *data)
 	}
 	else if (cmd->args[1] && cmd->args[2])
 	{
-		ft_putendl_fd("exit", 2);
-		ft_putendl_fd("bash: exit: too many arguments", 2);
+		data->last_exit_status = 1;
+		ft_putstr_fd("exit\nbash: exit: too many arguments\n", 2);
 		return ;
 	}
 	else if (!cmd->args[1])
