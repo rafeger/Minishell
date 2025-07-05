@@ -62,6 +62,12 @@ typedef struct s_ta
 	size_t		tokensize;
 }	t_ta;
 
+typedef struct s_redirect_map
+{
+    char	*symbol;
+    int		type;
+}	t_redirect_map;
+
 typedef struct s_redirect
 {
 	int					type;
@@ -195,16 +201,30 @@ int		check_single_redirection(const char *line, int k);
 int		shell_syntax_check(const char *line);
 
 /* Parser */
-void	add_arg(t_cmd *cmd, char *arg, int quoted);
+void	add_argument(t_cmd *cmd, char *arg, int quoted);
+
 int		get_redirect_type(char *token);
-void	add_redirect(t_cmd *cmd, int type, char *file, int eof_quoted);
+void	cmd_add_redirect(t_cmd *cmd, int type, char *file, int eof_quoted);
 void	cleanup_pipe_data(t_ta *new_ta, char **sub_tokens, int last_alloc);
+
+t_cmd	*parse_tokens(t_ta *t_a);
+
 t_ta	*init_new_ta(t_ta *t_a, int index);
 char	**create_sub_tokens(t_ta *t_a, int index, t_ta *new_ta);
 int		init_quoted_array(t_ta *new_ta, t_ta *t_a, int index);
 t_cmd	*setup_pipe(t_ta *new_ta, t_ta *t_a, int idx, char **stok);
 int		handle_pipe_token(t_cmd *cmd, t_ta *t_a, int *i);
 int		handle_pipe(t_cmd *cmd, t_ta *t_a, int index);
+
+int	check_dollar_concatenation(char *prev, char *curr);
+int	check_colon_concatenation(char *prev, char *curr);
+int	check_trailing_dollar(char *prev, char *curr);
+int	check_digit_concatenation(char *prev, char *curr);
+int	should_merge_arguments(char *prev_arg, char *curr_arg);
+void	update_command_name_if_needed(t_cmd *cmd, char *arg, int quoted);
+void	store_new_argument(t_cmd *cmd, char *arg, int quoted);
+int		expand_argument_storage(t_cmd *cmd);
+void	merge_with_last_argument(t_cmd *cmd, char *arg);
 
 /* Expand */
 char	*expand_variables(char *input, t_shell_data *shell_data);

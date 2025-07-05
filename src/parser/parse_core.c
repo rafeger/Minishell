@@ -25,7 +25,7 @@ static void	handle_redirect(t_cmd *cmd, t_ta *t_a, int *i)
 			file_token_idx++;
 		if (file_token_idx < t_a->t_tot && t_a->tokens[file_token_idx])
 		{
-			add_redirect(cmd, redir_kind, t_a->tokens[file_token_idx],
+			cmd_add_redirect(cmd, redir_kind, t_a->tokens[file_token_idx],
 				t_a->quoted[file_token_idx]);
 			*i = file_token_idx + 1;
 		}
