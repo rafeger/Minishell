@@ -57,7 +57,7 @@ void	handle_parent_cleanup(t_cmd *cmd, int pipe_fd[2], int *input_fd)
 	}
 }
 
-void	close_heredoc_fds(t_cmd *cmd_list)
+int	close_heredoc_fds(t_cmd *cmd_list)
 {
 	t_cmd	*cmd;
 
@@ -71,4 +71,5 @@ void	close_heredoc_fds(t_cmd *cmd_list)
 		}
 		cmd = cmd->next;
 	}
+	return (1);
 }

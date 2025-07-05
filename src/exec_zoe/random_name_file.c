@@ -30,12 +30,13 @@ static int	get_random_int(void)
 
 static void	int_to_hex(unsigned int num, char *hex)
 {
-	int i;
+	int	i;
+	int	val;
 
 	i = 7;
 	while (i >= 0)
 	{
-		int val = num & 0xF;
+		val = num & 0xF;
 		if (val < 10)
 			hex[i] = '0' + val;
 		else
@@ -46,31 +47,31 @@ static void	int_to_hex(unsigned int num, char *hex)
 	hex[8] = '\0';
 }
 
-static int copy_string(char *dest, const char *src, int start_pos)
+static int	copy_string(char *dest, const char *src, int start_pos)
 {
-    int i;
+	int	i;
 
 	i = 0;
-    while (src[i])
-    {
-        dest[start_pos + i] = src[i];
-        i++;
-    }
-    return (start_pos + i);
+	while (src[i])
+	{
+		dest[start_pos + i] = src[i];
+		i++;
+	}
+	return (start_pos + i);
 }
 
-static void build_filename(char *filename, const char *hex)
+static void	build_filename(char *filename, const char *hex)
 {
-    int pos;
+	int	pos;
 
 	pos = 0;
-    pos = copy_string(filename, "/tmp/heredoc_", pos);
-    pos = copy_string(filename, hex, pos);
-    pos = copy_string(filename, ".tmp", pos);
-    filename[pos] = '\0';
+	pos = copy_string(filename, "/tmp/heredoc_", pos);
+	pos = copy_string(filename, hex, pos);
+	pos = copy_string(filename, ".tmp", pos);
+	filename[pos] = '\0';
 }
 
-char *generate_random_filename(void)
+char	*generate_random_filename(void)
 {
 	char	*filename;
 	char	hex[9];
@@ -79,7 +80,6 @@ char *generate_random_filename(void)
 	filename = malloc(26);
 	if (!filename)
 		return (NULL);
-
 	rand_int = get_random_int();
 	if (rand_int == -1)
 		return (free(filename), NULL);
